@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Undersoft.Tests", "Undersof
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Undersoft", "Undersoft", "{D081A4A8-B743-48BB-A172-1FF8703B1E81}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instants", "NET.Undersoft.Sdk\Undersoft.System.Instants\Undersoft.System.Instants.csproj", "{CD3DDB92-12A0-4CE4-B801-74E5488F195B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant", "NET.Undersoft.Sdk\Undersoft.System.Instant\Undersoft.System.Instant.csproj", "{CD3DDB92-12A0-4CE4-B801-74E5488F195B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Labors", "NET.Undersoft.Sdk\Undersoft.System.Labors\Undersoft.System.Labors.csproj", "{661E4B00-CE15-4331-BFCE-FD66A10B58DF}"
 EndProject
@@ -19,27 +19,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Extract", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Extract.Stock", "NET.Undersoft.Sdk\Undersoft.System.Extract.Stock\Undersoft.System.Extract.Stock.csproj", "{EFD8573E-8588-40FB-8F04-174261703E89}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instants.Mathline", "NET.Undersoft.Sdk\Undersoft.System.Instants.Mathline\Undersoft.System.Instants.Mathline.csproj", "{9D4B7BD1-2999-4CD9-ABAC-1DA2BC00503E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Mathline", "NET.Undersoft.Sdk\Undersoft.System.Instant.Mathline\Undersoft.System.Instant.Mathline.csproj", "{9D4B7BD1-2999-4CD9-ABAC-1DA2BC00503E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instants.Sqlbank", "NET.Undersoft.Sdk\Undersoft.System.Instants.Sqlbank\Undersoft.System.Instants.Sqlbank.csproj", "{F64703D3-853A-4F32-A439-29BE46CA8F9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Sqlbank", "NET.Undersoft.Sdk\Undersoft.System.Instant.Sqlbank\Undersoft.System.Instant.Sqlbank.csproj", "{F64703D3-853A-4F32-A439-29BE46CA8F9E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Multemic", "NET.Undersoft.Sdk\Undersoft.System.Multemic\Undersoft.System.Multemic.csproj", "{BAC88EBF-67B8-43D3-9815-DEBB0D034613}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Multemic.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Multemic.Tests\Undersoft.System.Multemic.Tests.csproj", "{886BF7FB-2466-4B3F-9960-11F743C87544}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instants.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Instants.Tests\Undersoft.System.Instants.Tests.csproj", "{48934DBC-4E96-4BDE-8808-4C361825AAC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Instant.Tests\Undersoft.System.Instant.Tests.csproj", "{48934DBC-4E96-4BDE-8808-4C361825AAC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Extract.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Extract.Tests\Undersoft.System.Extract.Tests.csproj", "{B23D7C35-4B89-4AD1-AC06-216EFD8130D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instants.Mathline.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Instants.Mathline.Tests\Undersoft.System.Instants.Mathline.Tests.csproj", "{6C1255CB-BDD7-4403-ABE3-30FDAB10E99C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Mathline.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Instant.Mathline.Tests\Undersoft.System.Instant.Mathline.Tests.csproj", "{6C1255CB-BDD7-4403-ABE3-30FDAB10E99C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System", "NET.Undersoft.Sdk\Undersoft.System\Undersoft.System.csproj", "{74B074DB-BF07-4EA6-9BE0-E1D1BB9C90B0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Labors.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Labors.Tests\Undersoft.System.Labors.Tests.csproj", "{07B6596D-8DE4-4D97-A65B-39875BA929B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instants.Sqlbank.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Instants.Sqlbank.Tests\Undersoft.System.Instants.Sqlbank.Tests.csproj", "{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Undersoft.System.Native.Bitscan", "NET.Undersoft.Sdk\Undersoft.System.Native.Bitscan\Undersoft.System.Native.Bitscan.vcxproj", "{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Sqlbank.Tests", "NET.Undersoft.Sdk.Tests\Undersoft.System.Instant.Sqlbank.Tests\Undersoft.System.Instant.Sqlbank.Tests.csproj", "{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -243,16 +241,6 @@ Global
 		{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}.Release|x64.Build.0 = Release|x64
 		{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}.Release|x86.ActiveCfg = Release|x86
 		{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}.Release|x86.Build.0 = Release|x86
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Debug|x64.ActiveCfg = Debug|x64
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Debug|x64.Build.0 = Debug|x64
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Debug|x86.ActiveCfg = Debug|Win32
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Debug|x86.Build.0 = Debug|Win32
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Release|Any CPU.ActiveCfg = Release|Win32
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Release|x64.ActiveCfg = Release|x64
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Release|x64.Build.0 = Release|x64
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Release|x86.ActiveCfg = Release|Win32
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -274,7 +262,6 @@ Global
 		{74B074DB-BF07-4EA6-9BE0-E1D1BB9C90B0} = {D081A4A8-B743-48BB-A172-1FF8703B1E81}
 		{07B6596D-8DE4-4D97-A65B-39875BA929B9} = {9BDC8D3C-15D0-4AEC-A80B-18885E128FE2}
 		{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1} = {9BDC8D3C-15D0-4AEC-A80B-18885E128FE2}
-		{265C01D6-8D41-43D5-B92E-AC4FB016FCBB} = {D081A4A8-B743-48BB-A172-1FF8703B1E81}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E63CE8B4-84B8-449A-A1CB-F526EA796731}

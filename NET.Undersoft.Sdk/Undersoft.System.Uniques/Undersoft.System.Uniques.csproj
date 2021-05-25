@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="HashKey\Algorithm\Base\**" />
+    <Compile Remove="HashKey\Algorithm\Interfaces\**" />
+    <Compile Remove="HashKey\Algorithm\Utilities\**" />
+    <EmbeddedResource Remove="HashKey\Algorithm\Base\**" />
+    <EmbeddedResource Remove="HashKey\Algorithm\Interfaces\**" />
+    <EmbeddedResource Remove="HashKey\Algorithm\Utilities\**" />
+    <None Remove="HashKey\Algorithm\Base\**" />
+    <None Remove="HashKey\Algorithm\Interfaces\**" />
+    <None Remove="HashKey\Algorithm\Utilities\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="HashKey\Algorithm\UnsafeBuffer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Undersoft.System.Extract\Undersoft.System.Extract.csproj" />
+    <ProjectReference Include="..\Undersoft.System\Undersoft.System.csproj" />
+  </ItemGroup>
+
+</Project>
