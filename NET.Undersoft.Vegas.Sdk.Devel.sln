@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Labors.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Sqlbank.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Instant.Sqlbank.Tests\Undersoft.System.Instant.Sqlbank.Tests.csproj", "{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Logs", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Logging\Undersoft.System.Logs.csproj", "{98782E30-575B-4E1C-8616-8CC9384ADA92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Logs", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Logs\Undersoft.System.Logs.csproj", "{98782E30-575B-4E1C-8616-8CC9384ADA92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
