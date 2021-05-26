@@ -74,6 +74,28 @@ namespace System.Instant
             return InnerPut(NewCard(value));
         }
 
+        public override ICard<IFigure> AddNew()
+        {
+            ICard<IFigure> newCard = NewCard(autoHashKey(), NewFigure());
+            if (InnerAdd(newCard))
+                return newCard;
+            return null;
+        }
+        public override ICard<IFigure> AddNew(long key)
+        {
+            ICard<IFigure> newCard = NewCard(key, NewFigure());
+            if (InnerAdd(newCard))
+                return newCard;
+            return null;
+        }
+        public override ICard<IFigure> AddNew(object key)
+        {
+            ICard<IFigure> newCard = NewCard(base.GetHashKey(key), NewFigure());
+            if (InnerAdd(newCard))
+                return newCard;
+            return null;
+        }
+
         private ICard<IFigure>[] cards;
         public ICard<IFigure>[] Cards { get => cards; }
 

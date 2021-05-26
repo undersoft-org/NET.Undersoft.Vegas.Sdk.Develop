@@ -21,9 +21,42 @@ namespace System.Instant
             Value = unmanaged;
         }        
 
-        public int SizeConst;
+        public int SizeConst;     
+    }
 
-        public UnmanagedType ArraySubType;       
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class FigureSizeAttribute : FigureAttribute
+    {
+        public UnmanagedType Value;
+
+        public FigureSizeAttribute(int size)
+        {
+            SizeConst = size;
+        }
+
+        public int SizeConst;
+    }
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class FigureLinkAttribute : FigureAttribute
+    {
+        public Type TargetType;
+        public string TargetName;
+
+
+        public FigureLinkAttribute(Type targetType, string linkRubric)
+        {
+            TargetType = targetType;
+            TargetName = targetType.Name;
+            LinkRubric = linkRubric;
+        }
+        public FigureLinkAttribute(string targetName, string linkRubric)
+        {
+            TargetName = targetName;
+            LinkRubric = linkRubric;
+        }
+
+        public string LinkRubric;
     }
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]

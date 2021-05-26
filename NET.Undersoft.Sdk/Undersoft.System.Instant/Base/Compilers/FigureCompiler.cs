@@ -31,7 +31,10 @@ namespace System.Instant
         public readonly ConstructorInfo figureKeyCtor = typeof(FigureKeyAttribute)
                                                             .GetConstructor(Type.EmptyTypes);
 
-        public readonly ConstructorInfo figureIdentityCtor = typeof(FigureKeyAttribute)
+        public readonly ConstructorInfo figureLinkCtor = typeof(FigureLinkAttribute)
+                                                            .GetConstructor(Type.EmptyTypes);
+
+        public readonly ConstructorInfo figureIdentityCtor = typeof(FigureIdentityAttribute)
                                                             .GetConstructor(Type.EmptyTypes);
 
         public readonly ConstructorInfo figureRequiredCtor = typeof(FigureRequiredAttribute)

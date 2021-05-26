@@ -118,11 +118,11 @@ namespace System.Uniques
         }
         public override unsafe UInt64 ComputeHashKey(byte* bytes, int length, uint seed = 0)
         {
-            return HashHandle32.ComputeHashKey(bytes, length, seed);
+            return HashHandle64.ComputeHashKey(bytes, length, seed);
         }
         public override unsafe UInt64 ComputeHashKey(byte[] bytes, uint seed = 0)
         {
-            return HashHandle32.ComputeHashKey(bytes, seed);
+            return HashHandle64.ComputeHashKey(bytes, seed);
         }
 
         public override unsafe Byte[] GetHashBytes(byte* obj, int length, uint seed = 0)

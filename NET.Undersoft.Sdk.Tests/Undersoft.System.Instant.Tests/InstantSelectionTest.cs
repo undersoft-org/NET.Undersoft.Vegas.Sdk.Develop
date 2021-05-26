@@ -52,16 +52,12 @@ namespace System.Instant
                 _iRts["Time"] = now;
                 iRtseq.Add(_iRts);
             }
-          
-            //for (int i = 50000; i < 100000; i++)
-            //{
-            //    IFigure _iRts = iRtseq.NewFigure();
-            //    _iRts.ValueArray = iRts.ValueArray;
-            //    _iRts["Id"] = idSeed + i;
-            //    _iRts["Time"] = DateTime.Now;
-            //    iRtseq.Add(_iRts);
-            //}
 
+            long[] keyarray = new long[60 * 1000];
+            for (int i = 0; i < 60000; i++)
+            {
+                keyarray[i] = Unique.NewKey;
+            }
 
             iRtseq.Add(iRtseq.NewFigure());
             iRtseq[0, 4] = iRts[4];

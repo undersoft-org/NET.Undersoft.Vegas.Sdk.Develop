@@ -54,7 +54,7 @@ namespace System.Instant
         [FigureKey]
         private long Key = long.MaxValue;
 
-        [FigureAs(UnmanagedType.ByValArray, SizeConst = 10, ArraySubType = UnmanagedType.U1)]
+        [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray { get; set; }
 
         [FigureDisplay("AvgPrice")]

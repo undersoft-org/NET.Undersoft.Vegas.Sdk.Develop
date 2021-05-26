@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Uniques;
-using System.Extract;
+using System.Numerics;
 
 /*************************************************************************************
     Copyright (c) 2020 Undersoft
@@ -25,8 +25,7 @@ namespace System.Multemic.Basedeck
         static protected readonly float RESIZING_VECTOR = 1.766f;
         static protected readonly float CONFLICTS_PERCENT_LIMIT = 0.22f;
         static protected readonly float REMOVED_PERCENT_LIMIT = 0.15f;
-        //static protected readonly ulong MAX_BIT_MASK = 0xFFFFFFFFFFFFFFFF;
-        static protected readonly uint  AUTO_KEY_SEED = (uint)DateTime.Now.ToBinary().GetHashKey32();
+        //static protected readonly ulong MAX_BIT_MASK = 0xFFFFFFFFFFFFFFFF;       
 
         protected ICard<V> first, last;
         protected ICard<V>[] table;
@@ -41,7 +40,7 @@ namespace System.Multemic.Basedeck
 
         protected int previousSize()
         {
-          // return SIZE_PRIMES.Table[--primesId];
+           // return SIZE_PRIMES.Table[--primesId];
             return (int)(size * (1 - REMOVED_PERCENT_LIMIT))^3; // Evaluate size without primes
         }       
 
@@ -76,7 +75,7 @@ namespace System.Multemic.Basedeck
 
         protected long autoHashKey()
         {
-            return base.GetHashKey(DateTime.Now.Ticks.GetBytes(), AUTO_KEY_SEED);
+            return 0;
         }
 
         #endregion
@@ -440,33 +439,28 @@ namespace System.Multemic.Basedeck
         }
         public virtual        bool TryAdd(V value)
         {
-            //long key = base.GetHashKey(value);
-            //if (key == 0)
-            //    key = autoHashKey(value);            
-            //return InnerAdd(key, value); ;
-
             return InnerAdd(value);
         }
 
         public virtual     ICard<V> AddNew()
         {
-            ICard<V> _last = last;
-            if (InnerAdd(autoHashKey(), default(V)))
-                return _last.Next;
+            ICard<V> newCard = NewCard(autoHashKey(), default(V));
+            if(InnerAdd(newCard))
+                return newCard;
             return null;
         }
         public virtual     ICard<V> AddNew(long key)
         {
-            ICard<V> _last = last;
-            if (InnerAdd(key, default(V)))
-                return _last.Next;
+            ICard<V> newCard = NewCard(key, default(V));
+            if (InnerAdd(newCard))
+                return newCard;
             return null;
         }
         public virtual     ICard<V> AddNew(object key)
         {
-            ICard<V> _last = last;
-            if (InnerAdd(base.GetHashKey(key), default(V)))
-                return _last.Next;
+            ICard<V> newCard = NewCard(base.GetHashKey(key), default(V));
+            if (InnerAdd(newCard))
+                return newCard;
             return null;
         }
 
@@ -932,7 +926,7 @@ namespace System.Multemic.Basedeck
 
             return ((ulong)key % ((uint)(size - 1)));
 
-            // author's algorithm to establish position / index in table            
+            // establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type) 
             // alsow project must be compiled in x64 format (default) for x86 format proper C lib compilation of BitScan.dll is needed       
 
@@ -944,7 +938,7 @@ namespace System.Multemic.Basedeck
 
             return ((ulong)key % (uint)(newsize - 1));
 
-            // author's algorithm to establish position / index in table            
+            // establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type)
             // alsow project must be compiled in x64 format (default) for x86 format proper C lib compilation of BitScan.dll is needed       
 

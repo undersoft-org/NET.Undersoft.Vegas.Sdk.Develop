@@ -237,16 +237,6 @@ namespace System.Uniques
             if (t == typeof(Enum))
                 return Convert.ToInt32(obj);
 
-            //if (obj is IUnique)
-            //    return ((IUnique)obj).GetHashKey();
-
-            //if (t.IsLayoutSequential)
-            //{
-            //    byte* ps = stackalloc byte[8];
-            //    ExtractOperation.ValueStructureToPointer(obj, ps, 0);
-            //    return *(long*)ps;
-            //}
-
             return (long)HashHandle64.ComputeHashKey(obj.GetBytes(true), seed);
         }
 

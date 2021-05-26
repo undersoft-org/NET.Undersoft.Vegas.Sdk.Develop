@@ -50,7 +50,7 @@ namespace System.Extract
 
         private long Key = long.MaxValue;
 
-        [FigureAs(UnmanagedType.ByValArray, SizeConst = 10, ArraySubType = UnmanagedType.U1)]
+        [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray { get; set; }
 
         public Ussn SerialCode { get; set; } = Ussn.Empty;
@@ -78,7 +78,7 @@ namespace System.Extract
 
         private long Key = long.MaxValue;
 
-        [FigureAs(UnmanagedType.ByValArray, SizeConst = 10, ArraySubType = UnmanagedType.U1)]
+        [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray { get; set; }
 
         public Ussn SerialCode { get; set; } = Ussn.Empty;
