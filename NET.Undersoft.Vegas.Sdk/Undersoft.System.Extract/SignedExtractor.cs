@@ -283,15 +283,6 @@ namespace System.Extract
         public unsafe static byte[] GetStructureBytes(object structure)
         {
             byte[] b = null;
-            object _structure = structure;
-            if (_structure is string)
-            {
-                int l = ((string)_structure).Length;
-                b = new byte[l];
-                fixed (char* c = (string)_structure)
-                fixed (byte* pb = b)
-                    CopyBlock(pb, (byte*)c, l);
-            }
 
             if (structure is ValueType)
             {
@@ -302,7 +293,7 @@ namespace System.Extract
                 if (structure is DateTime)
                 {
                     b = new byte[8];
-                    _structure = ((DateTime)_structure).ToBinary();
+                    structure = ((DateTime)structure).ToBinary();
                 }
                 else if (structure is Enum)
                 {
@@ -311,15 +302,24 @@ namespace System.Extract
                 }
                 else
                 {
-                    b = new byte[Marshal.SizeOf(_structure)];
+                    b = new byte[Marshal.SizeOf(structure)];
                 }
             }
+            else if (structure.GetType() == typeof(string))
+            {
+                int l = ((string)structure).Length;
+                b = new byte[l];
+                fixed (char* c = (string)structure)
+                fixed (byte* pb = b)
+                    CopyBlock(pb, (byte*)c, l);
+                return b;
+            }
             else
-                b = new byte[Marshal.SizeOf(_structure)];
+                b = new byte[Marshal.SizeOf(structure)];
 
-          
+
             fixed (byte* pb = b)
-                Marshal.StructureToPtr(_structure, new IntPtr(pb), false);
+                Marshal.StructureToPtr(structure, new IntPtr(pb), false);
             return b;
         }
         public unsafe static byte[] GetStructureBytes(ValueType structure)

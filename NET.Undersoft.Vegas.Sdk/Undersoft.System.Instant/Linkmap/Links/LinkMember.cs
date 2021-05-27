@@ -38,22 +38,7 @@ namespace System.Instant.Linkmap
 
         public IRubrics Rubrics { get; set; }
     
-        public IRubrics KeyRubrics { get; set; }
-
-        public int[] GetLinkOrdinals()
-        {
-            return KeyRubrics.Ordinals;
-        }
-
-        public object[] GetLinkValues(IFigure figure)
-        {
-            return KeyRubrics.Ordinals.Select(x => figure[x]).ToArray();
-        }
-
-        public long GetLinkKey(IFigure figure)
-        {
-            return KeyRubrics.Ordinals.Select(x => figure[x]).ToArray().GetHashKey64();
-        }
+        public IRubrics KeyRubrics { get; set; }       
 
         public Ussc SystemSerialCode { get; set; }
 

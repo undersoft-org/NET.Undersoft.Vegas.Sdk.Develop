@@ -54,7 +54,7 @@ namespace System.Instant
             }
 
             long[] keyarray = new long[60 * 1000];
-            for (int i = 0; i < 60000; i++)
+            for (   int i = 0; i < 60000; i++)
             {
                 keyarray[i] = Unique.NewKey;
             }

@@ -6,11 +6,11 @@ namespace System
     {
         V Value { get; set; }
 
-        int[] IdentityIndexes();
-
+        int[]    IdentityIndexes();
+         
         object[] IdentityValues();
 
-        long IdentitiesToKey();
+        long     IdentitiesToKey();
     }
 
 
@@ -30,8 +30,8 @@ namespace System
 
         void    SetHashSeed(uint seed);
 
-        uint     GetHashSeed();
+        uint    GetHashSeed();
 
-        uint     SeedBlock { get; set; }
+        uint    SeedBlock { get; set; }
     }
 }

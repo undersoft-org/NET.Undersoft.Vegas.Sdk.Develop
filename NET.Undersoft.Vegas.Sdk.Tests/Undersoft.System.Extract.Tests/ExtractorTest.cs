@@ -251,40 +251,40 @@ namespace System.Extract
 
         [Fact] public unsafe void Extractor_FigureExtracts_Test()
         {
-            IInstant referenceType = new Figure(typeof(FieldsAndPropertiesModel));
+            Figure referenceType = new Figure(typeof(FieldsAndPropertiesModel));
             FieldsAndPropertiesModel fom = new FieldsAndPropertiesModel();
-            object rts = Figure_Compilation_Helper_Test(referenceType, fom);
+            IFigure rts = Figure_Compilation_Helper_Test(referenceType, fom);
 
             IntPtr pserial = rts.GetStructureIntPtr();
-            object rts2 = referenceType.New();
+            IFigure rts2 = referenceType.Generate();
             pserial.ToStructure(rts2);
 
             byte[] bserial = rts2.GetBytes();
-            object rts3 = referenceType.New();
+            IFigure rts3 = referenceType.Generate();
             bserial.ToStructure(rts3);
 
-            object rts4 = referenceType.New();
+            IFigure rts4 = referenceType.Generate();
             rts4.StructureFrom(bserial);
 
             Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), null, FigureMode.ValueType);
             fom = new FieldsAndPropertiesModel();
-            object vts = Figure_Compilation_Helper_Test(valueType, fom);
+            IFigure vts = Figure_Compilation_Helper_Test(valueType, fom);
             ValueType v = (ValueType)vts;
 
             IntPtr pserial2 = vts.GetStructureIntPtr();
 
-            object vts2 = valueType.New();
+            IFigure vts2 = valueType.Generate();
             ValueType v2 = (ValueType)vts2;
-            vts2 = pserial2.ToStructure(vts2);
+            vts2 = (IFigure)(pserial2.ToStructure(vts2));
 
-            byte[] bserial2 = vts.GetBytes();
-            object vts3 = valueType.New();
-            vts3 = bserial2.ToStructure(vts3);
+            byte[] bserial2 = (vts).GetBytes();
+            IFigure vts3 = valueType.Generate();
+            vts3 = (IFigure)(bserial2.ToStructure(vts3));
             fixed (byte* b = bserial2)
-                vts3 = Extractor.PointerToStructure(b, vts3);
+                vts3 = (IFigure)(Extractor.PointerToStructure(b, vts3));
 
-            object vts4 = valueType.New();
-            vts4 = vts4.StructureFrom(pserial2);
+            IFigure vts4 = valueType.Generate();
+            vts4 = (IFigure)(vts4.StructureFrom(pserial2));
 
             Marshal.FreeHGlobal((IntPtr)pserial2);
 

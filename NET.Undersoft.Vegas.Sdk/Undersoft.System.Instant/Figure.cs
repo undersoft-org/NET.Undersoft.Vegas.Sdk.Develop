@@ -82,11 +82,15 @@ namespace System.Instant
 
         public object New()
         {
+            if (this.Type == null)
+                return Generate();
             return this.Type.New();
         }
 
         private IFigure newFigure()
         {
+            if (this.Type == null)
+                return Generate();
             return (IFigure)this.Type.New();
         }
 

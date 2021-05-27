@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Multemic;
 using System.Uniques;
+using System.Extract;
 using System.Linq;
 
 namespace System.Instant
@@ -54,7 +55,7 @@ namespace System.Instant
         public FieldMappings Mappings { get; set; }
 
         private int[] ordinals;
-        public int[] Ordinals { get => ordinals; }
+        public int[] Ordinals { get => ordinals; }       
 
         public void Update()
         {
@@ -77,23 +78,81 @@ namespace System.Instant
         {
             return Figures.GetBytes();
         }
+        public unsafe byte[] GetBytes(IFigure figure)
+        {
+            int size = Figures.FigureSize;
+            byte* figurePtr = stackalloc byte[size * 2];
+            byte* bufferPtr = figurePtr + size;
+            figure.StructureTo(figurePtr);
+            int destOffset = 0;
+            foreach (var rubric in AsValues())
+            {
+                int l = rubric.RubricSize;
+                Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
+                destOffset += l;
+            }
+            byte[] b = new byte[destOffset];
+            fixed (byte* bp = b)
+                Extractor.CopyBlock(bp, bufferPtr, destOffset);
+            return b;
+        }
+        public unsafe byte[] GetKeyBytes(IFigure figure, uint seed = 0)
+        {
+            //return KeyRubrics.Ordinals.Select(x => figure[x]).ToArray().GetHashKey64();
+            int size = Figures.FigureSize;
+            byte* figurePtr = stackalloc byte[size * 2];
+            byte* bufferPtr = figurePtr + size;
+            figure.StructureTo(figurePtr);
+            int destOffset = 0;
+            foreach(var rubric in AsValues())
+            {
+                int l = rubric.RubricSize;
+                Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
+                destOffset += l;
+            }
+            ulong hash = HashHandle64.ComputeHashKey(bufferPtr, destOffset, seed);
+            byte[] b = new byte[8];
+            fixed (byte* bp = b)
+                *((ulong*)bp) = hash;
+            return b;
+        }
+        public unsafe long   GetHashKey(IFigure figure, uint seed = 0)
+        {
+            int size = Figures.FigureSize;
+            byte* figurePtr = stackalloc byte[size * 2];
+            byte* bufferPtr = figurePtr + size;
+            figure.StructureTo(figurePtr);
+            int destOffset = 0;
+            foreach (var rubric in AsValues())
+            {
+                int l = rubric.RubricSize;
+                Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
+                destOffset += l;
+            }
+            return (long)HashHandle64.ComputeHashKey(bufferPtr, destOffset, seed);
+        }
+        public void          SetHashKey(IFigure figure, uint seed = 0)
+        {
+            figure.SetHashKey(GetHashKey(figure, seed));
+        }
+
         public byte[] GetKeyBytes()
         {
             return Figures.GetKeyBytes();
         }    
-        public void SetHashKey(long value)
+        public void   SetHashKey(long value)
         {
             Figures.SetHashKey(value);
         }
-        public long GetHashKey()
+        public long   GetHashKey()
         {
             return Figures.GetHashKey();
         }
-        public bool Equals(IUnique other)
+        public bool   Equals(IUnique other)
         {
             return Figures.Equals(other);
         }
-        public int CompareTo(IUnique other)
+        public int    CompareTo(IUnique other)
         {
             return Figures.CompareTo(other);
         }

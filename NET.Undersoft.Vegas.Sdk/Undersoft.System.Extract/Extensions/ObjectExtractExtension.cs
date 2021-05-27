@@ -35,6 +35,10 @@ namespace System.Extract
         {
             return Extractor.GetStructureBytes(structure);
         }
+        public unsafe static byte[] GetValueStructureBytes(this object structure)
+        {
+            return ExtractOperation.ValueStructureToBytes(structure);
+        }
         public unsafe static byte[] GetSequentialBytes(this Object objvalue)
         {
             byte[] b = new byte[Marshal.SizeOf(objvalue)];
@@ -67,8 +71,8 @@ namespace System.Extract
             if (objvalue is IUnique)
             {
                 if (forKeys)
-                    ((IUnique)objvalue).GetKeyBytes();
-                ((IUnique)objvalue).GetBytes();
+                    return ((IUnique)objvalue).GetKeyBytes();
+                return ((IUnique)objvalue).GetBytes();
             }
             if (t.IsValueType)
             {               
@@ -78,8 +82,8 @@ namespace System.Extract
                     return ((DateTime)objvalue).ToBinary().GetBytes();
                 if (objvalue is Enum)
                     return Convert.ToInt32(objvalue).GetBytes();
-                return objvalue.GetSequentialBytes();
-            }
+                return objvalue.GetStructureBytes();
+            }           
             if (t.IsLayoutSequential)
                 return objvalue.GetSequentialBytes();         
             if (objvalue is String || objvalue is IFormattable)

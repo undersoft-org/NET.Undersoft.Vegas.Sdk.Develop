@@ -643,7 +643,8 @@ namespace System.Instant
 
             ILGenerator il = method.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
-            il.EmitCall(OpCodes.Call, typeof(ObjectExtractExtenstion).GetMethod("GetStructureBytes", new Type[] { typeof(object) }), null);
+            il.Emit(OpCodes.Box, tb.UnderlyingSystemType); // box
+            il.EmitCall(OpCodes.Call, typeof(ObjectExtractExtenstion).GetMethod("GetValueStructureBytes", new Type[] { typeof(object) }), null);
             il.Emit(OpCodes.Ret);
         }
 

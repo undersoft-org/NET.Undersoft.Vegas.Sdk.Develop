@@ -149,7 +149,7 @@ namespace System.Instant
             long key = value.KeyBlock;
             if (key == 0)
             {
-                key = Figures.KeyRubrics.Ordinals.Select(x => value[x]).ToArray().GetHashKey();
+                key = Figures.KeyRubrics.Ordinals.Select(x => value[x]).ToArray().GetHashKey();           
                 value.KeyBlock = key;
             }
             return key;

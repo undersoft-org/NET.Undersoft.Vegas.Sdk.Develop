@@ -118,15 +118,15 @@ namespace System.Instant
 
         public override    int[] IdentityIndexes()
         {           
-            return Member.GetLinkOrdinals();
+            return Member.KeyRubrics.Ordinals;
         }
         public override object[] IdentityValues()
         {
-            return Member.GetLinkValues(value.Value);      
+            return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray();
         }
         public override     long IdentitiesToKey()
         {
-            return Member.GetLinkKey(value.Value);
+            return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray().GetHashKey();
         }  
 
         public override long Key
