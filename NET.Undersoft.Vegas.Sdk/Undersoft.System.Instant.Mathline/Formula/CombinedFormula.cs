@@ -61,7 +61,7 @@ namespace System.Instant.Mathline
                     g.Emit(OpCodes.Stloc, i);
                     g.Emit(OpCodes.Ldarg_0);
                     g.Emit(OpCodes.Ldc_I4_0);  
-                    g.EmitCall(OpCodes.Callvirt, typeof(CombinedComputer).GetMethod("GetRowCount", new Type[] { typeof(int) }), null);
+                    g.EmitCall(OpCodes.Callvirt, typeof(CombinedMathline).GetMethod("GetRowCount", new Type[] { typeof(int) }), null);
                     g.Emit(OpCodes.Stloc, l);
 
                     if (size.rows > 1 || size.cols > 1)

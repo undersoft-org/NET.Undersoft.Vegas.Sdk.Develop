@@ -2,7 +2,7 @@
 namespace System.Instant.Mathline
 {
 	/// Class for the Generated Code
-	public abstract class CombinedComputer
+	public abstract class CombinedMathline
     { 
         public int ParametersCount = 0;
 

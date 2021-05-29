@@ -125,38 +125,38 @@ namespace System.Instant.Mathline
         [NonSerialized] public Formula RightFormula;
         [NonSerialized] public CombinedFormula CombinedFormula;
 
-        public void Compute(CombinedComputer ev)
+        public void Compute(CombinedMathline cm)
         {            
-            Computer e = new Computer(ev.Compute);
+            Evaluator e = new Evaluator(cm.Compute);
             e();
         }
 
-        public Computer GetComputer(CombinedFormula m)
+        public Evaluator CreateEvaluator(CombinedFormula m)
         {
-            CombinedComputer computer = CombineComputer(m);
-            Computer ev = new Computer(computer.Compute);
+            CombinedMathline mathline = CombineMathline(m);
+            Evaluator ev = new Evaluator(mathline.Compute);
             return ev;
         }
-        public Computer GetComputer(CombinedComputer e)
+        public Evaluator CreateEvaluator(CombinedMathline e)
         {
-            Computer ev = new Computer(e.Compute);
+            Evaluator ev = new Evaluator(e.Compute);
             return ev;
         }
-        public Computer GetComputer(Formula f, LeftFormula m)
+        public Evaluator CreateEvaluator(Formula f, LeftFormula m)
         {
-            CombinedComputer computer = CombineComputer(f, m);
-            Computer ev = new Computer(computer.Compute);
+            CombinedMathline mathline = CombineMathline(f, m);
+            Evaluator ev = new Evaluator(mathline.Compute);
             return ev;
         }
 
-        public CombinedComputer CombineComputer(CombinedFormula m)
+        public CombinedMathline CombineMathline(CombinedFormula m)
         {
             return Compiler.Compile(m);
         }
-        public CombinedComputer CombineComputer(Formula f, LeftFormula m)
+        public CombinedMathline CombineMathline(Formula f, LeftFormula m)
         {
-            CombinedComputer computer = Compiler.Compile(new CombinedFormula(m, f));
-            return computer;
+            CombinedMathline mathline = Compiler.Compile(new CombinedFormula(m, f));
+            return mathline;
         }     
 
         public Formula Transpose()

@@ -54,29 +54,29 @@ namespace System.Instant.Mathline
             if (!ReferenceEquals(Data, table))
             {
                 Data = table;
-                CombinedComputer[] evs = CombineComputers();
+                CombinedMathline[] evs = CombineEvaluators();
                 bool[] b = evs.Select(e => e.SetParams(Data, 0)).ToArray();
                 return true;
             }
-            CombineComputers();
+            CombineEvaluators();
             return false;
         }
         public bool Combine()
         {
             if (!ReferenceEquals(Data, null))
             {
-                CombinedComputer[] evs = CombineComputers();
+                CombinedMathline[] evs = CombineEvaluators();
                 bool[] b = evs.Select(e => e.SetParams(Data, 0)).ToArray();
                 return true;
             }
-            CombineComputers();
+            CombineEvaluators();
             return false;
 
         }
 
-        public CombinedComputer[] CombineComputers()
+        public CombinedMathline[] CombineEvaluators()
         {
-            return this.AsValues().Select(m => m.CombineComputer()).ToArray();
+            return this.AsValues().Select(m => m.CombineEvaluator()).ToArray();
         }
 
         public override  ICard<MathRubric> EmptyCard()

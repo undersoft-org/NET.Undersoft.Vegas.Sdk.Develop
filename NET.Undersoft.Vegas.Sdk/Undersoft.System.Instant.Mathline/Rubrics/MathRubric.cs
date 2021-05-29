@@ -13,7 +13,7 @@ namespace System.Instant.Mathline
     {
         #region Private NonSerialized
         [NonSerialized] private MemberRubric memberRubric;
-        [NonSerialized] private CombinedComputer reckoner;
+        [NonSerialized] private CombinedMathline reckoner;
         [NonSerialized] private CombinedFormula formula;
         [NonSerialized] private Mathline formuler;
         [NonSerialized] private MathRubrics formulaRubrics;
@@ -72,14 +72,14 @@ namespace System.Instant.Mathline
 
         public bool PartialMathline { get; set; }
 
-        public CombinedComputer Computer
+        public CombinedMathline Evaluator
         { get { return reckoner; } set { reckoner = value; } }
 
         public LeftFormula Compute()
         {
             if (reckoner != null)
             {
-                Computer reckon = new Computer(reckoner.Compute);
+                Evaluator reckon = new Evaluator(reckoner.Compute);
                 reckon();
             }
             return formula.lexpr;
@@ -100,10 +100,10 @@ namespace System.Instant.Mathline
             }
         }        
 
-        public CombinedComputer CombineComputer()
+        public CombinedMathline CombineEvaluator()
         {
             if (reckoner == null)
-                reckoner = formula.CombineComputer(formula);
+                reckoner = formula.CombineMathline(formula);
 
             return reckoner;
         }

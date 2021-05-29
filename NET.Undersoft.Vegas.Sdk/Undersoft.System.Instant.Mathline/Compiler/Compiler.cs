@@ -28,7 +28,7 @@ namespace System.Instant.Mathline
             }
         }
 
-        public static CombinedComputer Compile(Formula formula)
+        public static CombinedMathline Compile(Formula formula)
         {
             if (MODULE == null)
             {
@@ -41,7 +41,7 @@ namespace System.Instant.Mathline
             }
             CLASS_ID++;
 
-            TypeBuilder MathlineFormula = MODULE.DefineType(TYPE_PREFIX + CLASS_ID, TypeAttributes.Public, typeof(CombinedComputer));
+            TypeBuilder MathlineFormula = MODULE.DefineType(TYPE_PREFIX + CLASS_ID, TypeAttributes.Public, typeof(CombinedMathline));
             Type[] constructorArgs = { };
             ConstructorBuilder constructor = MathlineFormula.DefineConstructor(
                 MethodAttributes.Public, CallingConventions.Standard, null);
@@ -71,7 +71,7 @@ namespace System.Instant.Mathline
 
             // create the class...
             Type mxt = MathlineFormula.CreateTypeInfo();
-            CombinedComputer computation = (CombinedComputer)Activator.CreateInstance(mxt, new Object[] { });
+            CombinedMathline computation = (CombinedMathline)Activator.CreateInstance(mxt, new Object[] { });
             computation.SetParams(context.ParamCards, context.Count);
 
             return computation;

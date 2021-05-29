@@ -10,7 +10,7 @@ using System.Data;
 
 namespace System.Instant.Mathline
 {
-    public delegate void Computer();
+    public delegate void Evaluator();
 
     [Serializable]
     public class CompilerContext
@@ -146,7 +146,7 @@ namespace System.Instant.Mathline
             {
                 // simple this.paramTables[i]
                 g.Emit(OpCodes.Ldarg_0); //this
-                g.Emit(OpCodes.Ldfld, typeof(CombinedComputer).GetField(paramFieldName));
+                g.Emit(OpCodes.Ldfld, typeof(CombinedMathline).GetField(paramFieldName));
                 g.Emit(OpCodes.Ldc_I4, i);
                 g.Emit(OpCodes.Ldelem_Ref);
                 g.Emit(OpCodes.Stloc, indexVariableCount + i);
