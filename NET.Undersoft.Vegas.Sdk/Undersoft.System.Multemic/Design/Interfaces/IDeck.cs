@@ -65,7 +65,7 @@ namespace System.Multemic
         void Enqueue(ICard<V> card);
         bool Enqueue(V card);
 
-           V Dequeue();
+              V Dequeue();
         bool TryDequeue(out ICard<V> item);
         bool TryDequeue(out V item);
         new bool TryTake(out V item);

@@ -1,11 +1,34 @@
-﻿namespace System.IO
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.ByteMarkupExetnsion.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (28.05.2021) 
+   @licence MIT
+ *************************************************/
+
+namespace System.IO
 {
+    /// <summary>
+    /// Defines the <see cref="ByteMarkupExtension" />.
+    /// </summary>
     public static class ByteMarkupExtension
     {
+        #region Methods
+
+        /// <summary>
+        /// The IsMarkup.
+        /// </summary>
+        /// <param name="checknoise">The checknoise<see cref="byte"/>.</param>
+        /// <param name="noisekind">The noisekind<see cref="MarkupType"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
         public static bool IsMarkup(this byte checknoise, out MarkupType noisekind)
         {
             switch (checknoise)
-            { 
+            {
                 case (byte)MarkupType.Block:
                     noisekind = MarkupType.Block;
                     return true;
@@ -20,6 +43,13 @@
                     return false;
             }
         }
+
+        /// <summary>
+        /// The IsSpliter.
+        /// </summary>
+        /// <param name="checknoise">The checknoise<see cref="byte"/>.</param>
+        /// <param name="spliterkind">The spliterkind<see cref="MarkupType"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
         public static bool IsSpliter(this byte checknoise, out MarkupType spliterkind)
         {
             switch (checknoise)
@@ -50,5 +80,7 @@
                     return false;
             }
         }
+
+        #endregion
     }
 }

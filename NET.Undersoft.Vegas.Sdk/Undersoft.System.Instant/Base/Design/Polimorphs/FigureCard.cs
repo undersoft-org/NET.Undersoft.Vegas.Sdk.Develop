@@ -2,7 +2,7 @@
 using System.Extract;
 using System.Uniques;
 using System.Multemic;
-using System.Instant.Linkmap;
+using System.Instant.Linking;
 using System.Linq;
 using System.Reflection;
 using System.IO;

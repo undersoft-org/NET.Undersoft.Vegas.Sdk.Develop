@@ -530,6 +530,7 @@ namespace System.Instant
 
             ILGenerator il = method.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
+            //il.Emit(OpCodes.Box, tb.UnderlyingSystemType); // box
             il.EmitCall(OpCodes.Call, typeof(ObjectExtractExtenstion).GetMethod("GetSequentialBytes", new Type[] { typeof(object) }), null);
             il.Emit(OpCodes.Ret);
         }

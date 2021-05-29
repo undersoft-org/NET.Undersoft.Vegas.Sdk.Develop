@@ -1,43 +1,86 @@
-﻿using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Instant;
-using System.Multemic;
-using System.Uniques;
-using System.Extract;
-using System.Linq;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   LaborMethods.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
-{   
+{
+    using System.Instant;
+    using System.Multemic;
 
+    /// <summary>
+    /// Defines the <see cref="LaborMethods" />.
+    /// </summary>
     public class LaborMethods : Catalog<IDeputy>
     {
+        #region Methods
+
+        /// <summary>
+        /// The EmptyCard.
+        /// </summary>
+        /// <returns>The <see cref="ICard{IDeputy}"/>.</returns>
         public override ICard<IDeputy> EmptyCard()
         {
             return new LaborMethod();
         }
 
-        public override ICard<IDeputy>[] EmptyCardTable(int size)
-        {
-            return new LaborMethod[size];
-        }
+        /// <summary>
+        /// The EmptyCardList.
+        /// </summary>
+        /// <param name="size">The size<see cref="int"/>.</param>
+        /// <returns>The <see cref="ICard{IDeputy}[]"/>.</returns>
         public override ICard<IDeputy>[] EmptyCardList(int size)
         {
             return new LaborMethod[size];
         }
 
+        /// <summary>
+        /// The EmptyCardTable.
+        /// </summary>
+        /// <param name="size">The size<see cref="int"/>.</param>
+        /// <returns>The <see cref="ICard{IDeputy}[]"/>.</returns>
+        public override ICard<IDeputy>[] EmptyCardTable(int size)
+        {
+            return new LaborMethod[size];
+        }
+
+        /// <summary>
+        /// The NewCard.
+        /// </summary>
+        /// <param name="value">The value<see cref="IDeputy"/>.</param>
+        /// <returns>The <see cref="ICard{IDeputy}"/>.</returns>
+        public override ICard<IDeputy> NewCard(IDeputy value)
+        {
+            return new LaborMethod(value);
+        }
+
+        /// <summary>
+        /// The NewCard.
+        /// </summary>
+        /// <param name="key">The key<see cref="long"/>.</param>
+        /// <param name="value">The value<see cref="IDeputy"/>.</param>
+        /// <returns>The <see cref="ICard{IDeputy}"/>.</returns>
         public override ICard<IDeputy> NewCard(long key, IDeputy value)
         {
             return new LaborMethod(key, value);
         }
 
+        /// <summary>
+        /// The NewCard.
+        /// </summary>
+        /// <param name="key">The key<see cref="object"/>.</param>
+        /// <param name="value">The value<see cref="IDeputy"/>.</param>
+        /// <returns>The <see cref="ICard{IDeputy}"/>.</returns>
         public override ICard<IDeputy> NewCard(object key, IDeputy value)
         {
             return new LaborMethod(key, value);
         }
 
-        public override ICard<IDeputy> NewCard(IDeputy value)
-        {
-            return new LaborMethod(value);
-        }
+        #endregion
     }
 }

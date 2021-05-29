@@ -15,7 +15,7 @@ namespace System.Extract
         }
         public unsafe static void StructureFrom(this ValueType structure, byte[] binary, long offset = 0)
         {
-            structure = Extractor.BytesToStructure(binary, structure, offset);
+            structure = Extractor.BytesToStructure(binary, ref structure, offset);
         }
 
         public unsafe static Byte[] GetBytes(this ValueType objvalue)

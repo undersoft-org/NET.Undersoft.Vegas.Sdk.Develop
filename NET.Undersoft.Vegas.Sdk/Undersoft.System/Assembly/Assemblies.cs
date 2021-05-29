@@ -1,15 +1,75 @@
-﻿using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Linq;
-using System.Collections.Generic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Assemblies.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (28.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System
 {
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+
+    /// <summary>
+    /// Defines the <see cref="Assemblies" />.
+    /// </summary>
     public static class Assemblies
     {
-        private static bool resolveHandler = ResolveLoad();
+        #region Fields
 
-        public static Type GetType(string name, string nameSpace = null)
+        public static bool resolveAssigned;
+
+        #endregion
+
+        #region Constructors
+
+        static Assemblies()
+        {
+            resolveAssigned = ResolveExecuting();
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the AssemblyCode.
+        /// </summary>
+        public static string AssemblyCode
+        {
+            get
+            {
+                object[] attributes;
+                var entryAssembly = Assembly.GetEntryAssembly();
+                if (entryAssembly is null)
+                    attributes = Assembly.GetCallingAssembly()
+                        .GetCustomAttributes(typeof(GuidAttribute), false);
+                else
+                    attributes = entryAssembly
+                        .GetCustomAttributes(typeof(GuidAttribute), false);
+                if (attributes.Length == 0)
+                    return String.Empty;
+                return ((GuidAttribute)attributes[0]).Value.ToUpper();
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The FindType.
+        /// </summary>
+        /// <param name="name">The name<see cref="string"/>.</param>
+        /// <param name="nameSpace">The nameSpace<see cref="string"/>.</param>
+        /// <returns>The <see cref="Type"/>.</returns>
+        public static Type FindType(string name, string nameSpace = null)
         {
             Type type = Type.GetType(name);
             if (type != null)
@@ -17,15 +77,24 @@ namespace System
             var asms = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var asm in asms)
             {
-                
+
                 type = asm.GetType(name);
                 if (type != null)
-                    if(nameSpace == null || type.Namespace == nameSpace)
+                    if (nameSpace == null || type.Namespace == nameSpace)
                         return type;
             }
             return null;
         }
-        public static Type GetType(Type argumentType, object argumentValue, Type attributeType = null, string nameSpace = null)
+
+        /// <summary>
+        /// The FindType.
+        /// </summary>
+        /// <param name="argumentType">The argumentType<see cref="Type"/>.</param>
+        /// <param name="argumentValue">The argumentValue<see cref="object"/>.</param>
+        /// <param name="attributeType">The attributeType<see cref="Type"/>.</param>
+        /// <param name="nameSpace">The nameSpace<see cref="string"/>.</param>
+        /// <returns>The <see cref="Type"/>.</returns>
+        public static Type FindType(Type argumentType, object argumentValue, Type attributeType = null, string nameSpace = null)
         {
             var asms = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -50,88 +119,28 @@ namespace System
             return null;
         }
 
-        public static object GetDefault(this Type type)
+        /// <summary>
+        /// The ResolveExecuting.
+        /// </summary>
+        /// <returns>The <see cref="bool"/>.</returns>
+        public static bool ResolveExecuting()
         {
-            if (type == null || !type.IsValueType || type == typeof(void))
-                return null;
-
-            if (type.IsPrimitive || !type.IsNotPublic)
+            if (!resolveAssigned)
             {
-                try
+                AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
                 {
-                    return Activator.CreateInstance(type);
-                }
-                catch (Exception e)
-                {
-                    throw new ArgumentException(
-                        "{" + MethodInfo.GetCurrentMethod() + "} Error:\n\nThe Activator.CreateInstance method could not " +
-                        "create a default instance of the supplied value type <" + type +
-                        "> (Inner Exception message: \"" + e.Message + "\")", e);
-                }
+                    String resourceName = "AssemblyLoadingAndReflection." + new AssemblyName(args.Name).Name + ".dll";
+                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    {
+                        Byte[] assemblyData = new Byte[stream.Length];
+                        stream.Read(assemblyData, 0, assemblyData.Length);
+                        return Assembly.Load(assemblyData);
+                    }
+                };
             }
-            throw new ArgumentException("{" + MethodInfo.GetCurrentMethod() + "} Error:\n\nThe supplied value type <" + type +
-                    "> is not a publicly-visible type, so the default value cannot be retrieved");
-        }
-
-        public static Queue<object> New(this Queue<object> queue, Type type, int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                queue.Enqueue(Activator.CreateInstance(type));
-            }
-            return queue;
-        }
-
-        public static object New(this Type type)
-        {
-            if (type.IsInterface)
-                type = type.GetType();
-            return Activator.CreateInstance(type);
-        }
-        public static object New(this Type type, params object[] parameters)
-        {
-            return Activator.CreateInstance(type, parameters);
-        }
-        public static object[] New(this Type[] types)
-        {
-            object[] models = new object[types.Length];
-            for (int i = 0; i < types.Length; i++)
-                models[i] = Activator.CreateInstance(types[i]);
-            return models;
-        }
-
-        public static string AssemblyCode
-        {
-            get
-            {
-                object[] attributes;
-                var entryAssembly = Assembly.GetEntryAssembly();
-                if (entryAssembly is null)
-                    attributes = Assembly.GetCallingAssembly()
-                        .GetCustomAttributes(typeof(GuidAttribute), false);
-                else
-                    attributes = entryAssembly
-                        .GetCustomAttributes(typeof(GuidAttribute), false);
-                if (attributes.Length == 0)
-                    return String.Empty;
-                return ((GuidAttribute)attributes[0]).Value.ToUpper();
-            }
-        }
-
-        public static bool ResolveLoad()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
-            {
-                String resourceName = "AssemblyLoadingAndReflection." + new AssemblyName(args.Name).Name + ".dll";
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    Byte[] assemblyData = new Byte[stream.Length];
-                    stream.Read(assemblyData, 0, assemblyData.Length);
-                    return Assembly.Load(assemblyData);
-                }
-            };
-
             return true;
         }
+
+        #endregion
     }
 }

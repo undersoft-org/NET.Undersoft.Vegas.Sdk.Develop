@@ -1,4 +1,5 @@
-﻿/*************************************************************************************
+﻿using System.Uniques;
+/*************************************************************************************
     Copyright (c) 2020 Undersoft
 
     System.Multemic.Basedeck.TetraSize
@@ -43,12 +44,12 @@ namespace System.Multemic.Basedeck
         public unsafe int NextSize(int id)
         {
             fixed (TetraSize* a = &this)
-                return (*&((int*)a)[id]) = SIZE_PRIMES.Table[(*&((int*)a)[id+4])++];
+                return (*&((int*)a)[id]) = PRIMES_ARRAY.Get((*&((int*)a)[id+4])++);
         }
         public unsafe int PreviousSize(int id)
         {
             fixed (TetraSize* a = &this)
-                return (*&((int*)a)[id]) = SIZE_PRIMES.Table[--(*&((int*)a)[id + 4])];
+                return (*&((int*)a)[id]) = PRIMES_ARRAY.Get(--(*&((int*)a)[id + 4]));
         }
 
         public unsafe int GetPrimesId(int id)

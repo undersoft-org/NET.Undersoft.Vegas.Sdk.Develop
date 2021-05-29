@@ -78,7 +78,7 @@ namespace System.Labors.Tests
     {
         public object GetFirstCurrency(string currency, int days)
         {
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
 
             NBPSource kurKraju = new NBPSource(days);
 

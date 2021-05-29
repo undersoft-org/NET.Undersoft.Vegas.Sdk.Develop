@@ -1,14 +1,38 @@
-﻿using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Multemic;
-using System.Uniques;
-using System.Instant;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   Laboratory.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
-{   
+{
+    using System.Collections.Generic;
+    using System.Instant;
+    using System.Linq;
+
+    /// <summary>
+    /// Defines the <see cref="InvalidLaborException" />.
+    /// </summary>
+    public class InvalidLaborException : Exception
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvalidLaborException"/> class.
+        /// </summary>
+        /// <param name="message">The message<see cref="string"/>.</param>
+        public InvalidLaborException(string message)
+            : base(message)
+        {
+        }
+
+        #endregion
+    }
+
     public class Laboratory
     {
         public Laboratory(LaborMethods _methods, Scope _scope = null)
@@ -34,8 +58,8 @@ namespace System.Labors
             Notes = scope.Notes;
         }
 
-        private LaborMethods methods;        
-     
+        private LaborMethods methods;
+
         public LaborNotes Notes
         {
             get;
@@ -54,7 +78,7 @@ namespace System.Labors
                 scope = value;
             }
         }
-      
+
         public void Expanse(LaborMethods _labors, Subject _mission)
         {
             if (methods != null && (methods.Count > 0))
@@ -63,7 +87,7 @@ namespace System.Labors
             else
                 methods = _labors;
             if (_mission != null)
-            {                               
+            {
                 _mission.AddRange(methods.AsValues().ToList());
                 Scope.Add(_mission);
             }
@@ -88,7 +112,7 @@ namespace System.Labors
             sub.AddRange(methods.AsValues().ToList());
             Scope.Add(sub);
             return sub;
-        }        
+        }
         public Subject Expanse(IDeputy antitem, string mission)
         {
             methods.Put(antitem);
@@ -122,7 +146,7 @@ namespace System.Labors
             List<Labor> workerLabors = Scope.Subjects
                 .AsValues().Where(m => m.Labors.ContainsKey(workerName))
                     .SelectMany(w => w.Labors.AsValues()).ToList();
-            foreach(Labor objc in workerLabors)
+            foreach (Labor objc in workerLabors)
                 objc.Execute(input);
         }
         public void Elaborate(IDictionary<string, object[]> workersAndInputs)
@@ -136,7 +160,7 @@ namespace System.Labors
                     objc.Execute(input);
             }
         }
-      
+
         public Subject this[string missionName]
         {
             get
@@ -145,12 +169,5 @@ namespace System.Labors
             }
         }
 
-    }
-
-    public class InvalidLaborException : Exception
-    {
-        public InvalidLaborException(string message)
-            : base(message)
-        { }
     }
 }

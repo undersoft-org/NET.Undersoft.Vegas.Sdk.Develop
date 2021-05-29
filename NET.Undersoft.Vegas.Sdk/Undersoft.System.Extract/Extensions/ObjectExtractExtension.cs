@@ -37,7 +37,7 @@ namespace System.Extract
         }
         public unsafe static byte[] GetValueStructureBytes(this object structure)
         {
-            return ExtractOperation.ValueStructureToBytes(structure);
+            return Extraction.ValueStructureToBytes(structure);
         }
         public unsafe static byte[] GetSequentialBytes(this Object objvalue)
         {
@@ -77,7 +77,7 @@ namespace System.Extract
             if (t.IsValueType)
             {               
                 if (t.IsPrimitive)
-                    return ExtractOperation.ValueStructureToBytes(objvalue);              
+                    return Extraction.ValueStructureToBytes(objvalue);              
                 if (objvalue is DateTime)
                     return ((DateTime)objvalue).ToBinary().GetBytes();
                 if (objvalue is Enum)
@@ -103,13 +103,13 @@ namespace System.Extract
         {
             int offset = 0;            
             int charsize = sizeof(char);
-            int count = objvalue.Count;
+           //  int count = objvalue.Count;
             int s;
 
-            for (int i = 0; i < count; i++)
+            foreach(var o in objvalue)
             {
                 s = 0;
-                object o = objvalue[i];
+               // object o = objvalue[i];
                 if (o is string)
                 {
                     s = ((string)o).Length * charsize;

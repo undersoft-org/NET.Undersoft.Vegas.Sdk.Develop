@@ -1,5 +1,5 @@
-﻿using System.Instant.Linkmap;
-using System.Instant.Treatment;
+﻿using System.Instant.Linking;
+using System.Instant.Treatments;
 
 namespace System.Instant
 {      

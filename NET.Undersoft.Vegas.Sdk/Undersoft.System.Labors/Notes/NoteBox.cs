@@ -1,61 +1,63 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System.Multemic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   NoteBox.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Multemic;
+
+    /// <summary>
+    /// Defines the <see cref="NoteBox" />.
+    /// </summary>
     public class NoteBox : Board<NoteTopic>
     {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoteBox"/> class.
+        /// </summary>
+        /// <param name="Recipient">The Recipient<see cref="string"/>.</param>
         public NoteBox(string Recipient)
         {
             RecipientName = Recipient;
             Evokers = new NoteEvokers();
         }
 
-        public string RecipientName { get; set; }
+        #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the Evokers.
+        /// </summary>
+        public NoteEvokers Evokers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Labor.
+        /// </summary>
         public Labor Labor { get; set; }
 
-        public object[] GetParams(string key)
-        {
-            NoteTopic _ioqueue = null;
-            Note temp = null;
-            if (TryGet(key, out _ioqueue))
-                if (_ioqueue.TryDequeue(out temp))
-                    return temp.Parameters;
-            return null;
-        }
-        public Note GetNote(string key)
-        {
-            NoteTopic _ioqueue = null;
-            if (TryGet(key, out _ioqueue))
-                return _ioqueue.Dequeue();
-            return null;
-        }
+        /// <summary>
+        /// Gets or sets the RecipientName.
+        /// </summary>
+        public string RecipientName { get; set; }
 
-        public void AddNote(Note value)
-        {
-            if (value.SenderName != null)
-            {
-                NoteTopic queue = null;
-                if (!ContainsKey(value.SenderName))
-                {
-                    queue = new NoteTopic(value.SenderName, this);
-                    if (Add(value.SenderName, queue))
-                    {
-                        if (value.EvokerOut != null)
-                            Evokers.Add(value.EvokerOut);
-                        queue.AddNote(value);
-                    }
-                }
-                else if (TryGet(value.SenderName, out queue))
-                {
-                    if (value.EvokerOut != null)
-                        Evokers.Add(value.EvokerOut);
-                    queue.AddNote(value);
-                }
-            }
-        }
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="value">The value<see cref="IList{Note}"/>.</param>
         public void AddNote(IList<Note> value)
         {
             if (value != null && value.Any())
@@ -87,28 +89,41 @@ namespace System.Labors
                     }
                 }
             }
-        }       
-        public void AddNote(string key, Note value)
+        }
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="value">The value<see cref="Note"/>.</param>
+        public void AddNote(Note value)
         {
-            value.SenderName = key;
-            NoteTopic queue = null;
-            if (!ContainsKey(key))
+            if (value.SenderName != null)
             {
-                queue = new NoteTopic(key, this);
-                if (Add(key, queue))
+                NoteTopic queue = null;
+                if (!ContainsKey(value.SenderName))
+                {
+                    queue = new NoteTopic(value.SenderName, this);
+                    if (Add(value.SenderName, queue))
+                    {
+                        if (value.EvokerOut != null)
+                            Evokers.Add(value.EvokerOut);
+                        queue.AddNote(value);
+                    }
+                }
+                else if (TryGet(value.SenderName, out queue))
                 {
                     if (value.EvokerOut != null)
                         Evokers.Add(value.EvokerOut);
                     queue.AddNote(value);
                 }
             }
-            else if (TryGet(key, out queue))
-            {
-                if (value.EvokerOut != null)
-                    Evokers.Add(value.EvokerOut);
-                queue.AddNote(value);
-            }
         }
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="key">The key<see cref="string"/>.</param>
+        /// <param name="value">The value<see cref="List{Note}"/>.</param>
         public void AddNote(string key, List<Note> value)
         {
             NoteTopic queue = null;
@@ -140,6 +155,39 @@ namespace System.Labors
                 }
             }
         }
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="key">The key<see cref="string"/>.</param>
+        /// <param name="value">The value<see cref="Note"/>.</param>
+        public void AddNote(string key, Note value)
+        {
+            value.SenderName = key;
+            NoteTopic queue = null;
+            if (!ContainsKey(key))
+            {
+                queue = new NoteTopic(key, this);
+                if (Add(key, queue))
+                {
+                    if (value.EvokerOut != null)
+                        Evokers.Add(value.EvokerOut);
+                    queue.AddNote(value);
+                }
+            }
+            else if (TryGet(key, out queue))
+            {
+                if (value.EvokerOut != null)
+                    Evokers.Add(value.EvokerOut);
+                queue.AddNote(value);
+            }
+        }
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="key">The key<see cref="string"/>.</param>
+        /// <param name="ioqueues">The ioqueues<see cref="object"/>.</param>
         public void AddNote(string key, object ioqueues)
         {
             NoteTopic queue = null;
@@ -159,18 +207,48 @@ namespace System.Labors
                 }
             }
         }
-        public List<Note> TakeOut(List<string> keys)
+
+        /// <summary>
+        /// The GetNote.
+        /// </summary>
+        /// <param name="key">The key<see cref="string"/>.</param>
+        /// <returns>The <see cref="Note"/>.</returns>
+        public Note GetNote(string key)
         {
-            List<Note> antios = this.AsCards().Where(q => keys.Contains(q.Value.SenderName)).Select(v => v.Value.Notes).ToList();
-            return antios;
+            NoteTopic _ioqueue = null;
+            if (TryGet(key, out _ioqueue))
+                return _ioqueue.Dequeue();
+            return null;
         }
+
+        /// <summary>
+        /// The GetParams.
+        /// </summary>
+        /// <param name="key">The key<see cref="string"/>.</param>
+        /// <returns>The <see cref="object[]"/>.</returns>
+        public object[] GetParams(string key)
+        {
+            NoteTopic _ioqueue = null;
+            Note temp = null;
+            if (TryGet(key, out _ioqueue))
+                if (_ioqueue.TryDequeue(out temp))
+                    return temp.Parameters;
+            return null;
+        }
+
+        /// <summary>
+        /// The MeetsRequirements.
+        /// </summary>
+        /// <param name="keys">The keys<see cref="List{string}"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
         public bool MeetsRequirements(List<string> keys)
         {
-            return this.AsCards().Where(q => keys.Contains(q.Value.SenderName)).All(v => v.Value.Count > 0);         
+            return this.AsCards().Where(q => keys.Contains(q.Value.SenderName)).All(v => v.Value.Count > 0);
         }
 
-        public NoteEvokers Evokers { get; set; }
-
+        /// <summary>
+        /// The QualifyToEvoke.
+        /// </summary>
         public void QualifyToEvoke()
         {
             List<NoteEvoker> toEvoke = new List<NoteEvoker>();
@@ -211,5 +289,18 @@ namespace System.Labors
                 }
             }
         }
+
+        /// <summary>
+        /// The TakeOut.
+        /// </summary>
+        /// <param name="keys">The keys<see cref="List{string}"/>.</param>
+        /// <returns>The <see cref="List{Note}"/>.</returns>
+        public List<Note> TakeOut(List<string> keys)
+        {
+            List<Note> antios = this.AsCards().Where(q => keys.Contains(q.Value.SenderName)).Select(v => v.Value.Notes).ToList();
+            return antios;
+        }
+
+        #endregion
     }
 }

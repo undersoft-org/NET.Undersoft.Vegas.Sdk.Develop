@@ -28,7 +28,7 @@ namespace System.Deal
             get
             {
                 if (contentType == null && ContentTypeName != null)
-                    ContentType = Assemblies.GetType(ContentTypeName);
+                    ContentType = Assemblies.FindType(ContentTypeName);
                 return contentType;
             }
             set

@@ -1,5 +1,5 @@
 using System.Uniques;
-using System.Instant.Treatment;
+using System.Instant.Treatments;
 using System.Runtime.InteropServices;
 
 namespace System.Instant

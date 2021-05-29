@@ -91,7 +91,7 @@ namespace System.Instant.Sqlbank
 
                     dr.GetValues(itemArray);
 
-                    figure.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().GetDefault() : a).ToArray();
+                    figure.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
                     //figure.SystemSerialCode = new Ussn(keyOrder.Select(ko => itemArray[ko]).ToArray());
 
@@ -138,7 +138,7 @@ namespace System.Instant.Sqlbank
                
                     IFigure row = deck.NewFigure();
 
-                    row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().GetDefault() : a).ToArray();
+                    row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
                     //row.SystemSerialCode = new Ussn(keyOrder.Select(ko => itemArray[ko]).ToArray());
 
@@ -194,7 +194,7 @@ namespace System.Instant.Sqlbank
 
                     IFigure row = deck.NewFigure();
 
-                    row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().GetDefault() : a).ToArray();
+                    row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
                     //row.SystemSerialCode = new Ussn(keyIndexes.Select(ko => itemArray[ko]).ToArray());
 
@@ -250,7 +250,7 @@ namespace System.Instant.Sqlbank
 
                     IFigure row = deck.NewFigure();
 
-                    row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().GetDefault() : a).ToArray();
+                    row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
                     //row.SystemSerialCode = new Ussn(keyIndexes.Select(ko => itemArray[ko]).ToArray());
 

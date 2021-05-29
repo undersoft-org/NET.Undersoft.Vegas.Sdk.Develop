@@ -1,5 +1,5 @@
 using System.Multemic;
-using System.Instant.Linkmap;
+using System.Instant.Linking;
 using System.Reflection;
 using Xunit;
 
@@ -60,7 +60,7 @@ namespace System.Instant
      
             FiguresLinkmap_AddFigures_Helper_Test(figuresB);
 
-            FigureLink fl = new FigureLink(figuresA, figuresB);
+            Link fl = new Link(figuresA, figuresB);
             fl.OriginKeys.Put(figuresA.Rubrics.KeyRubrics.AsValues());
             fl.TargetKeys.Put(figuresB.Rubrics.KeyRubrics.AsValues());
 

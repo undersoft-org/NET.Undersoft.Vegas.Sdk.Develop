@@ -1,15 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Extract;
-using System.Instant;
-using System.Multemic;
-using System.Uniques;
-using System.Reflection;
-using System.Linq;
-using System.Threading.Tasks;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   Labor.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
 {
+    using System.Instant;
+    using System.Reflection;
+    using System.Threading.Tasks;
+    using System.Uniques;
+
     public class Labor : Task<object>, IDeputy
     {
         private Ussc SystemCode;
@@ -29,7 +34,7 @@ namespace System.Labors
 
             SystemCode = new Ussc(method.GetHashKey());
             SystemSerialCode = new Ussn(SystemCode.KeyBlock, 0, 0, 0, 0, DateTime.Now.ToBinary());
-        }   
+        }
         public Labor(Laborer laborer) : base(() => laborer.Work.Execute())
         {
             Name = laborer.LaborerName;
@@ -45,7 +50,7 @@ namespace System.Labors
 
         public string Name { get; set; }
 
-        public Laborer Laborer { get; set; }       
+        public Laborer Laborer { get; set; }
 
         public Subject Subject { get; set; }
 
@@ -97,7 +102,7 @@ namespace System.Labors
                 SystemCode.KeyBlock = value.KeyBlock;
             }
         }
-        public uint SeedBlock  { get => SystemCode.SeedBlock; set => SystemCode.SeedBlock = value; }
+        public uint SeedBlock { get => SystemCode.SeedBlock; set => SystemCode.SeedBlock = value; }
 
         public void Elaborate(params object[] input)
         {
@@ -145,5 +150,5 @@ namespace System.Labors
         {
             return SystemCode.GetHashSeed();
         }
-    }   
+    }
 }

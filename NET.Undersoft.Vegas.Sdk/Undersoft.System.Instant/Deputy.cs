@@ -1,23 +1,57 @@
-﻿using System.Reflection;
-using System.Reflection.Emit;
-using System.Uniques;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Extract;
-using System.Multemic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.Deputy.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (28.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant
 {
-    public delegate object InstantDelegate(object target, object[] parameters);
+    using System.Linq;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using System.Threading.Tasks;
+    using System.Uniques;
 
-    public class Deputy: IDeputy
+    #region Delegates
+
+    /// <summary>
+    /// The InstantDelegate.
+    /// </summary>
+    /// <param name="target">The target<see cref="object"/>.</param>
+    /// <param name="parameters">The parameters<see cref="object[]"/>.</param>
+    /// <returns>The <see cref="object"/>.</returns>
+    public delegate object InstantDelegate(object target, params object[] parameters);
+
+    #endregion
+
+    #region Enums
+
+    public enum ChangesType
     {
-        public   Object TargetObject;
+        Added,
+        Removed,
+        Replaced,
+        Cleared
+    };
+
+    #endregion
+
+
+
+    public class Deputy : IDeputy
+    {
+        public Object TargetObject;
         public Delegate Method;
 
-        public     MethodInfo Info { get; set; }
+        public MethodInfo Info { get; set; }
 
-        public IUnique Empty => Ussn.Empty; 
+        public IUnique Empty => Ussn.Empty;
 
         public long KeyBlock { get => systemSerialCode.KeyBlock; set => systemSerialCode.KeyBlock = value; }
 
@@ -42,7 +76,7 @@ namespace System.Instant
             {
                 for (int i = 0; i < Parameters.Length; i++)
                     if (Parameters[i].Name == propertyName)
-                        ParameterValues[i] = value;              
+                        ParameterValues[i] = value;
             }
         }
 
@@ -51,12 +85,14 @@ namespace System.Instant
         public Deputy(Delegate TargetMethod)
         {
             TargetObject = TargetMethod.Target;
-            Type t2 = TargetObject.GetType();
-            MethodInfo m2 = TargetMethod.Method;
-            Method = invoking(m2);
-            NumberOfArguments = m2.GetParameters().Length;
-            Info = m2;
-            Parameters = m2.GetParameters();
+            Type t = TargetObject.GetType();
+            MethodInfo m = TargetMethod.Method;
+
+            Method = invoking(m);
+
+            NumberOfArguments = m.GetParameters().Length;
+            Info = m;
+            Parameters = m.GetParameters();
             long time = DateTime.Now.ToBinary();
             string decription = $"{Info.DeclaringType.FullName}." +
                                    $"{Info.Name}" +
@@ -65,58 +101,68 @@ namespace System.Instant
             systemSerialCode.KeyBlock = new object[] { decription, DateTime.Now }.GetHashKey();
             systemSerialCode.TimeBlock = time;
         }
-        public Deputy(Object TargetClassObject, String MethodName, Type[] parameters)
-        {
-            TargetObject = TargetClassObject;
-            Type t2 = TargetClassObject.GetType();
 
-            MethodInfo m2 = parameters != null ? t2.GetMethod(MethodName, parameters) : t2.GetMethod(MethodName);
-            Method = invoking(m2);
-            NumberOfArguments = m2.GetParameters().Length;
-            Info = m2;
-            Parameters = m2.GetParameters();           
+        public Deputy(Object TargetObject, String MethodName) : this(TargetObject, MethodName, null)
+        {
+        }
+        public Deputy(Object TargetObject, String MethodName, Type[] parameters)
+        {
+            this.TargetObject = TargetObject;
+            Type t = TargetObject.GetType();
+
+            MethodInfo m = parameters != null ? t.GetMethod(MethodName, parameters) : t.GetMethod(MethodName);
+            Method = invoking(m);
+            NumberOfArguments = m.GetParameters().Length;
+            Info = m;
+            Parameters = m.GetParameters();
             long time = DateTime.Now.ToBinary();
-            string decription = $"{Info.DeclaringType.FullName}." + 
+            string decription = $"{Info.DeclaringType.FullName}." +
                                    $"{Info.Name}" +
                                    $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
 
             systemSerialCode.KeyBlock = new object[] { decription, DateTime.Now }.GetHashKey();
             systemSerialCode.TimeBlock = time;
         }
-        public Deputy(String TargetClassName, String MethodName) : this(Summon.New(TargetClassName), MethodName, null)
+
+        public Deputy(Type TargetType, String MethodName) : this(Summon.New(TargetType), MethodName, null)
         {
         }
-        public Deputy(String TargetClassName, String MethodName, Type[] parameters) : this(Summon.New(TargetClassName), MethodName, parameters)
-        {
-        }
-        public Deputy(Object TargetClassObject, String MethodName) : this(TargetClassObject, MethodName, null)
-        {
-        }
-        public Deputy(MethodInfo MethodInvokeInfo) : this(MethodInvokeInfo.DeclaringType.FullName, MethodInvokeInfo.Name, MethodInvokeInfo.GetParameters().Select(p => p.ParameterType).ToArray())
+        public Deputy(Type TargetType, String MethodName, Type[] parameters) : this(Summon.New(TargetType), MethodName, parameters)
         {
         }
 
-        public byte[]   GetBytes()
+        public Deputy(String TargetName, String MethodName) : this(Summon.New(TargetName), MethodName, null)
+        {
+        }
+        public Deputy(String TargetName, String MethodName, Type[] parameters) : this(Summon.New(TargetName), MethodName, parameters)
+        {
+        }
+
+        public Deputy(MethodInfo MethodInvokeInfo) : this(MethodInvokeInfo.DeclaringType.New(), MethodInvokeInfo.Name, MethodInvokeInfo.GetParameters().Select(p => p.ParameterType).ToArray())
+        {
+        }
+
+        public byte[] GetBytes()
         {
             return SystemSerialCode.GetBytes();
         }
-        public byte[]   GetKeyBytes()
+        public byte[] GetKeyBytes()
         {
             return SystemSerialCode.GetKeyBytes();
         }
-        public void     SetHashKey(long value)
+        public void SetHashKey(long value)
         {
             SystemSerialCode.SetHashKey(value);
         }
-        public long     GetHashKey()
+        public long GetHashKey()
         {
             return SystemSerialCode.GetHashKey();
         }
-        public bool     Equals(IUnique other)
+        public bool Equals(IUnique other)
         {
             return SystemSerialCode.Equals(other);
         }
-        public int      CompareTo(IUnique other)
+        public int CompareTo(IUnique other)
         {
             return SystemSerialCode.CompareTo(other);
         }
@@ -136,48 +182,48 @@ namespace System.Instant
         }
 
         public object Execute(params object[] FunctionParameters)
-        {           
+        {
             try
             {
                 return Method.DynamicInvoke(TargetObject, FunctionParameters);
             }
             catch (Exception e)
             {
-          throw new TargetInvocationException(e);
+                throw new TargetInvocationException(e);
             }
         }
         public T Execute<T>(params object[] FunctionParameters)
         {
-             try
+            try
             {
                 return (T)Method.DynamicInvoke(TargetObject, FunctionParameters);
             }
             catch (Exception e)
             {
-             throw new TargetInvocationException(e);
+                throw new TargetInvocationException(e);
             }
         }
 
         public async Task<object> ExecuteAsync(params object[] FunctionParameters)
-        {                        
+        {
             try
             {
                 return await Task.Run<object>(() => Execute(FunctionParameters)).ConfigureAwait(true);
             }
             catch (Exception e)
             {
-             throw new TargetInvocationException(e);
+                throw new TargetInvocationException(e);
             }
         }
         public async Task<T> ExecuteAsync<T>(params object[] FunctionParameters)
         {
-         try
+            try
             {
                 return await Task.Run<T>(() => Execute<T>(FunctionParameters)).ConfigureAwait(true);
             }
             catch (Exception e)
             {
-                  throw new TargetInvocationException(e);
+                throw new TargetInvocationException(e);
             }
         }
 
@@ -188,7 +234,7 @@ namespace System.Instant
             return (NewObject);
         }
 
-        private    Delegate invoking(MethodInfo methodInfo)
+        private Delegate invoking(MethodInfo methodInfo)
         {
             DynamicMethod dynamicMethod = new DynamicMethod(string.Empty,
                           typeof(object), new Type[] { typeof(object),
@@ -319,70 +365,23 @@ namespace System.Instant
                 il.Emit(OpCodes.Ldc_I4, value);
             }
         }
-    }   
-
-    public static class Summon
-    {
-        public static object New(Type type)
-        {          
-            if (type != null)
-                return Activator.CreateInstance(type);
-            string strFullyQualifiedName = type.FullName;
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = asm.GetType(strFullyQualifiedName);
-                if (type != null)
-                    return Activator.CreateInstance(type);
-            }
-            return null;
-        }
-        public static object New(Type type, params object[] constructorParams)
-        {
-            if (type != null)
-                return Activator.CreateInstance(type, constructorParams);
-
-            string strFullyQualifiedName = type.FullName;
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = asm.GetType(strFullyQualifiedName);
-                if (type != null)
-                    return Activator.CreateInstance(type, constructorParams);
-            }
-            return null;
-        }
-        public static object New(string strFullyQualifiedName)
-        {
-            Type type = Type.GetType(strFullyQualifiedName);
-            if (type != null)
-                return Activator.CreateInstance(type);
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = asm.GetType(strFullyQualifiedName);
-                if (type != null)
-                    return Activator.CreateInstance(type);
-            }
-            return null;
-        }
-        public static object New(string strFullyQualifiedName, params object[] constructorParams)
-        {
-            Type type = Type.GetType(strFullyQualifiedName);
-            if (type != null)
-                return Activator.CreateInstance(type, constructorParams);
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = asm.GetType(strFullyQualifiedName);
-                if (type != null)
-                    return Activator.CreateInstance(type, constructorParams);
-            }
-            return null;
-        }
     }
 
+    /// <summary>
+    /// Defines the <see cref="ItemChangedEventArgs{T}" />.
+    /// </summary>
+    /// <typeparam name="T">.</typeparam>
     public class ItemChangedEventArgs<T> : EventArgs
     {
+        #region Fields
+
         public readonly T ChangedItem;
         public readonly ChangesType ChangesType;
         public readonly T ReplacedWith;
+
+        #endregion
+
+        #region Constructors
 
         public ItemChangedEventArgs(ChangesType changesType, T changedItem,
             T replacement)
@@ -391,13 +390,7 @@ namespace System.Instant
             ChangedItem = changedItem;
             ReplacedWith = replacement;
         }
-    }
 
-    public enum ChangesType
-    {
-        Added,
-        Removed,
-        Replaced,
-        Cleared
-    };
+        #endregion
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Multemic;
-using System.Instant.Treatment;
-using System.Instant.Linkmap;
+using System.Instant.Treatments;
+using System.Instant.Linking;
 
 namespace System.Instant
 {
@@ -42,11 +42,9 @@ namespace System.Instant
 
         Func<IFigure, bool> Picker { get; set; }
 
-        FigureTreatment Treatment { get; set; }
+        Treatment Treatment { get; set; }
 
-        FigureLinks Links { get; set; }
-
-        FigureLinkmap Linkmap { get; set; }
+        Links Links { get; set; }
 
         IDeck<IComputation> Computations { get; set; }
     }

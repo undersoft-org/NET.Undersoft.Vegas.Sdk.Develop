@@ -1,29 +1,74 @@
-﻿using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Multemic;
-using System.Uniques;
-using System.Instant;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   Laborator.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
-{   
+{
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Multemic;
+    using System.Threading;
+
+    /// <summary>
+    /// Defines the <see cref="Laborator" />.
+    /// </summary>
     public class Laborator
     {
-        readonly object holder = new object();
-        readonly object holderIO = new object();
+        #region Fields
 
+        /// <summary>
+        /// Defines the holder.
+        /// </summary>
+        internal readonly object holder = new object();
+        /// <summary>
+        /// Defines the holderIO.
+        /// </summary>
+        internal readonly object holderIO = new object();
+        /// <summary>
+        /// Defines the Notes.
+        /// </summary>
+        public LaborNotes Notes;
+        /// <summary>
+        /// Defines the Ready.
+        /// </summary>
+        public bool Ready;
+        /// <summary>
+        /// Defines the Scope.
+        /// </summary>
+        public Scope Scope;
+        /// <summary>
+        /// Defines the Subject.
+        /// </summary>
+        public Subject Subject;
+        /// <summary>
+        /// Defines the laborers.
+        /// </summary>
         private Thread[] laborers;
-        private Board<Laborer> LaborersQueue = 
+        /// <summary>
+        /// Defines the LaborersCount.
+        /// </summary>
+        private int LaborersCount;
+        /// <summary>
+        /// Defines the LaborersQueue.
+        /// </summary>
+        private Board<Laborer> LaborersQueue =
             new Board<Laborer>();
 
-        public LaborNotes Notes;
-        public Subject Subject;
-        public Scope Scope;
-        public bool Ready;
-        private int LaborersCount;
+        #endregion
 
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Laborator"/> class.
+        /// </summary>
+        /// <param name="mission">The mission<see cref="Subject"/>.</param>
         public Laborator(Subject mission)
         {
             Subject = mission;
@@ -33,6 +78,30 @@ namespace System.Labors
             Ready = false;
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The Close.
+        /// </summary>
+        /// <param name="SafeClose">The SafeClose<see cref="bool"/>.</param>
+        public void Close(bool SafeClose)
+        {
+            // Enqueue one null item per worker to make each exit.
+            foreach (Thread laborer in laborers)
+            {
+                Elaborate(null);
+
+                if (SafeClose && laborer.ThreadState == ThreadState.Running)
+                    laborer.Join();
+            }
+        }
+
+        /// <summary>
+        /// The CreateLaborers.
+        /// </summary>
+        /// <param name="antcount">The antcount<see cref="int"/>.</param>
         public void CreateLaborers(int antcount = 1)
         {
             if (antcount > 1)
@@ -48,14 +117,14 @@ namespace System.Labors
             for (int i = 0; i < LaborersCount; i++)
             {
                 laborers[i] = new Thread(ActivateLaborer);
-                laborers[i].Start();               
+                laborers[i].Start();
             }
         }
-        public void Reset(int antcount = 1)
-        {
-            Close(true);
-            CreateLaborers(antcount);
-        }
+
+        /// <summary>
+        /// The Elaborate.
+        /// </summary>
+        /// <param name="worker">The worker<see cref="Laborer"/>.</param>
         public void Elaborate(Laborer worker)
         {
             lock (holder)
@@ -65,7 +134,7 @@ namespace System.Labors
                     Laborer Worker = CloneLaborer(worker);
                     LaborersQueue.Enqueue(Worker);
                     Monitor.Pulse(holder);
-                   
+
                 }
                 else
                 {
@@ -75,6 +144,19 @@ namespace System.Labors
             }
         }
 
+        /// <summary>
+        /// The Reset.
+        /// </summary>
+        /// <param name="antcount">The antcount<see cref="int"/>.</param>
+        public void Reset(int antcount = 1)
+        {
+            Close(true);
+            CreateLaborers(antcount);
+        }
+
+        /// <summary>
+        /// The ActivateLaborer.
+        /// </summary>
         private void ActivateLaborer()
         {
             while (true)
@@ -114,21 +196,14 @@ namespace System.Labors
                 lock (holderIO)
                     Outpost(worker, output);
 
-            }            
+            }
         }
 
-        public void  Close(bool SafeClose)
-        {
-            // Enqueue one null item per worker to make each exit.
-            foreach (Thread laborer in laborers)
-            {             
-                Elaborate(null);
-                
-                if (SafeClose && laborer.ThreadState == ThreadState.Running)
-                    laborer.Join();               
-            }                  
-        }
-
+        /// <summary>
+        /// The CloneLaborer.
+        /// </summary>
+        /// <param name="laborer">The laborer<see cref="Laborer"/>.</param>
+        /// <returns>The <see cref="Laborer"/>.</returns>
         private Laborer CloneLaborer(Laborer laborer)
         {
             Laborer _laborer = new Laborer(laborer.LaborerName, laborer.Work);
@@ -138,6 +213,11 @@ namespace System.Labors
             return _laborer;
         }
 
+        /// <summary>
+        /// The Outpost.
+        /// </summary>
+        /// <param name="worker">The worker<see cref="Laborer"/>.</param>
+        /// <param name="output">The output<see cref="object"/>.</param>
         private void Outpost(Laborer worker, object output)
         {
             if (output != null)
@@ -157,9 +237,10 @@ namespace System.Labors
                     if (intios.Any())
                         Notes.Send(intios);
                 }
-               
+
             }
         }
-    }
 
+        #endregion
+    }
 }

@@ -1,12 +1,19 @@
-﻿using System.Linq;
-using System.Uniques;
-using System.Extract;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Multemic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   NoteEvokers.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Multemic;
+
     public class NoteEvokers : Catalog<NoteEvoker>
     {
         public void AddRange(List<NoteEvoker> _evokers)
@@ -38,5 +45,4 @@ namespace System.Labors
             }
         }
     }
-
 }

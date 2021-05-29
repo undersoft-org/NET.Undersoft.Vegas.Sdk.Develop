@@ -4,8 +4,8 @@ using System.Multemic;
 using System.Collections;
 using System.Collections.Generic;
 using System.Uniques;
-using System.Instant.Linkmap;
-using System.Instant.Treatment;
+using System.Instant.Linking;
+using System.Instant.Treatments;
 
 namespace System.Instant
 {
@@ -643,15 +643,9 @@ namespace System.Instant
 
         public Type Type { get => Figures.Type; set => Figures.Type = value; }
 
-        public FigureLinks Links { get; set; } = new FigureLinks();
+        public Links Links { get; set; } = new Links();
 
-        public  FigureLinkmap Linkmap
-        {
-            get => Sleeves.Linkmap;
-            set => Sleeves.Linkmap = value;
-        }
-
-        public  FigureTreatment Treatment
+        public  Treatment Treatment
         {
             get => Sleeves.Treatment;
             set => Sleeves.Treatment = value;

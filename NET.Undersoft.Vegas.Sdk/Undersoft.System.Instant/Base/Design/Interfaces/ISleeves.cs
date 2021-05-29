@@ -1,4 +1,4 @@
-﻿using System.Instant.Treatment;
+﻿using System.Instant.Treatments;
 using System.Multemic;
 
 namespace System.Instant

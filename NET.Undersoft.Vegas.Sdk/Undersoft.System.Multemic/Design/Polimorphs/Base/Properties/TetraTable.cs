@@ -84,7 +84,7 @@ namespace System.Multemic.Basedeck
 
         public static int GetPosition(long key, long size)
         {
-            return (int)((ulong)key % (uint)size);
+            return (int)((ulong)key % (ulong)size);
         }
        
         private ICard<V>[] EvenPositiveSize;

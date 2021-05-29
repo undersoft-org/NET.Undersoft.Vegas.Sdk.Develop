@@ -1,9 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Instant;
-using System.Multemic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   Scope.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
 {
+    using System.Collections.Generic;
+    using System.Instant;
+    using System.Multemic;
+
     public class Scope
     {
         public Scope(string name = null, LaborNotes notes = null)
@@ -22,19 +32,19 @@ namespace System.Labors
             Subjects.TryGet(key, out result);
             return result;
         }
-        public void    Add(Subject value)
+        public void Add(Subject value)
         {
             value.Scope = this;
             value.Visor = new Laborator(value);
             Subjects.Put(value.SubjectName, value);
         }
-        public void    Add(string key, Subject value)
+        public void Add(string key, Subject value)
         {
             value.Scope = this;
             value.Visor = new Laborator(value);
             Subjects.Put(key, value);
         }
-        public void    Add(string key, IList<Labor> value)
+        public void Add(string key, IList<Labor> value)
         {
             Subject msn = new Subject(key, value);
             msn.Scope = this;
@@ -49,7 +59,7 @@ namespace System.Labors
             Subjects.Put(key, msn);
             return msn;
         }
-        public void    Add(string key, IDeputy value)
+        public void Add(string key, IDeputy value)
         {
             List<IDeputy> cml = new List<IDeputy>() { value };
             Subject msn = new Subject(key, cml);

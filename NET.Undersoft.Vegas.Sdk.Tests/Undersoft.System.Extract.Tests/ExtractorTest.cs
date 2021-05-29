@@ -223,6 +223,7 @@ namespace System.Extract
         }
         [Fact] public unsafe void Extractor_StructModel_Test()
         {
+            Assemblies.ResolveExecuting();
 
             StructModel[] structure = new StructModel[] { new StructModel(83948930), new StructModel(45453), new StructModel(5435332) };
             structure[0].Alias = "FirstAlias";
@@ -236,12 +237,12 @@ namespace System.Extract
 
             int size = Marshal.SizeOf(structure[0]);
 
-            byte* pserial = ExtractOperation.ValueStructureToPointer(structure[0]);
+            byte* pserial = Extraction.ValueStructureToPointer(structure[0]);
 
             StructModel structure2 = new StructModel();
             ValueType o = structure2;
 
-            ExtractOperation.PointerToValueStructure(pserial, o, 0);
+            Extraction.PointerToValueStructure(pserial, o, 0);
 
             structure2 = (StructModel)o;
 

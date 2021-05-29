@@ -1,15 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Extract;
-using System.Instant;
-using System.Multemic;
-using System.Uniques;
-using System.Reflection;
-using System.Linq;
-using System.Threading.Tasks;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   Subject.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
 {
+    using System.Collections.Generic;
+    using System.Instant;
+    using System.Multemic;
+
     public class Subject
     {
         public Scope Scope { get; set; }
@@ -17,11 +21,11 @@ namespace System.Labors
         public Subject(string Name)
         {
             SubjectName = Name;
-            LaborersCount = 1;           
+            LaborersCount = 1;
         }
         public Subject(string Name, IList<Labor> LaborList)
         {
-            SubjectName = Name;        
+            SubjectName = Name;
             foreach (Labor objective in LaborList)
             {
                 objective.Scope = Scope;
@@ -32,7 +36,7 @@ namespace System.Labors
         }
         public Subject(string Name, IList<IDeputy> MethodList)
         {
-            SubjectName = Name;           
+            SubjectName = Name;
             foreach (IDeputy method in MethodList)
             {
                 Labor objective = new Labor($"{method.Info.Name}", method);
@@ -70,7 +74,7 @@ namespace System.Labors
             obj.Scope = Scope;
             obj.Subject = this;
             Labors.Put(obj.Laborer.LaborerName, obj);
-        }            
+        }
         public void AddRange(IList<Labor> value)
         {
             foreach (Labor obj in value)
@@ -90,7 +94,7 @@ namespace System.Labors
                 Labors.Put($"{obj.Info.Name}", oj);
             }
         }
-      
+
         public Labor this[string key]
         {
             get
@@ -105,6 +109,6 @@ namespace System.Labors
                 value.Subject = this;
                 Labors.Put(key, value);
             }
-        }       
+        }
     }
 }

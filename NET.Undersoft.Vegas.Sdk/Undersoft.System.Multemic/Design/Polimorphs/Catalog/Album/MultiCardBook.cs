@@ -488,7 +488,7 @@ namespace System.Multemic
 
                 if (card != null && !card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize, newMixMask, newMsbId);
+                    ulong pos = getPosition(card.Key, newsize);
 
                     mem = newcardTable[pos];
 
@@ -520,8 +520,6 @@ namespace System.Multemic
             } 
             conflicts = _conflicts;
             removed = 0;
-            mixMask = newMixMask;
-            msbId = newMsbId;
         }
 
         private         void rehash(ICard<V>[] newcardTable, int newsize)
@@ -537,7 +535,7 @@ namespace System.Multemic
                 card = list[i];
                 if (card != null && !card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize, newMixMask, newMsbId);
+                    ulong pos = getPosition(card.Key, newsize);
                     mem = newcardTable[pos];
 
                     if (mem == null)
@@ -563,8 +561,6 @@ namespace System.Multemic
                 }
             } 
             conflicts = _conflicts;
-            mixMask = newMixMask;
-            msbId = newMsbId;
         }
 
         protected virtual  void Reindex()

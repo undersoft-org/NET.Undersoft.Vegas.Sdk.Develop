@@ -32,7 +32,7 @@ namespace System.Extract
         }
         public unsafe static ValueType ToStructure(this byte[] binary, ValueType structure, long offset = 0)
         {
-           return Extractor.BytesToStructure(binary, structure, offset);
+           return Extractor.BytesToStructure(binary, ref structure, offset);
         }
 
         public unsafe static ulong ToUInt64(this Byte[] bytes)

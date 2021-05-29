@@ -254,7 +254,7 @@ namespace System.Instant
             Figure_Compilation_Helper_Test(valueType, Figure_Compilation_Helper_Test(valueType, new FieldsAndPropertiesModel()));
 
         }
-        [Fact] public unsafe void Figure_ExtractOperations_Test()
+        [Fact] public unsafe void Figure_Extractions_Test()
         {
 
             Figure referenceType = new Figure(typeof(FieldsAndPropertiesModel));

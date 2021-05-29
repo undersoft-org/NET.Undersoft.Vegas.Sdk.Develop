@@ -1,6 +1,6 @@
 ﻿using System.Uniques;
-using System.Instant.Linkmap;
-using System.Instant.Treatment;
+using System.Instant.Linking;
+using System.Instant.Treatments;
 using System.IO;
 using System.Multemic;
 using System.Runtime.InteropServices;
@@ -79,7 +79,7 @@ namespace System.Instant
 
         public override ICard<IFigure> AddNew()
         {
-            ICard<IFigure> newCard = NewCard(autoHashKey(), NewFigure());
+            ICard<IFigure> newCard = NewCard(Unique.NewKey, NewFigure());
             if (InnerAdd(newCard))
                 return newCard;
             return null;
@@ -113,16 +113,12 @@ namespace System.Instant
 
         public Func<IFigure, bool> Picker { get; set; }
 
-        public FigureLinks Links { get; set; } = new FigureLinks();
+        public Links Links { get; set; } = new Links();
 
-        private FigureLinkmap linkmap;
-        public  FigureLinkmap Linkmap { get => linkmap == null ? linkmap = new FigureLinkmap(this) : linkmap;
-                                        set => linkmap = value; }
-
-        private FigureTreatment treatment;
-        public  FigureTreatment Treatment
+        private Treatment treatment;
+        public  Treatment Treatment
         {
-            get => treatment == null ? treatment = new FigureTreatment(this) : treatment;
+            get => treatment == null ? treatment = new Treatment(this) : treatment;
             set => treatment = value;
         }
 

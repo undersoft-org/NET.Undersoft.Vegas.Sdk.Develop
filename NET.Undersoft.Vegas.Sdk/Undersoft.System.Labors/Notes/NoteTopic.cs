@@ -1,29 +1,40 @@
-﻿using System.Linq;
-using System.Uniques;
-using System.Extract;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Multemic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   NoteTopic.cs
+              
+   @author: Dariusz Hanc                                                  
+   @date: (28.05.2021)                                            
+   @licence MIT                                       
+ *************************************************/
 
 namespace System.Labors
 {
+    using System.Collections.Generic;
+    using System.Multemic;
+
+    /// <summary>
+    /// Defines the <see cref="NoteTopic" />.
+    /// </summary>
     public class NoteTopic : Catalog<Note>
     {
-        public NoteTopic(string senderName, NoteBox recipient = null)
-        {
-            if (recipient != null)
-                RecipientBox = recipient;
-            SenderName = senderName;
-        }
-        public NoteTopic(string senderName, Note note, NoteBox recipient = null)
-        {
-            if (recipient != null)
-            {
-                RecipientBox = recipient;
-            }
-            SenderName = senderName;
-            Notes = note;
-        }
+        #region Fields
+
+        /// <summary>
+        /// Defines the RecipientBox.
+        /// </summary>
+        public NoteBox RecipientBox;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoteTopic"/> class.
+        /// </summary>
+        /// <param name="senderName">The senderName<see cref="string"/>.</param>
+        /// <param name="notelist">The notelist<see cref="IList{Note}"/>.</param>
+        /// <param name="recipient">The recipient<see cref="NoteBox"/>.</param>
         public NoteTopic(string senderName, IList<Note> notelist, NoteBox recipient = null)
         {
             if (recipient != null)
@@ -39,6 +50,38 @@ namespace System.Labors
                 }
             }
         }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoteTopic"/> class.
+        /// </summary>
+        /// <param name="senderName">The senderName<see cref="string"/>.</param>
+        /// <param name="note">The note<see cref="Note"/>.</param>
+        /// <param name="recipient">The recipient<see cref="NoteBox"/>.</param>
+        public NoteTopic(string senderName, Note note, NoteBox recipient = null)
+        {
+            if (recipient != null)
+            {
+                RecipientBox = recipient;
+            }
+            SenderName = senderName;
+            Notes = note;
+        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoteTopic"/> class.
+        /// </summary>
+        /// <param name="senderName">The senderName<see cref="string"/>.</param>
+        /// <param name="recipient">The recipient<see cref="NoteBox"/>.</param>
+        public NoteTopic(string senderName, NoteBox recipient = null)
+        {
+            if (recipient != null)
+                RecipientBox = recipient;
+            SenderName = senderName;
+        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoteTopic"/> class.
+        /// </summary>
+        /// <param name="senderName">The senderName<see cref="string"/>.</param>
+        /// <param name="recipient">The recipient<see cref="NoteBox"/>.</param>
+        /// <param name="parameters">The parameters<see cref="object[]"/>.</param>
         public NoteTopic(string senderName, NoteBox recipient = null, params object[] parameters)
         {
             if (recipient != null)
@@ -52,41 +95,15 @@ namespace System.Labors
                     Notes = result;
                 }
             }
-
         }
 
-        public NoteBox RecipientBox;
-        public string SenderName { get; set; }
+        #endregion
 
-        public void AddNote(string senderName, params object[] parameters)
-        {
-            SenderName = senderName;
-            if (parameters != null)
-            {
-                Note result = new Note(senderName);
-                result.Parameters = parameters;
-                Notes = result;
-            }
-        }
-        public void AddNote(params object[] parameters)
-        {
-            if (parameters != null)
-            {
-                Note result = new Note(SenderName);
-                result.Parameters = parameters;
-                Notes = result;
-            }
-        }
-        public void AddNote(Note note)
-        {
-            Notes = note;
-        }
-        public void AddNote(IList<Note> noteList)
-        {
-            foreach (Note result in noteList)
-                Notes = result;
-        }
+        #region Properties
 
+        /// <summary>
+        /// Gets or sets the Notes.
+        /// </summary>
         public Note Notes
         {
             get
@@ -103,5 +120,65 @@ namespace System.Labors
                     RecipientBox.QualifyToEvoke();
             }
         }
+
+        /// <summary>
+        /// Gets or sets the SenderName.
+        /// </summary>
+        public string SenderName { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="noteList">The noteList<see cref="IList{Note}"/>.</param>
+        public void AddNote(IList<Note> noteList)
+        {
+            foreach (Note result in noteList)
+                Notes = result;
+        }
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="note">The note<see cref="Note"/>.</param>
+        public void AddNote(Note note)
+        {
+            Notes = note;
+        }
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="parameters">The parameters<see cref="object[]"/>.</param>
+        public void AddNote(params object[] parameters)
+        {
+            if (parameters != null)
+            {
+                Note result = new Note(SenderName);
+                result.Parameters = parameters;
+                Notes = result;
+            }
+        }
+
+        /// <summary>
+        /// The AddNote.
+        /// </summary>
+        /// <param name="senderName">The senderName<see cref="string"/>.</param>
+        /// <param name="parameters">The parameters<see cref="object[]"/>.</param>
+        public void AddNote(string senderName, params object[] parameters)
+        {
+            SenderName = senderName;
+            if (parameters != null)
+            {
+                Note result = new Note(senderName);
+                result.Parameters = parameters;
+                Notes = result;
+            }
+        }
+
+        #endregion
     }
 }

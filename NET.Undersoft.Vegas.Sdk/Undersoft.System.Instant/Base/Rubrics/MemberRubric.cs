@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Linq;
 using System.Uniques;
-using System.Instant.Linkmap;
-using System.Instant.Treatment;
+using System.Instant.Linking;
+using System.Instant.Treatments;
 
 namespace System.Instant
 {
@@ -90,7 +90,7 @@ namespace System.Instant
         public int[]            AggregateIndex   { get; set; }
         public int[]            AggregateOrdinal { get; set; }
 
-        public FigureLinks     AggregateLinks { get; set; }
+        public Links     AggregateLinks { get; set; }
 
         public int              SummaryOrdinal { get; set; }
         public IRubric          SummaryPattern { get; set; }

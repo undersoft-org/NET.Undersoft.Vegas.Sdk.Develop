@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Uniques;
-using System.Numerics;
+using System.Runtime.CompilerServices;
 
 /*************************************************************************************
     Copyright (c) 2020 Undersoft
@@ -73,11 +73,6 @@ namespace System.Multemic.Basedeck
             --removed;
         }
 
-        protected long autoHashKey()
-        {
-            return 0;
-        }
-
         #endregion
 
         #region Constructor
@@ -141,7 +136,7 @@ namespace System.Multemic.Basedeck
 
         #region Item
 
-        ICard<V>        IList<ICard<V>>.this[int index]
+        ICard<V>      IList<ICard<V>>.this[int index]
         {
             get => GetCard(index);
             set => GetCard(index).Set(value);
@@ -166,9 +161,9 @@ namespace System.Multemic.Basedeck
 
         #region Get
 
-        protected virtual         V InnerGet(long key)
+        protected virtual    V InnerGet(long key)
         {
-            ICard<V> mem = table[getPosition(key)];
+            ICard<V> mem = table[getPosition(key, size)];
 
             while (mem != null)
             {
@@ -200,11 +195,10 @@ namespace System.Multemic.Basedeck
             return InnerGet(key.IdentitiesToKey());
         }
 
-
-        protected virtual      bool InnerTryGet(long key, out ICard<V> output)
+        protected virtual bool InnerTryGet(long key, out ICard<V> output)
         {
             output = null;
-            ICard<V> mem = table[getPosition(key)];
+            ICard<V> mem = table[getPosition(key, size)];
             while (mem != null)
             {
                 if (mem.Equals(key))
@@ -251,9 +245,9 @@ namespace System.Multemic.Basedeck
             return false;
         }
 
-        protected virtual   ICard<V> InnerGetCard(long key)
+        protected virtual ICard<V> InnerGetCard(long key)
         {
-            ICard<V> mem = table[getPosition(key)];
+            ICard<V> mem = table[getPosition(key, size)];
 
             while (mem != null)
             {
@@ -268,47 +262,46 @@ namespace System.Multemic.Basedeck
 
             return null;
         }
-        public virtual      ICard<V> GetCard(long key)
+        public virtual         ICard<V> GetCard(long key)
         {
             return             InnerGetCard(key);
         }
-        public virtual      ICard<V> GetCard(object key)
+        public virtual         ICard<V> GetCard(object key)
         {
             return InnerGetCard(base.GetHashKey(key));
         }
-        public abstract     ICard<V> GetCard(int index);
+        public abstract        ICard<V> GetCard(int index);
 
         #endregion
 
         #region Put
 
-        protected abstract     ICard<V> InnerPut(long key, V value);
-        protected abstract     ICard<V> InnerPut(V value);
-        protected abstract     ICard<V> InnerPut(ICard<V> value);
-
-        public virtual      ICard<V> Put(long key, object value)
+        protected abstract ICard<V> InnerPut(long key, V value);
+        protected abstract ICard<V> InnerPut(V value);
+        protected abstract ICard<V> InnerPut(ICard<V> value);
+        public virtual          ICard<V> Put(long key, object value)
         {
             return InnerPut(key, (V)value);
         }
-        public virtual      ICard<V> Put(long key, V value)
+        public virtual          ICard<V> Put(long key, V value)
         {
             return InnerPut(key, value);
         }
-        public virtual      ICard<V> Put(object key, V value)
+        public virtual          ICard<V> Put(object key, V value)
         {
             return InnerPut(base.GetHashKey(key), value);
         }
-        public virtual      ICard<V> Put(object key, object value)
+        public virtual          ICard<V> Put(object key, object value)
         {
             if(value is V)
                 return InnerPut(base.GetHashKey(key), (V)value);
             return null;
         }
-        public virtual      ICard<V> Put(ICard<V> card)
+        public virtual          ICard<V> Put(ICard<V> card)
         {
             return InnerPut(card);
         }
-        public virtual          void Put(IList<ICard<V>> cards)
+        public virtual              void Put(IList<ICard<V>> cards)
         {
             int c = cards.Count;
             for (int i = 0; i < c; i++)
@@ -316,16 +309,16 @@ namespace System.Multemic.Basedeck
                 InnerPut(cards[i]);
             }
         }
-        public virtual          void Put(IEnumerable<ICard<V>> cards)
+        public virtual              void Put(IEnumerable<ICard<V>> cards)
         {
             foreach (ICard<V> card in cards)
                 InnerPut(card);
         }
-        public virtual      ICard<V> Put(V value)
+        public virtual          ICard<V> Put(V value)
         {
            return InnerPut(value);
         }
-        public virtual          void Put(object value)
+        public virtual              void Put(object value)
         {
             if (value is IUnique<V>)
                 Put((IUnique<V>)value);
@@ -334,7 +327,7 @@ namespace System.Multemic.Basedeck
             else if (value is ICard<V>)
                 Put((ICard<V>)value);
         }
-        public virtual          void Put(IList<V> cards)
+        public virtual              void Put(IList<V> cards)
         {
             int c = cards.Count;
             for (int i = 0; i < c; i++)
@@ -342,23 +335,23 @@ namespace System.Multemic.Basedeck
                 InnerPut(cards[i]);
             }
         }
-        public virtual          void Put(IEnumerable<V> cards)
+        public virtual              void Put(IEnumerable<V> cards)
         {
             foreach (V card in cards)
                 InnerPut(card);
         }
-        public virtual      ICard<V> Put(IUnique<V> value)
+        public virtual          ICard<V> Put(IUnique<V> value)
         {
            return InnerPut(base.GetHashKey(value), value.Value);
         }
-        public virtual          void Put(IList<IUnique<V>> value)
+        public virtual              void Put(IList<IUnique<V>> value)
         {
             foreach (IUnique<V> item in value)
             {
                 Put(item);
             }
         }
-        public virtual          void Put(IEnumerable<IUnique<V>> value)
+        public virtual              void Put(IEnumerable<IUnique<V>> value)
         {
             foreach (IUnique<V> item in value)
             {
@@ -369,26 +362,26 @@ namespace System.Multemic.Basedeck
 
         #region Add
 
-        protected abstract    bool InnerAdd(long key, V value);
-        protected abstract    bool InnerAdd(V value);
-        protected abstract    bool InnerAdd(ICard<V> value);
-        public virtual        bool Add(long key, object value)
+        protected abstract bool InnerAdd(long key, V value);
+        protected abstract bool InnerAdd(V value);
+        protected abstract bool InnerAdd(ICard<V> value);
+        public virtual          bool Add(long key, object value)
         {
             return InnerAdd(key, (V)value);
         }
-        public virtual        bool Add(long key, V value)
+        public virtual          bool Add(long key, V value)
         {
             return InnerAdd(key, value);
         }
-        public virtual        bool Add(object key, V value)
+        public virtual          bool Add(object key, V value)
         {
             return InnerAdd(base.GetHashKey(key), value);
         }
-        public virtual        void Add(ICard<V> card)
+        public virtual          void Add(ICard<V> card)
         {
             InnerAdd(card);
         }
-        public virtual        void Add(IList<ICard<V>> cardList)
+        public virtual          void Add(IList<ICard<V>> cardList)
         {
             int c = cardList.Count;
             for (int i = 0; i < c; i++)
@@ -396,16 +389,16 @@ namespace System.Multemic.Basedeck
                 InnerAdd(cardList[i]);
             }
         }
-        public virtual        void Add(IEnumerable<ICard<V>> cardTable)
+        public virtual          void Add(IEnumerable<ICard<V>> cardTable)
         {
             foreach (ICard<V> card in cardTable)
                 Add(card);
         }
-        public virtual        void Add(V value)
+        public virtual          void Add(V value)
         {
             InnerAdd(value);
         }
-        public virtual        void Add(IList<V> cards)
+        public virtual          void Add(IList<V> cards)
         {
             int c = cards.Count;
             for (int i = 0; i < c; i++)
@@ -414,37 +407,37 @@ namespace System.Multemic.Basedeck
 
             }
         }
-        public virtual        void Add(IEnumerable<V> cards)
+        public virtual          void Add(IEnumerable<V> cards)
         {
             foreach (V card in cards)
                 Add(card);
         }
-        public virtual        void Add(IUnique<V> value)
+        public virtual          void Add(IUnique<V> value)
         {
             InnerAdd(base.GetHashKey(value), value.Value);
         }
-        public virtual        void Add(IList<IUnique<V>> value)
+        public virtual          void Add(IList<IUnique<V>> value)
         {
             foreach (IUnique<V> item in value)
             {
                 Add(item);
             }
         }
-        public virtual        void Add(IEnumerable<IUnique<V>> value)
+        public virtual          void Add(IEnumerable<IUnique<V>> value)
         {
             foreach (IUnique<V> item in value)
             {
                 Add(item);
             }
         }
-        public virtual        bool TryAdd(V value)
+        public virtual       bool TryAdd(V value)
         {
             return InnerAdd(value);
         }
 
         public virtual     ICard<V> AddNew()
         {
-            ICard<V> newCard = NewCard(autoHashKey(), default(V));
+            ICard<V> newCard = NewCard(Unique.NewKey, default(V));
             if(InnerAdd(newCard))
                 return newCard;
             return null;
@@ -464,12 +457,12 @@ namespace System.Multemic.Basedeck
             return null;
         }
 
-        protected abstract    void InnerInsert(int index, ICard<V> item);
-        public virtual        void Insert(int index, ICard<V> item)
+        protected abstract void InnerInsert(int index, ICard<V> item);
+        public virtual          void Insert(int index, ICard<V> item)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             long key = item.Key;
-            ulong pos = getPosition(key);
+            ulong pos = getPosition(key,size);
 
             ICard<V> card = table[pos]; /// local for last removed item finded   
             // add in case when item doesn't exist and there is no conflict                                                      
@@ -511,7 +504,7 @@ namespace System.Multemic.Basedeck
                 card = card.Extent;
             }
         }
-        public virtual        void Insert(int index, V item)
+        public virtual          void Insert(int index, V item)
         {
             Insert(index, NewCard(item));
         }
@@ -520,31 +513,26 @@ namespace System.Multemic.Basedeck
 
         #region Queue
 
-        public virtual       bool Enqueue(V value)
+        public virtual    bool Enqueue(V value)
         {
             return InnerAdd(value);
         }
-        public virtual       bool Enqueue(object key, V value)
+        public virtual    bool Enqueue(object key, V value)
         {
             return InnerAdd(base.GetHashKey(key), value);
         }
-        public virtual       void Enqueue(ICard<V> card)
+        public virtual    void Enqueue(ICard<V> card)
         {
             InnerAdd(card);
         }
 
-        public virtual       bool TryTake(out V output)
-        {
-            return TryDequeue(out output);
-        }
-        public virtual          V Dequeue()
+        public virtual       V Dequeue()
         {
             V card = default(V);
             TryDequeue(out card);
             return card;
         }
-
-        public virtual       bool TryDequeue(out V output)
+        public virtual bool TryDequeue(out V output)
         {
             var _output = Next(first);
             if (_output != null)
@@ -557,7 +545,7 @@ namespace System.Multemic.Basedeck
             output = default(V);
             return false;
         }
-        public virtual       bool TryDequeue(out ICard<V> output)
+        public virtual bool TryDequeue(out ICard<V> output)
         {
             output = Next(first);
             if (output != null)
@@ -568,6 +556,33 @@ namespace System.Multemic.Basedeck
             }
             return false;
         }
+
+        public virtual bool    TryPick(int skip, out V output)
+        {
+            var _output = this.AsCards().Skip(skip).FirstOrDefault();
+            if (_output != null)
+            {
+                output = _output.Value;
+                return true;
+            }
+            output = default(V);
+            return false;
+        }
+        public virtual bool    TryPick(int skip, out ICard<V> output)
+        {
+            output = this.AsCards().Skip(skip).FirstOrDefault();
+            if (output != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public virtual    bool TryTake(out V output)
+        {
+            return TryDequeue(out output);
+        }
+
         #endregion
 
         #region Renew
@@ -631,7 +646,7 @@ namespace System.Multemic.Basedeck
 
         protected bool      InnerContainsKey(long key)
         {
-            ICard<V> mem = table[getPosition(key)];
+            ICard<V> mem = table[getPosition(key, size)];
 
             while (mem != null)
             {
@@ -675,9 +690,9 @@ namespace System.Multemic.Basedeck
 
         #region Remove
 
-        protected virtual      V InnerRemove(long key)
+        protected virtual V InnerRemove(long key)
         {
-            ICard<V> mem = table[getPosition(key)];
+            ICard<V> mem = table[getPosition(key, size)];
 
             while (mem != null)
             {
@@ -712,11 +727,11 @@ namespace System.Multemic.Basedeck
         {
             return TryRemove(item.GetHashKey());
         }
-        public virtual      bool TryRemove(object key)
+        public virtual   bool TryRemove(object key)
         {
             return InnerRemove(base.GetHashKey(key)).Equals(default(V)) ? false : true;
         }
-        public virtual      void RemoveAt(int index)
+        public virtual    void RemoveAt(int index)
         {
             InnerRemove(GetCard(index).Key);
         }
@@ -825,11 +840,12 @@ namespace System.Multemic.Basedeck
                 foreach (V ves in this.AsValues())
                     array[i++] = ves;
         }
-        public virtual           V[] ToArray()
+
+        public virtual            V[] ToArray()
         {
             return this.AsValues().ToArray();
         }
-        public virtual      object[] ToObjectArray()
+        public virtual object[] ToObjectArray()
         {
             return this.AsValues().Select((x) => (object)x).ToArray();
         }
@@ -885,33 +901,33 @@ namespace System.Multemic.Basedeck
             return (IEnumerable<ICard<V>>)this;
         }
 
-        public virtual      IEnumerable<IUnique<V>> AsIdentifiers()
+        public virtual IEnumerable<IUnique<V>> AsIdentifiers()
         {
             return (IEnumerable<IUnique<V>>)this;
         }
 
-        public virtual         IEnumerator<ICard<V>> GetEnumerator()
+        public virtual   IEnumerator<ICard<V>> GetEnumerator()
         {
             return new CardSeries<V>(this);
         }
 
-        public virtual            IEnumerator<long> GetKeyEnumerator()
+        public virtual    IEnumerator<long> GetKeyEnumerator()
         {
             return new CardKeyBlockSeries<V>(this);
         }
 
-        IEnumerator<V>               IEnumerable<V>.GetEnumerator()
+        IEnumerator<V>          IEnumerable<V>.GetEnumerator()
         {
             return new CardSeries<V>(this);
         }
 
         IEnumerator<IUnique<V>>
-                            IEnumerable<IUnique<V>>.GetEnumerator()
+                       IEnumerable<IUnique<V>>.GetEnumerator()
         {
             return new CardKeySeries<V>(this);
         }      
 
-        IEnumerator                     IEnumerable.GetEnumerator()
+        IEnumerator                IEnumerable.GetEnumerator()
         {
             return new CardSeries<V>(this);
         }
@@ -920,11 +936,11 @@ namespace System.Multemic.Basedeck
 
         #region Hashtable
 
-        protected       ulong getPosition(long key)
+        protected ulong getPosition(long key)
         {
             // standard hashmap method to establish position / index in table
 
-            return ((ulong)key % ((uint)(size - 1)));
+            return ((ulong)key % (uint)(size - 1));
 
             // establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type) 
@@ -932,11 +948,11 @@ namespace System.Multemic.Basedeck
 
             //return Submix.Map(key, size - 1, mixMask, msbId);           
         }
-        protected       ulong getPosition(long key, int newsize)//, ulong newMixMask, int newMsbId)
+        protected ulong getPosition(long key, int tableSize)//, ulong newMixMask, int newMsbId)
         {
             // standard hashmap method to establish position / index in table 
 
-            return ((ulong)key % (uint)(newsize - 1));
+            return ((ulong)key % (uint)(tableSize - 1));
 
             // establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type)
@@ -944,30 +960,6 @@ namespace System.Multemic.Basedeck
 
             //return Submix.Map(key, newsize - 1, newMixMask, newMsbId);
         }
-        //protected ulong getPosition(long key)
-        //{
-        //    // standard hashmap method to establish position / index in table
-
-        //    // return ((ulong)key % (uint)size);
-
-        //    // author's algorithm to establish position / index in table            
-        //    // based on most significant bit - BSR (or equivalent depending on the cpu type) 
-        //    // alsow project must be compiled in x64 format (default) for x86 format proper C lib compilation of BitScan.dll is needed       
-
-        //    return Submix.Map(key, size - 1, mixMask, msbId);
-        //}
-        //protected       ulong getPosition(long key, int newsize, ulong newMixMask, int newMsbId)
-        //{
-        //    // standard hashmap method to establish position / index in table 
-
-        //    // return ((ulong)key % (uint)newsize);
-
-        //    // author's algorithm to establish position / index in table            
-        //    // based on most significant bit - BSR (or equivalent depending on the cpu type)
-        //    // alsow project must be compiled in x64 format (default) for x86 format proper C lib compilation of BitScan.dll is needed       
-
-        //    return Submix.Map(key, newsize - 1, newMixMask, newMsbId);                    
-        //}
 
         protected virtual  void Rehash(int newSize)
         {
@@ -1001,9 +993,9 @@ namespace System.Multemic.Basedeck
                 {
                     ulong pos = getPosition(card.Key, newsize);
 
-                    ICard<V> mem = newcardTable[pos];
+                    ICard<V> ex_card = newcardTable[pos];
 
-                    if (mem == null)
+                    if (ex_card == null)
                     {
                         card.Extent = null;
                         newcardTable[pos] = _lastcard = _lastcard.Next = card;
@@ -1012,15 +1004,15 @@ namespace System.Multemic.Basedeck
                     {
                         for (; ; )
                         {
-                            if (mem.Extent == null)
+                            if (ex_card.Extent == null)
                             {
                                 card.Extent = null;;
-                                _lastcard = _lastcard.Next = mem.Extent = card;
+                                _lastcard = _lastcard.Next = ex_card.Extent = card;
                                 _conflicts++;
                                 break;
                             }
                             else
-                                mem = mem.Extent;
+                                ex_card = ex_card.Extent;
                         }
                     }
                 }
@@ -1045,9 +1037,9 @@ namespace System.Multemic.Basedeck
                 {
                     ulong pos = getPosition(card.Key, newsize);
 
-                    ICard<V> mem = newcardTable[pos];
+                    ICard<V> ex_card = newcardTable[pos];
 
-                    if (mem == null)
+                    if (ex_card == null)
                     {
                         card.Extent = null;
                         newcardTable[pos] = card;
@@ -1056,15 +1048,15 @@ namespace System.Multemic.Basedeck
                     {
                         for (; ; )
                         {
-                            if (mem.Extent == null)
+                            if (ex_card.Extent == null)
                             {
                                 card.Extent = null;
-                                mem.Extent = card;
+                                ex_card.Extent = card;
                                 _conflicts++;
                                 break;
                             }
                             else
-                                mem = mem.Extent;
+                                ex_card = ex_card.Extent;
                         }
                     }
                 }

@@ -6,112 +6,114 @@ namespace System.Extract
 {
     public static partial class Extractor
     {
+        private static IExtractor extractor = Extraction.GetExtractor();
+
         public static unsafe void CopyBlock(byte* dest, byte* src, int count)
         {
-            ExtractOperation.CopyBlock(dest, 0, src, 0, (uint)count);
+            extractor.CopyBlock(dest, 0, src, 0, (uint)count);
         }
         public static unsafe void CopyBlock(void* dest, void* src, int count)
         {
-            ExtractOperation.CopyBlock((byte*)dest, 0, (byte*)src, 0, (uint)count);
+            extractor.CopyBlock((byte*)dest, 0, (byte*)src, 0, (uint)count);
         }
 
         public static unsafe void CopyBlock(byte* dest, byte* src, int destOffset, int count)
         {
-            ExtractOperation.CopyBlock(dest, (uint)destOffset, src, 0, (uint)count);
+            extractor.CopyBlock(dest, (uint)destOffset, src, 0, (uint)count);
         }
         public static unsafe void CopyBlock(void* dest, void* src, int destOffset, int count)
         {
-            ExtractOperation.CopyBlock((byte*)dest, (uint)destOffset, (byte*)src, 0, (uint)count);
+            extractor.CopyBlock((byte*)dest, (uint)destOffset, (byte*)src, 0, (uint)count);
         }
 
         public static unsafe void CopyBlock(byte* dest, int destOffset, byte* src, int srcOffset, int count)
         {
-            ExtractOperation.CopyBlock(dest, (uint)destOffset, src, (uint)srcOffset, (uint)count);
+            extractor.CopyBlock(dest, (uint)destOffset, src, (uint)srcOffset, (uint)count);
         }
         public static unsafe void CopyBlock(void* dest, int destOffset, void* src, int srcOffset, int count)
         {
-            ExtractOperation.CopyBlock((byte*)dest, (uint)destOffset, (byte*)src, (uint)srcOffset, (uint)count);
+            extractor.CopyBlock((byte*)dest, (uint)destOffset, (byte*)src, (uint)srcOffset, (uint)count);
         }
 
         public static unsafe void CopyBlock(byte* dest, byte* src, long count)
         {
-            ExtractOperation.CopyBlock(dest, 0, src, 0, (ulong)count);
+            extractor.CopyBlock(dest, 0, src, 0, (ulong)count);
         }
         public static unsafe void CopyBlock(void* dest, void* src, long count)
         {
-            ExtractOperation.CopyBlock((byte*)dest, 0, (byte*)src, 0, (ulong)count);
+            extractor.CopyBlock((byte*)dest, 0, (byte*)src, 0, (ulong)count);
         }
 
         public static unsafe void CopyBlock(byte* dest, byte* src, long destOffset, long count)
         {
-            ExtractOperation.CopyBlock(dest, (ulong)destOffset, src, 0, (ulong)count);
+            extractor.CopyBlock(dest, (ulong)destOffset, src, 0, (ulong)count);
         }
         public static unsafe void CopyBlock(void* dest, void* src, long destOffset, long count)
         {
-            ExtractOperation.CopyBlock((byte*)dest, (ulong)destOffset, (byte*)src, 0, (ulong)count);
+            extractor.CopyBlock((byte*)dest, (ulong)destOffset, (byte*)src, 0, (ulong)count);
         }
 
         public static unsafe void CopyBlock(byte* dest, long destOffset, byte* src, long srcOffset, long count)
         {
-            ExtractOperation.CopyBlock(dest, (ulong)destOffset, src, (ulong)srcOffset, (ulong)count);
+            extractor.CopyBlock(dest, (ulong)destOffset, src, (ulong)srcOffset, (ulong)count);
         }
         public static unsafe void CopyBlock(void* dest, long destOffset, void* src, long srcOffset, long count)
         {
-            ExtractOperation.CopyBlock((byte*)dest, (ulong)destOffset, (byte*)src, (ulong)srcOffset, (ulong)count);
+            extractor.CopyBlock((byte*)dest, (ulong)destOffset, (byte*)src, (ulong)srcOffset, (ulong)count);
         }
 
         public static unsafe void CopyBlock(byte[] dest, byte[] src, int count)
         {
-            ExtractOperation.CopyBlock(dest, 0, src, 0, (uint)count);
+            extractor.CopyBlock(dest, 0, src, 0, (uint)count);
         }
         public static unsafe void CopyBlock(IntPtr dest, IntPtr src, int count)
         {
-            ExtractOperation.CopyBlock((byte*)(dest.ToPointer()), 0, (byte*)(src.ToPointer()), 0, (uint)count);
+            extractor.CopyBlock((byte*)(dest.ToPointer()), 0, (byte*)(src.ToPointer()), 0, (uint)count);
         }
 
         public static unsafe void CopyBlock(byte[] dest, byte[] src, int destOffset, int count)
         {
-            ExtractOperation.CopyBlock(dest, (uint)destOffset, src, 0, (uint)count);
+            extractor.CopyBlock(dest, (uint)destOffset, src, 0, (uint)count);
         }
         public static unsafe void CopyBlock(IntPtr dest, IntPtr src, int destOffset, int count)
         {
-            ExtractOperation.CopyBlock((byte*)src.ToPointer(), (uint)destOffset, (byte*)dest.ToPointer(), 0, (uint)count);
+            extractor.CopyBlock((byte*)src.ToPointer(), (uint)destOffset, (byte*)dest.ToPointer(), 0, (uint)count);
         }
 
         public static unsafe void CopyBlock(byte[] dest, int destOffset, byte[] src, int srcOffset, int count)
         {
-            ExtractOperation.CopyBlock(dest, (uint)destOffset, src, (uint)srcOffset, (uint)count);
+            extractor.CopyBlock(dest, (uint)destOffset, src, (uint)srcOffset, (uint)count);
         }
         public static unsafe void CopyBlock(IntPtr dest, int destOffset, IntPtr src, int srcOffset, int count)
         {
-            ExtractOperation.CopyBlock((byte*)(dest.ToPointer()), (uint)destOffset, (byte*)(src.ToPointer()), (uint)srcOffset, (uint)count);
+            extractor.CopyBlock((byte*)(dest.ToPointer()), (uint)destOffset, (byte*)(src.ToPointer()), (uint)srcOffset, (uint)count);
         }
 
         public static unsafe void CopyBlock(byte[] dest, byte[] src, long count)
         {
-            ExtractOperation.CopyBlock(dest, 0, src, 0, (ulong)count);
+            extractor.CopyBlock(dest, 0, src, 0, (ulong)count);
         }
         public static unsafe void CopyBlock(IntPtr dest, IntPtr src, long count)
         {
-            ExtractOperation.CopyBlock((byte*)(dest.ToPointer()), 0, (byte*)(src.ToPointer()), 0, (ulong)count);
+            extractor.CopyBlock((byte*)(dest.ToPointer()), 0, (byte*)(src.ToPointer()), 0, (ulong)count);
         }
 
         public static unsafe void CopyBlock(byte[] dest, byte[] src, long destOffset, long count)
         {
-            ExtractOperation.CopyBlock(dest, (ulong)destOffset, src, 0, (ulong)count);
+            extractor.CopyBlock(dest, (ulong)destOffset, src, 0, (ulong)count);
         }
         public static unsafe void CopyBlock(IntPtr dest, IntPtr src, long destOffset, long count)
         {
-            ExtractOperation.CopyBlock((byte*)(dest.ToPointer()), (ulong)destOffset, (byte*)(src.ToPointer()), 0, (ulong)count);
+            extractor.CopyBlock((byte*)(dest.ToPointer()), (ulong)destOffset, (byte*)(src.ToPointer()), 0, (ulong)count);
         }
 
         public static unsafe void CopyBlock(byte[] dest, long destOffset, byte[] src, long srcOffset, long count)
         {
-            ExtractOperation.CopyBlock(dest, (ulong)destOffset, src, (ulong)srcOffset, (ulong)count);
+            extractor.CopyBlock(dest, (ulong)destOffset, src, (ulong)srcOffset, (ulong)count);
         }
         public static unsafe void CopyBlock(IntPtr dest, long destOffset, IntPtr src, long srcOffset, long count)
         {
-            ExtractOperation.CopyBlock((byte*)(dest.ToPointer()), (ulong)destOffset, (byte*)(src.ToPointer()), (ulong)srcOffset, (ulong)count);
+            extractor.CopyBlock((byte*)(dest.ToPointer()), (ulong)destOffset, (byte*)(src.ToPointer()), (ulong)srcOffset, (ulong)count);
         }
 
         public unsafe static bool BlockEqual(byte[] source, byte[] dest)
@@ -177,9 +179,11 @@ namespace System.Extract
             {
                 Type t = structure.GetType();
                 if (t.IsPrimitive || t.IsLayoutSequential)
-                    structure = ExtractOperation.PointerToValueStructure((byte*)binary, structure, 0);
+                {
+                    return Extraction.PointerToValueStructure((byte*)binary, structure, 0);                    
+                }
                 else
-                    structure = PointerToStructure(binary, structure.GetType(), 0);
+                    return PointerToStructure(binary, structure.GetType(), 0);
             }
             else
                 Marshal.PtrToStructure(binary, structure);
@@ -188,26 +192,29 @@ namespace System.Extract
 
         public unsafe static ValueType PointerToStructure(byte* binary, ValueType structure)
         {
-           return ExtractOperation.PointerToValueStructure(binary, structure, 0);
+            return Extraction.PointerToValueStructure(binary, structure, 0);           
         }
         public unsafe static ValueType PointerToStructure(IntPtr binary, ValueType structure)
         {
-           return ExtractOperation.PointerToValueStructure((byte*)binary, structure, 0);
+            return Extraction.PointerToValueStructure((byte*)binary, structure, 0);
         }
 
         public unsafe static object BytesToStructure(byte[] binary, object structure, long offset)
         {
             if (structure is ValueType)
-              return ExtractOperation.BytesToValueStructure(binary, structure, 0);
+            {
+                return Extraction.BytesToValueStructure(binary, structure, 0);               
+            }
             else
             {
                 fixed (byte* b = &binary[offset])
-                   return PointerToStructure(new IntPtr(b), structure);
+                    return PointerToStructure(new IntPtr(b), structure);
             }
         }
-        public unsafe static ValueType BytesToStructure(byte[] binary, ValueType structure, long offset)
+        public unsafe static ValueType BytesToStructure(byte[] binary, ref ValueType structure, long offset)
         {
-           return ExtractOperation.BytesToValueStructure(binary, structure, 0);
+            extractor.BytesToValueStructure(binary, ref structure, 0);
+            return structure;
         }
 
         public unsafe static void StructureToPointer(object structure, byte* binary)
@@ -230,7 +237,7 @@ namespace System.Extract
 
                 if (t.IsLayoutSequential)
                 {
-                    ExtractOperation.ValueStructureToPointer(structure, (byte*)binary, 0);
+                    extractor.ValueStructureToPointer(structure, (byte*)binary, 0);
                     return;
                 }
 
@@ -265,7 +272,7 @@ namespace System.Extract
                 structure = ((DateTime)structure).ToBinary();
             if (structure.GetType().IsLayoutSequential)
             {
-                ExtractOperation.ValueStructureToPointer(structure, (byte*)binary, 0);
+                extractor.ValueStructureToPointer(structure, (byte*)binary, 0);
                 return;
             }
 
@@ -288,7 +295,7 @@ namespace System.Extract
             {
                 Type t = structure.GetType();
                 if (t.IsPrimitive || t.IsLayoutSequential)
-                    return ExtractOperation.ValueStructureToBytes(structure);
+                    return extractor.ValueStructureToBytes(structure);
 
                 if (structure is DateTime)
                 {
@@ -327,7 +334,7 @@ namespace System.Extract
           
             Type t = structure.GetType();
             if (t.IsPrimitive || t.IsLayoutSequential)
-                return ExtractOperation.ValueStructureToBytes(structure);
+                return extractor.ValueStructureToBytes(structure);
 
             byte[] b = null;
             var _structure = structure;
@@ -359,7 +366,7 @@ namespace System.Extract
             {
                 Type t = structure.GetType();
                 if (t.IsPrimitive || t.IsLayoutSequential)
-                    return ExtractOperation.ValueStructureToPointer(structure);
+                    return extractor.ValueStructureToPointer(structure);
 
                 if (structure is DateTime)
                 {
@@ -394,7 +401,9 @@ namespace System.Extract
             {
                 Type t = structure.GetType();
                 if (t.IsPrimitive || t.IsLayoutSequential)
-                    return ExtractOperation.ValueStructureToIntPtr(structure);
+                {
+                    return new IntPtr(extractor.ValueStructureToPointer(structure));
+                }
 
                 if (structure is DateTime)
                 {

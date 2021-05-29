@@ -230,6 +230,21 @@ namespace System.Multemic
             return temp;
         }
 
+        public override bool TryPick(int skip, out V output)
+        {
+            acquireWriter();
+            var temp = base.TryPick(skip, out output);
+            releaseWriter();
+            return temp;
+        }
+        public override bool TryPick(int skip, out ICard<V> output)
+        {
+            acquireWriter();
+            var temp = base.TryPick(skip, out output);
+            releaseWriter();
+            return temp;
+        }
+
         public override          int IndexOf(ICard<V> item)
         {
             int id = 0;

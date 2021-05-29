@@ -30,7 +30,6 @@ namespace System.Multemic
 
         ICard<V> GetCard(object key, uint seed);
 
-        ICard<V> AddNew(uint seed);
         ICard<V> AddNew(object key, uint seed);
 
         bool Add(object key, uint seed, V value);
