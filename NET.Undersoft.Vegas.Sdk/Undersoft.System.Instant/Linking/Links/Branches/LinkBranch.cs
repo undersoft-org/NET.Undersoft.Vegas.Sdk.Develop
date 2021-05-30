@@ -30,14 +30,14 @@ namespace System.Instant.Linking
         {
             Member = member;
             var card = NewCard(value);
-            KeyBlock = card.IdentitiesToKey();
+            UniqueKey = card.UniquesAsKey();
             InnerAdd(card);
         }
         public LinkBranch(LinkMember member, ICard<IFigure> value, int _cardSize) : base(_cardSize, HashBits.bit64)
         {
             Member = member;
             var card = NewCard(value);
-            KeyBlock = card.IdentitiesToKey();
+            UniqueKey = card.UniquesAsKey();
             InnerAdd(card);
         }
         public LinkBranch(LinkMember member, ICollection<ICard<IFigure>> collections, int _cardSize = 5) : base(_cardSize, HashBits.bit64)
@@ -46,7 +46,7 @@ namespace System.Instant.Linking
             if (collections.Any())
             {
                 var card = NewCard(collections.First());
-                KeyBlock = card.IdentitiesToKey();
+                UniqueKey = card.UniquesAsKey();
                 InnerAdd(card);
             }
             foreach (var card in collections.Skip(1))
@@ -58,7 +58,7 @@ namespace System.Instant.Linking
             if (collections.Any())
             {
                 var card = NewCard(collections.First());
-                KeyBlock = card.IdentitiesToKey();
+                UniqueKey = card.UniquesAsKey();
                 InnerAdd(card);
             }
             foreach (var card in collections.Skip(1))
@@ -73,11 +73,11 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Usid.Empty;
 
-        public long KeyBlock { get => SystemSerialCode.KeyBlock; set => SystemSerialCode.SetHashKey(value); }
+        public long UniqueKey { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
 
         public LinkMember Member { get; set; }
 
-        public uint SeedBlock { get => Member.SeedBlock; set => Member.SetHashSeed(value); }
+        public uint UniqueSeed { get => Member.UniqueSeed; set => Member.SetUniqueSeed(value); }
 
         public Usid SystemSerialCode { get; set; }
 
@@ -110,19 +110,19 @@ namespace System.Instant.Linking
             return SystemSerialCode.GetBytes();
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return SystemSerialCode.GetHashKey();
+            return SystemSerialCode.UniqueKey;
         }
 
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return Member.GetHashSeed();
+            return Member.GetUniqueSeed();
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetKeyBytes();
+            return SystemSerialCode.GetUniqueBytes();
         }
 
         public override ICard<ICard<IFigure>> NewCard(ICard<ICard<IFigure>> value)
@@ -145,21 +145,21 @@ namespace System.Instant.Linking
             return new LinkCard(key, value, Member);
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            SystemSerialCode.SetHashKey(value);
+            SystemSerialCode.SetUniqueKey(value);
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            Member.SetHashSeed(seed);
+            Member.SetUniqueSeed(seed);
         }
 
         protected override bool InnerAdd(ICard<IFigure> value)
         {
             var card = NewCard(value);
-            if (KeyBlock == 0)
-                KeyBlock = card.IdentitiesToKey();
+            if (UniqueKey == 0)
+                UniqueKey = card.UniquesAsKey();
             return InnerAdd(card);
         }
 

@@ -58,7 +58,7 @@ namespace System.Labors
         /// </summary>
         /// <param name="key">The key<see cref="object"/>.</param>
         /// <param name="value">The value<see cref="IDeputy"/>.</param>
-        public LaborMethod(object key, IDeputy value) : base(key.GetHashKey64(), value)
+        public LaborMethod(object key, IDeputy value) : base(key.UniqueKey64(), value)
         {
         }
 
@@ -82,7 +82,7 @@ namespace System.Labors
         /// <returns>The <see cref="int"/>.</returns>
         public override int CompareTo(object other)
         {
-            return (int)(KeyBlock - other.GetHashKey());
+            return (int)(UniqueKey - other.UniqueKey());
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace System.Labors
         /// <returns>The <see cref="bool"/>.</returns>
         public override bool Equals(object y)
         {
-            return KeyBlock == y.GetHashKey64();
+            return UniqueKey == y.UniqueKey64();
         }
 
         /// <summary>
@@ -114,10 +114,10 @@ namespace System.Labors
         }
 
         /// <summary>
-        /// The GetKeyBytes.
+        /// The GetUniqueBytes.
         /// </summary>
         /// <returns>The <see cref="byte[]"/>.</returns>
-        public override byte[] GetKeyBytes()
+        public override byte[] GetUniqueBytes()
         {
             return Key.GetBytes();
         }
@@ -150,7 +150,7 @@ namespace System.Labors
         /// <param name="value">The value<see cref="IDeputy"/>.</param>
         public override void Set(object key, IDeputy value)
         {
-            Key = key.GetHashKey64();
+            Key = key.UniqueKey64();
             Value = value;
             Removed = false;
         }

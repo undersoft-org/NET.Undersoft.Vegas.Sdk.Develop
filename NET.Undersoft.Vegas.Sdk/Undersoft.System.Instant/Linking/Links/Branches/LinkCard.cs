@@ -1,25 +1,24 @@
-﻿using System.Runtime.InteropServices;
-using System.Extract;
-using System.Uniques;
-using System.Multemic;
-using System.Instant.Linking;
-using System.Linq;
-using System.Reflection;
-using System.IO;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
 
-/******************************************************************
-    Copyright (c) 2020 Undersoft
+   System.Instant.LinkCard.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (29.05.2021) 
+   @licence MIT
+ *************************************************/
 
-    @name System.Instant.LinkCard                
-    
-    @project NET.Undersoft.Sdk
-    @author Darius Hanc                                                                               
-    @version 0.8.D (Feb 7, 2020)                                            
-    @licence MIT                                       
- 
- ******************************************************************/
 namespace System.Instant
-{     
+{
+    using System.Extract;
+    using System.Instant.Linking;
+    using System.Linq;
+    using System.Multemic;
+    using System.Runtime.InteropServices;
+    using System.Uniques;
+
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public class LinkCard : Card<ICard<IFigure>>, IFigure, IEquatable<ICard<IFigure>>, IComparable<ICard<IFigure>>
@@ -60,7 +59,7 @@ namespace System.Instant
         public override void Set(object key, ICard<IFigure> value)
         {
             this.value = value;
-            this.value.KeyBlock = key.GetHashKey();
+            this.value.UniqueKey = key.UniqueKey();
         }
         public override void Set(ICard<IFigure> value)
         {
@@ -68,7 +67,7 @@ namespace System.Instant
         }
         public override void Set(ICard<ICard<IFigure>> card)
         {
-            this.value = card.Value;        
+            this.value = card.Value;
         }
 
         public override bool Equals(long key)
@@ -77,21 +76,21 @@ namespace System.Instant
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.GetHashKey());
+            return Key.Equals(y.UniqueKey());
         }
-        public          bool Equals(ICard<IFigure> other)
+        public bool Equals(ICard<IFigure> other)
         {
-            return Key == other.KeyBlock;
+            return Key == other.UniqueKey;
         }
 
         public override int GetHashCode()
         {
-            return Value.GetKeyBytes().BitAggregate64to32().ToInt32();
+            return Value.GetUniqueBytes().BitAggregate64to32().ToInt32();
         }
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.GetHashKey64());
+            return (int)(Key - other.UniqueKey64());
         }
         public override int CompareTo(long key)
         {
@@ -101,9 +100,9 @@ namespace System.Instant
         {
             return (int)(Key - other.Key);
         }
-        public          int CompareTo(ICard<IFigure> other)
+        public int CompareTo(ICard<IFigure> other)
         {
-            return (int)(Key - other.KeyBlock);
+            return (int)(Key - other.UniqueKey);
         }
 
         public override byte[] GetBytes()
@@ -111,34 +110,34 @@ namespace System.Instant
             return value.GetBytes();
         }
 
-        public unsafe override byte[] GetKeyBytes()
+        public unsafe override byte[] GetUniqueBytes()
         {
-            return value.GetKeyBytes();
+            return value.GetUniqueBytes();
         }
 
-        public override    int[] IdentityIndexes()
-        {           
+        public override int[] UniqueOrdinals()
+        {
             return Member.KeyRubrics.Ordinals;
         }
-        public override object[] IdentityValues()
+        public override object[] UniqueValues()
         {
             return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray();
         }
-        public override     long IdentitiesToKey()
+        public override long UniquesAsKey()
         {
-            return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray().GetHashKey();
-        }  
+            return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray().UniqueKey();
+        }
 
         public override long Key
         {
-            get => value.KeyBlock;                                                   
-            set => this.value.KeyBlock = value;            
+            get => value.UniqueKey;
+            set => this.value.UniqueKey = value;
         }
 
-        public override long KeyBlock
+        public override long UniqueKey
         {
-            get => value.KeyBlock;
-            set => this.value.KeyBlock = value;
+            get => value.UniqueKey;
+            set => this.value.UniqueKey = value;
         }
 
         public object[] ValueArray
@@ -153,12 +152,12 @@ namespace System.Instant
             }
         }
 
-        public     Ussn SystemSerialCode
+        public Ussn SystemSerialCode
         {
             get => value.Value.SystemSerialCode;
             set => this.value.Value.SystemSerialCode = value;
         }
-       
+
         public LinkMember Member { get; set; }
 
     }

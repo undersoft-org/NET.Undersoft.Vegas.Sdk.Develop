@@ -12,47 +12,47 @@ namespace System.Instant.Treatments
             figures = Figures;
         }
 
-        private MemberRubrics  replicateRubrics;
-        public  MemberRubrics  ReplicateRubrics
+        private MemberRubrics  replicativeRubrics;
+        public  MemberRubrics  ReplicativeRubrics
         {
             get
             {
-                if (replicateRubrics == null)
+                if (replicativeRubrics == null)
                 {
-                    if (aggregateRubrics == null)
-                        AggregateRubricsUpdate();
+                    if (replicativeRubrics == null)
+                        UpdateAggregatives();
                     else
-                        ReplicateRubricsUpdate();
+                        UpdateReplicatives();
                 }
-                return replicateRubrics;
+                return replicativeRubrics;
             }
         }
 
-        public MemberRubrics   ReplicateRubricsUpdate()
+        public MemberRubrics   UpdateReplicatives()
         {
-            replicateRubrics = new MemberRubrics();
-            replicateRubrics.Put(aggregateRubrics.AsValues().Where(p => p.AggregateOperand == AggregateOperand.Bind));
-            return replicateRubrics;
+            replicativeRubrics = new MemberRubrics();
+            replicativeRubrics.Put(aggregativeRubrics.AsValues().Where(p => p.AggregateOperand == AggregateOperand.Bind));
+            return replicativeRubrics;
         }
 
-        private MemberRubrics  aggregateRubrics;
-        public  MemberRubrics  AggregateRubrics
+        private MemberRubrics  aggregativeRubrics;
+        public  MemberRubrics  AggregativeRubrics
         {
             get
             {
-                if (aggregateRubrics == null)
+                if (aggregativeRubrics == null)
                 {
-                    AggregateRubricsUpdate();
+                    UpdateAggregatives();
                 }
-                return aggregateRubrics;
+                return aggregativeRubrics;
             }
         }
 
-        public MemberRubrics   AggregateRubricsUpdate()
+        public MemberRubrics   UpdateAggregatives()
         {
             AggregateOperand parsed = new AggregateOperand();
-            Links targetLinks = Linkmap.Links;
-            aggregateRubrics = new MemberRubrics();
+            Links targetLinks = figures.Links;
+            aggregativeRubrics = new MemberRubrics();
             MemberRubric[] _aggregateRubrics = figures.Rubrics.AsValues()
                                                                .Where(c => (c.RubricName.Split('#').Length > 1) ||
                                                                   (c.AggregatePattern != null &&
@@ -82,12 +82,12 @@ namespace System.Instant.Treatments
                                      .Select(o => o.RubricId).FirstOrDefault()).ToArray();
             }
 
-            aggregateRubrics.Put(_aggregateRubrics);
-            aggregateRubrics.AsValues().Where(j => j.AggregateIndex != null).Select(p => p.AggregateLinks = new Links(targetLinks.Cast<Link>().Where((x, y) => p.AggregateIndex.Contains(y)).ToArray()));
+            aggregativeRubrics.Put(_aggregateRubrics);
+            aggregativeRubrics.AsValues().Where(j => j.AggregateIndex != null).Select(p => p.AggregateLinks = new Links(targetLinks.Cast<Link>().Where((x, y) => p.AggregateIndex.Contains(y)).ToArray()));
 
-            ReplicateRubricsUpdate();
+            UpdateReplicatives();
 
-            return aggregateRubrics;
+            return aggregativeRubrics;
         }
 
         private MemberRubrics  summaryRubrics;
@@ -97,13 +97,13 @@ namespace System.Instant.Treatments
             {
                 if (summaryRubrics == null)
                 {
-                    SummaryRubricsUpdate();
+                    UpdateSummatives();
                 }
                 return summaryRubrics;
             }
         }
 
-        public  MemberRubrics  SummaryRubricsUpdate()
+        public  MemberRubrics  UpdateSummatives()
         {
             AggregateOperand parsed = new AggregateOperand();
             summaryRubrics = new MemberRubrics();

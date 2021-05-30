@@ -7,10 +7,9 @@ namespace System.Uniques
 {
     using System.Runtime.CompilerServices;
 
-    public static class HashHandle64
+    public static class UniqueCoder64
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe Byte[] ComputeHashBytes(byte[] bytes, uint seed = 0)
+        public static unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
         {
             byte[] b = new byte[8];
             fixed (byte* pb = b, pa = bytes)
@@ -20,8 +19,7 @@ namespace System.Uniques
             return b;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe Byte[] ComputeHashBytes(byte* bytes, int length, uint seed = 0)
+        public static unsafe Byte[] ComputeUniqueBytes(byte* bytes, int length, uint seed = 0)
         {
             byte[] b = new byte[8];
             fixed (byte* pb = b)
@@ -31,8 +29,7 @@ namespace System.Uniques
             return b;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe ulong  ComputeHashKey(byte[] bytes, uint seed = 0)
+        public static unsafe ulong  ComputeUniqueKey(byte[] bytes, uint seed = 0)
         {
             fixed (byte* pa = bytes)
             {
@@ -40,17 +37,15 @@ namespace System.Uniques
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe ulong  ComputeHashKey(byte* ptr, int length, ulong seed = 0)
+        public static unsafe ulong  ComputeUniqueKey(byte* ptr, int length, ulong seed = 0)
         {
             return xxHash64.UnsafeComputeHash(ptr, length, seed);
         }
     }
 
-    public static class HashHandle32
+    public static class UniqueCoder32
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe Byte[] ComputeHashBytes(byte[] bytes, uint seed = 0)
+        public static unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
         {
             byte[] b = new byte[4];
             fixed (byte* pb = b, pa = bytes)
@@ -60,8 +55,7 @@ namespace System.Uniques
             return b;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe Byte[] ComputeHashBytes(byte* ptr, int length, uint seed = 0)
+        public static unsafe Byte[] ComputeUniqueBytes(byte* ptr, int length, uint seed = 0)
         {
             byte[] b = new byte[4];
             fixed (byte* pb = b)
@@ -71,8 +65,7 @@ namespace System.Uniques
             return b;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe uint ComputeHashKey(byte[] bytes, uint seed = 0)
+        public static unsafe uint ComputeUniqueKey(byte[] bytes, uint seed = 0)
         {
             fixed (byte* pa = bytes)
             {
@@ -80,8 +73,7 @@ namespace System.Uniques
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe uint ComputeHashKey(byte* ptr, int length, uint seed = 0)
+        public static unsafe uint ComputeUniqueKey(byte* ptr, int length, uint seed = 0)
         {
             return xxHash32.UnsafeComputeHash(ptr, length, seed);
         }

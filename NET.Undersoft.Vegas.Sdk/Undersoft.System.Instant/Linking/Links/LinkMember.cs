@@ -1,14 +1,32 @@
-﻿using System.Linq;
-using System.Uniques;
-using System.Extract;
-using System.Multemic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.LinkMember.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (29.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant.Linking
 {
+    using System.Extract;
+    using System.Uniques;
+
     [JsonObject]
     [Serializable]
     public class LinkMember : IUnique
     {
+        #region Fields
+
+        public int BranchesCount = 0;
+
+        #endregion
+
+        #region Constructors
+
         public LinkMember()
         {
             KeyRubrics = new MemberRubrics();
@@ -21,33 +39,38 @@ namespace System.Instant.Linking
             Rubrics = figures.Rubrics;
             KeyRubrics = new MemberRubrics();
             Link = link;
-            byte[] keybytes = new long[] { figures.KeyBlock, link.KeyBlock }.GetBytes();
-            SetHashKey(keybytes.GetHashKey64());
-            SetHashSeed((uint)keybytes.GetHashKey32());
+            byte[] keybytes = new long[] { figures.UniqueKey, link.UniqueKey }.GetBytes();
+            SetUniqueKey(keybytes.UniqueKey64());
+            SetUniqueSeed((uint)keybytes.UniqueKey32());
         }
 
-        public string Name { get; set; }
+        #endregion
 
-        public IFigures Figures { get; set; }
-
-        public Link Link { get; set; }
-
-        public LinkSite Site { get; set; }
-
-        public int BranchesCount = 0;
-
-        public IRubrics Rubrics { get; set; }
-    
-        public IRubrics KeyRubrics { get; set; }       
-
-        public Ussc SystemSerialCode { get; set; }
+        #region Properties
 
         public IUnique Empty => Ussc.Empty;
 
-        public long KeyBlock
-        { get => SystemSerialCode.KeyBlock; set => SystemSerialCode.SetHashKey(value); }
-        public uint SeedBlock
-        { get => SystemSerialCode.SeedBlock; set => SystemSerialCode.SetHashSeed(value); }
+        public IFigures Figures { get; set; }
+
+        public long UniqueKey { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
+
+        public IRubrics KeyRubrics { get; set; }
+
+        public Link Link { get; set; }
+
+        public string Name { get; set; }
+
+        public IRubrics Rubrics { get; set; }
+
+        public uint UniqueSeed { get => SystemSerialCode.UniqueSeed; set => SystemSerialCode.SetUniqueSeed(value); }
+
+        public LinkSite Site { get; set; }
+
+        public Ussc SystemSerialCode { get; set; }
+
+        #endregion
+
+        #region Methods
 
         public int CompareTo(IUnique other)
         {
@@ -64,31 +87,31 @@ namespace System.Instant.Linking
             return SystemSerialCode.GetBytes();
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return SystemSerialCode.GetHashKey();
+            return SystemSerialCode.UniqueKey;
         }
 
-        public byte[] GetKeyBytes()
+        public uint GetUniqueSeed()
         {
-            return SystemSerialCode.GetKeyBytes();
+            return SystemSerialCode.GetUniqueSeed();
         }
 
-        public void SetHashKey(long value)
+        public byte[] GetUniqueBytes()
         {
-            SystemSerialCode.SetHashKey(value);
+            return SystemSerialCode.GetUniqueBytes();
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueKey(long value)
         {
-            SystemSerialCode.SetHashSeed(seed);
+            SystemSerialCode.SetUniqueKey(value);
         }
 
-        public uint GetHashSeed()
+        public void SetUniqueSeed(uint seed)
         {
-            return SystemSerialCode.GetHashSeed();
+            SystemSerialCode.SetUniqueSeed(seed);
         }
+
+        #endregion
     }
-
-
 }

@@ -16,18 +16,18 @@ namespace System.Uniques
         {
             get
             {
-                long block = KeyBlock;
+                long block = UniqueKey;
                 return (block << 32) | ((block >> 16) & 0xffff0000) | (block >> 48);
             }
             set
             {
-                KeyBlock = (value >> 32) | (((value & 0x0ffff0000) << 16)) | (value << 48);
+                UniqueKey = (value >> 32) | (((value & 0x0ffff0000) << 16)) | (value << 48);
             }
         }
 
         public Usid(long l)
         {
-            KeyBlock = l;
+            UniqueKey = l;
         }
         public Usid(string ca)
         {
@@ -59,7 +59,7 @@ namespace System.Uniques
         public Usid(object key)
         {
             fixed (byte* n = bytes)
-                *((long*)n) = key.GetHashKey64();            
+                *((long*)n) = key.UniqueKey64();            
         }
 
         public byte[] this[int offset]
@@ -111,12 +111,12 @@ namespace System.Uniques
             return r;
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {          
             return GetBytes();
         }
 
-        public long KeyBlock
+        public long UniqueKey
         {
             get
             {
@@ -176,30 +176,30 @@ namespace System.Uniques
 
         public bool IsNotEmpty
         {
-            get { return (KeyBlock > 0); }
+            get { return (UniqueKey > 0); }
         }
 
         public bool IsEmpty
         {
-            get { return (KeyBlock == 0); }
+            get { return (UniqueKey == 0); }
         }             
 
         public override int GetHashCode()
         {
             fixed (byte* pbyte = bytes)
             {
-                return (int)HashHandle32.ComputeHashKey(pbyte, 8);
+                return (int)UniqueCoder32.ComputeUniqueKey(pbyte, 8);
             }
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            KeyBlock = value;
+            UniqueKey = value;
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return KeyBlock;
+            return UniqueKey;
         }
 
         public int CompareTo(object value)
@@ -209,17 +209,17 @@ namespace System.Uniques
             if (!(value is Usid))
                 throw new Exception();
 
-            return (int)(KeyBlock - value.GetHashKey64());
+            return (int)(UniqueKey - value.UniqueKey64());
         }
 
         public int CompareTo(Usid g)
         {
-            return (int)(KeyBlock - g.KeyBlock);
+            return (int)(UniqueKey - g.UniqueKey);
         }
 
         public int CompareTo(IUnique g)
         {
-            return (int)(KeyBlock - g.GetHashKey());
+            return (int)(UniqueKey - g.UniqueKey());
         }
 
         public override bool Equals(object value)
@@ -227,26 +227,26 @@ namespace System.Uniques
             if (value == null)
                 return false;
             if ((value is string))
-                return new Usid(value.ToString()).KeyBlock == KeyBlock;
+                return new Usid(value.ToString()).UniqueKey == UniqueKey;
 
-            return (KeyBlock == ((Usid)value).KeyBlock);
+            return (UniqueKey == ((Usid)value).UniqueKey);
         }
 
         public bool Equals(long g)
         {
-            return (KeyBlock == g);
+            return (UniqueKey == g);
         }
         public bool Equals(Usid g)
         {
-            return (KeyBlock == g.KeyBlock);
+            return (UniqueKey == g.UniqueKey);
         }
         public bool Equals(IUnique g)
         {
-            return (KeyBlock == g.KeyBlock);
+            return (UniqueKey == g.UniqueKey);
         }
         public bool Equals(string g)
         {
-            return (KeyBlock == new Usid(g).KeyBlock);
+            return (UniqueKey == new Usid(g).UniqueKey);
         }
 
         public override String ToString()
@@ -266,11 +266,11 @@ namespace System.Uniques
 
         public static bool operator ==(Usid a, Usid b)
         {
-            return (a.KeyBlock == b.KeyBlock);
+            return (a.UniqueKey == b.UniqueKey);
         }
         public static bool operator !=(Usid a, Usid b)
         {
-            return (a.KeyBlock != b.KeyBlock);
+            return (a.UniqueKey != b.UniqueKey);
         }
 
         public static explicit operator Usid(String s)
@@ -357,16 +357,16 @@ namespace System.Uniques
             _KeyBlock = ((pchlong << 6) & 0x3fffffff00000000L) | ((pchlong << 6) & 0xffff0000L) | (pchlong & 0x03ffL);
         }
 
-        public uint SeedBlock
+        public uint UniqueSeed
         {
             get => 0;
             set => throw new NotImplementedException();
         }
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
             throw new NotImplementedException();
         }
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
             return 0;
         }

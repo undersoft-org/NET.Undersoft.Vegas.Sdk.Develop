@@ -30,7 +30,8 @@ using System.Runtime.CompilerServices;
 namespace System.Multemic
 {
     [StructLayout(LayoutKind.Sequential)] [Serializable]
-    public abstract class Card<V> : IEquatable<ICard<V>>, IEquatable<object>, IEquatable<long>, IComparable<object>, IComparable<long>, IComparable<ICard<V>>, ICard<V>
+    public abstract class Card<V> : IEquatable<ICard<V>>, IEquatable<object>, IEquatable<long>, IComparable<object>, 
+                                    IComparable<long>, IComparable<ICard<V>>, ICard<V>
     {
         [NonSerialized] private ICard<V> extent;
         [NonSerialized] private ICard<V> next;
@@ -75,7 +76,7 @@ namespace System.Multemic
 
         public virtual bool Equals(IUnique other)
         {
-            return Key == other.KeyBlock;
+            return Key == other.UniqueKey;
         }
         public virtual bool Equals(ICard<V> y)
         {
@@ -86,22 +87,22 @@ namespace System.Multemic
             return Key == key;
         }
 
-        public virtual void SetHashKey(long hashcode)
+        public virtual void SetUniqueKey(long hashcode)
         {
-            KeyBlock = hashcode;
+            UniqueKey = hashcode;
         }
-        public virtual long GetHashKey()
+        public virtual long GetUniqueKey()
         {
             return Key;
         }
 
-        public virtual void SetHashSeed(uint hashseed)
+        public virtual void SetUniqueSeed(uint hashseed)
         {
-            SeedBlock = hashseed;
+            UniqueSeed = hashseed;
         }
-        public virtual uint GetHashSeed()
+        public virtual uint GetUniqueSeed()
         {
-            return SeedBlock;
+            return UniqueSeed;
         }
 
         public override abstract bool Equals(object y);
@@ -110,7 +111,7 @@ namespace System.Multemic
 
         public virtual  int CompareTo(IUnique other)
         {
-            return (int)(Key - other.GetHashKey());
+            return (int)(Key - other.UniqueKey);
         }
         public abstract int CompareTo(object other);
         public virtual  int CompareTo(long key)
@@ -123,30 +124,30 @@ namespace System.Multemic
         }
 
         public abstract byte[] GetBytes();
-        public abstract byte[] GetKeyBytes();
+        public abstract byte[] GetUniqueBytes();
 
         public virtual ICard<V> Extent { get => extent; set => extent = value; }
         public virtual ICard<V> Next { get => next; set => next = value; }
 
         public virtual IUnique Empty => throw new NotImplementedException();
 
-        public virtual long KeyBlock { get => Key; set => Key = value; }
+        public virtual long UniqueKey { get => Key; set => Key = value; }
 
-        public virtual uint SeedBlock { get => 0; set => throw new NotImplementedException(); }
+        public virtual uint UniqueSeed { get => 0; set => throw new NotImplementedException(); }
 
         public virtual Type GetUniqueType() { return this.GetType(); }
 
-        public virtual int[] IdentityIndexes()
+        public virtual int[] UniqueOrdinals()
         {
             return null;
         }
 
-        public virtual object[] IdentityValues()
+        public virtual object[] UniqueValues()
         {
-            return  new object[] { Key };
+            return new object[] { Key };
         }
 
-        public virtual long IdentitiesToKey()
+        public virtual long UniquesAsKey()
         {
             return Key;
         }

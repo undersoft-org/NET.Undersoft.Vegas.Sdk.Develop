@@ -16,11 +16,11 @@ using System.Multemic.Basedeck;
 namespace System.Multemic
 {      
 
-    public class CardKeyBlockSeries<V> : IEnumerator<long>, IEnumerator
+    public class CardUniqueKeySeries<V> : IEnumerator<long>, IEnumerator
     {
         private IDeck<V> map;
 
-        public CardKeyBlockSeries(IDeck<V> Map)
+        public CardUniqueKeySeries(IDeck<V> Map)
         {
             map = Map;
             Entry = map.First;

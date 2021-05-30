@@ -1,130 +1,129 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.Organizeator.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (29.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant.Treatments
 {
-    
-    public static class Picker
-    {                          
-        public static IFigures Pickout(this IFigures figures, out bool sorted, out bool filtered, int stage = 1)
+    using System.Collections.Generic;
+    using System.Linq;
+
+    public static class Organizator
+    {
+        #region Methods
+
+        public static IFigure[] Organize(this IFigure[] figureArray, Func<IFigure, bool> evaluator)
+        {
+            return figureArray.Where(evaluator).ToArray();
+        }
+
+        public static IFigures Organize(this IFigures figures, Func<IFigure, bool> evaluator)
+        {
+            IFigures view = figures.Organized = (IFigures)figures.Type.New();
+            view.Add(figures.AsEnumerable().AsQueryable().Where(evaluator));
+            return view;
+        }
+
+        public static IFigures Organize(this IFigures figures, IFigure[] appendfigures, int stage = 1)
         {
             FigureFilter Filter = figures.Filter;
             FigureSort Sort = figures.Sort;
-
-            filtered = (Filter.Terms.Count > 0) ? true : false;
-            sorted = (Sort.Terms.Count > 0) ? true : false;
-            return ResolvePick(figures, Filter, Sort, stage);
+            return ResolveOrganizing(figures, Filter, Sort, stage, appendfigures);
         }
-        public static IFigures Pick(this IFigures figures, int stage = 1, FilterTerms filter = null, SortTerms sort = null, bool saveonly = false, bool clearonend = false)
+
+        public static IFigures Organize(this IFigures figures, int stage = 1, FilterTerms filter = null, SortTerms sort = null, bool saveonly = false, bool clearonend = false)
         {
             FigureFilter Filter = figures.Filter;
             FigureSort Sort = figures.Sort;
 
             if (filter != null)
             {
-                Filter.Terms.AddNewRange(filter.AsEnumerable().ToArray());
+                Filter.Terms.Renew(filter.AsEnumerable().ToArray());
             }
             if (sort != null)
             {
-                Sort.Terms.AddNewRange(sort.AsEnumerable().ToArray());
+                Sort.Terms.Renew(sort.AsEnumerable().ToArray());
             }
             if (!saveonly)
             {
-                IFigures result = ResolvePick(figures, Filter, Sort, stage);
+                IFigures result = ResolveOrganizing(figures, Filter, Sort, stage);
                 if (clearonend)
                 {
                     figures.Filter.Terms.Clear();
                     figures.Filter.Evaluator = null;
-                    figures.Picked.Filter = null;
+                    figures.Organized.Organizer = null;
                 }
                 return result;
             }
             return null;
         }
-        public static IFigures Pick(this IFigures figures, List<FilterTerm> filterList, List<SortTerm> sortList, bool saveonly = false, bool clearonend = false, int stage = 1)
+
+        public static IFigures Organize(this IFigures figures, List<FilterTerm> filterList, List<SortTerm> sortList, bool saveonly = false, bool clearonend = false, int stage = 1)
         {
             FigureFilter Filter = figures.Filter;
             FigureSort Sort = figures.Sort;
             if (filterList != null)
             {
-                Filter.Terms.AddNewRange(filterList);
+                Filter.Terms.Renew(filterList);
             }
             if (sortList != null)
             {
-                Sort.Terms.AddNewRange(sortList);
+                Sort.Terms.Renew(sortList);
             }
             if (!saveonly)
             {
-                IFigures result = ResolvePick(figures, Filter, Sort, stage);
+                IFigures result = ResolveOrganizing(figures, Filter, Sort, stage);
                 if (clearonend)
                 {
                     figures.Filter.Terms.Clear();
                     figures.Filter.Evaluator = null;
-                    figures.Picked.Filter = null;
+                    figures.Organized.Organizer = null;
                 }
                 return result;
             }
             return null;
         }
-        public static IFigures Pick(this IFigures figures, IFigure[] appendfigures, int stage = 1)
+
+        public static IFigures Organize(this IFigures figures, out bool sorted, out bool filtered, int stage = 1)
         {
             FigureFilter Filter = figures.Filter;
             FigureSort Sort = figures.Sort;
-            return ResolvePick(figures, Filter, Sort, stage, appendfigures);
+
+            filtered = (Filter.Terms.Count > 0) ? true : false;
+            sorted = (Sort.Terms.Count > 0) ? true : false;
+            return ResolveOrganizing(figures, Filter, Sort, stage);
         }
 
-        public static IFigure[] Pick(this IFigure[] figureArray, Func<IFigure, bool> evaluator)
+        private static IFigures ExecuteOrganizing(IFigures figures, FigureFilter filter, FigureSort sort, int stage = 1, IFigure[] appendfigures = null)
         {
-            return figureArray.Where(evaluator).ToArray();
-        }
-        public static IFigures Pick(this IFigures figures, Func<IFigure, bool> evaluator)
-        {
-            IFigures view = figures.Picked = (IFigures)figures.Type.New();
-            view.Add(figures.AsEnumerable().AsQueryable().Where(evaluator));
-            return view;
-        }
-
-        private static IFigures ResolvePick(IFigures figures, FigureFilter Filter, FigureSort Sort, int stage = 1, IFigure[] appendfigures = null)
-        {
-            FilterStage filterStage = (FilterStage)Enum.ToObject(typeof(FilterStage), stage);
-            int filtercount = Filter.Terms.AsEnumerable().Where(f => f.Stage.Equals(filterStage)).ToArray().Length;
-            int sortcount = Sort.Terms.Count;
-
-            if (filtercount > 0)
-                if (sortcount > 0)
-                    return ExecutePick(figures, Filter, Sort, stage, appendfigures);
-                else
-                    return ExecutePick(figures, Filter, null, stage, appendfigures);
-            else if (sortcount > 0)
-                return ExecutePick(figures, null, Sort, stage, appendfigures);
-            else
-                return ExecutePick(figures, null, null, stage, appendfigures);
-
-        }
-       
-        private static IFigures ExecutePick(IFigures _figures, FigureFilter filter, FigureSort sort, int stage = 1, IFigure[] appendfigures = null)
-        {
-            IFigures table = _figures;
-            IFigures figures = null;
-            IFigures view = _figures.Picked;           
+            IFigures table = figures;
+            IFigures _figures = null;
+            IFigures view = figures.Organized;
 
             if (appendfigures == null)
                 if (stage > 1)
-                    figures = view;
+                    _figures = view;
                 else if (stage < 0)
                 {
-                    figures = _figures;
-                    view = _figures.Picked = (IFigures)_figures.Type.New();
+                    _figures = figures;
+                    view = figures.Organized = (IFigures)figures.Type.New();
                 }
                 else
                 {
-                    figures = table;
+                    _figures = table;
                 }
 
             if (filter != null && filter.Terms.Count > 0)
             {
                 filter.Evaluator = filter.GetExpression(stage).Compile();
-                view.Picker = filter.Evaluator;
+                view.Organizer = filter.Evaluator;
 
                 if (sort != null && sort.Terms.Count > 0)
                 {
@@ -134,7 +133,7 @@ namespace System.Instant.Treatments
                     if (appendfigures != null)
                         tsrt = appendfigures.AsEnumerable().Where(filter.Evaluator);
                     else
-                        tsrt = figures.AsEnumerable().Where(filter.Evaluator);
+                        tsrt = _figures.AsEnumerable().Where(filter.Evaluator);
 
                     foreach (SortTerm fcs in sort.Terms)
                     {
@@ -152,7 +151,7 @@ namespace System.Instant.Treatments
                         view.Clear();
                         view.Add(ttby.ToArray());
                     }
-                    
+
                 }
                 else
                 {
@@ -167,19 +166,19 @@ namespace System.Instant.Treatments
             }
             else if (sort != null && sort.Terms.Count > 0)
             {
-                view.Filter = null;
+                view.Organizer = null;
                 view.Filter.Evaluator = null;
 
                 bool isFirst = true;
                 IOrderedQueryable<IFigure> ttby = null;
-            
+
                 foreach (SortTerm fcs in sort.Terms)
                 {
                     if (isFirst)
                         if (appendfigures != null)
                             ttby = appendfigures.AsQueryable().OrderBy(o => o[fcs.RubricName], fcs.Direction, Comparer<object>.Default);
                         else
-                            ttby = figures.AsEnumerable().AsQueryable().OrderBy(o => o[fcs.RubricName], fcs.Direction, Comparer<object>.Default);
+                            ttby = _figures.AsEnumerable().AsQueryable().OrderBy(o => o[fcs.RubricName], fcs.Direction, Comparer<object>.Default);
                     else
                         ttby = ttby.ThenBy(o => o[fcs.RubricName], fcs.Direction, Comparer<object>.Default);
 
@@ -195,7 +194,7 @@ namespace System.Instant.Treatments
             {
                 if (stage < 2)
                 {
-                    view.Filter = null;
+                    view.Organizer = null;
                     view.Filter.Evaluator = null;
                 }
 
@@ -208,9 +207,28 @@ namespace System.Instant.Treatments
             //  view.PagingDetails.ComputePageCount(view.Count);
             if (stage > 0)
             {
-                table.Picked = view;
+                table.Organized = view;
             }
             return view;
-        }                
+        }
+
+        private static IFigures ResolveOrganizing(IFigures figures, FigureFilter Filter, FigureSort Sort, int stage = 1, IFigure[] appendfigures = null)
+        {
+            OrganizeStage filterStage = (OrganizeStage)Enum.ToObject(typeof(OrganizeStage), stage);
+            int filtercount = Filter.Terms.AsEnumerable().Where(f => f.Stage.Equals(filterStage)).ToArray().Length;
+            int sortcount = Sort.Terms.Count;
+
+            if (filtercount > 0)
+                if (sortcount > 0)
+                    return ExecuteOrganizing(figures, Filter, Sort, stage, appendfigures);
+                else
+                    return ExecuteOrganizing(figures, Filter, null, stage, appendfigures);
+            else if (sortcount > 0)
+                return ExecuteOrganizing(figures, null, Sort, stage, appendfigures);
+            else
+                return ExecuteOrganizing(figures, null, null, stage, appendfigures);
+        }
+
+        #endregion
     }
 }

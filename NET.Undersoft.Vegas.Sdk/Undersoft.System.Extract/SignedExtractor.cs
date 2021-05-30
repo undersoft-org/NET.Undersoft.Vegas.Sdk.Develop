@@ -438,11 +438,7 @@ namespace System.Extract
             if (e == typeof(DateTime))
                 return 8;
             if (e == typeof(Enum))
-                return 4;
-            if (e == typeof(ISerialNumber))
-                return 24;
-            if (e == typeof(IUnique))
-                return 8;           
+                return 4;          
             return Marshal.SizeOf(e);
         }
         private static int ValueTypeObjectSize(object structure)
@@ -453,11 +449,7 @@ namespace System.Extract
             if (t == typeof(DateTime))
                 return 8;
             if (t == typeof(Enum))
-                return 4;
-            if (structure is ISerialNumber)
-                return 24;
-            if (structure is IUnique)
-                return 8;            
+                return 4;           
             return Marshal.SizeOf(structure);
         }
 

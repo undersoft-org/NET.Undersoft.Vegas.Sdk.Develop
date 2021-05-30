@@ -32,7 +32,7 @@ namespace System.Instant
 
         Type Type { get; set; }
 
-        IFigures Picked { get; set; }
+        IFigures Organized { get; set; }
 
         IFigure Summary { get; set; }
 
@@ -40,7 +40,7 @@ namespace System.Instant
 
         FigureSort Sort { get; set; }
 
-        Func<IFigure, bool> Picker { get; set; }
+        Func<IFigure, bool> Organizer { get; set; }
 
         Treatment Treatment { get; set; }
 

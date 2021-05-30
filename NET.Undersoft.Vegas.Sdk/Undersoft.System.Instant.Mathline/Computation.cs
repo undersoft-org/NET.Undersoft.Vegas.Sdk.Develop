@@ -11,7 +11,7 @@ namespace System.Instant.Mathline
         public Computation(IFigures data)
         {
             computation = new MathRubrics(data);
-            systemSerialCode.KeyBlock = DateTime.Now.ToBinary();
+            systemSerialCode.UniqueKey = DateTime.Now.ToBinary();
             if (data.Computations == null)
                 data.Computations = new Deck<IComputation>();
             data.Computations.Put(this);
@@ -87,8 +87,8 @@ namespace System.Instant.Mathline
         private Ussn systemSerialCode;
         public Ussn SystemSerialCode { get => systemSerialCode; set => systemSerialCode = value; }
         public IUnique Empty => Ussn.Empty;
-        public long KeyBlock
-        { get => SystemSerialCode.KeyBlock; set => systemSerialCode.KeyBlock = value; }
+        public long UniqueKey
+        { get => SystemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
        
 
         public int CompareTo(IUnique other)
@@ -103,30 +103,30 @@ namespace System.Instant.Mathline
         {
             return systemSerialCode.GetBytes();
         }
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return systemSerialCode.GetHashKey();
+            return systemSerialCode.GetUniqueKey();
         }
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return systemSerialCode.GetKeyBytes();
+            return systemSerialCode.GetUniqueBytes();
         }
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            systemSerialCode.SetHashKey(value);
-        }
-
-        public uint SeedBlock
-        { get => systemSerialCode.SeedBlock; set => systemSerialCode.SeedBlock = value; }
-
-        public void SetHashSeed(uint seed)
-        {
-            systemSerialCode.SetHashSeed(seed);
+            systemSerialCode.SetUniqueKey(value);
         }
 
-        public uint GetHashSeed()
+        public uint UniqueSeed
+        { get => systemSerialCode.UniqueSeed; set => systemSerialCode.UniqueSeed = value; }
+
+        public void SetUniqueSeed(uint seed)
         {
-            return systemSerialCode.GetHashSeed();
+            systemSerialCode.SetUniqueSeed(seed);
+        }
+
+        public uint GetUniqueSeed()
+        {
+            return systemSerialCode.GetUniqueSeed();
         }
     }
 }

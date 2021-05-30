@@ -50,7 +50,7 @@ namespace System.Instant
 
         public override ICard<FieldMapping> NewCard(FieldMapping value)
         {
-            return new Card64<FieldMapping>(value.DbTableName.GetHashKey(), value);
+            return new Card64<FieldMapping>(value.DbTableName.UniqueKey(), value);
         }
         public override ICard<FieldMapping> NewCard(ICard<FieldMapping> value)
         {

@@ -41,13 +41,13 @@ namespace System.Instant
         public FigureCard(IFigure value, IFigures figures) : base(value)
         {            
             Figures = figures;
-            IdentitiesToKey();
+            UniquesAsKey();
             
         }
         public FigureCard(ICard<IFigure> value, IFigures figures) : base(value)
         {
             Figures = figures;
-            IdentitiesToKey();
+            UniquesAsKey();
         }
 
         public object this[int fieldId]
@@ -64,7 +64,7 @@ namespace System.Instant
         public override void Set(object key, IFigure value)
         {
             this.value = value;
-            this.value.KeyBlock = key.GetHashKey();
+            this.value.UniqueKey = key.UniqueKey();
         }
         public override void Set(IFigure value)
         {
@@ -81,21 +81,21 @@ namespace System.Instant
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.GetHashKey());
+            return Key.Equals(y.UniqueKey());
         }
         public          bool Equals(IFigure other)
         {
-            return Key == other.KeyBlock;
+            return Key == other.UniqueKey;
         }
 
         public override int GetHashCode()
         {
-            return Value.GetKeyBytes().BitAggregate64to32().ToInt32();
+            return Value.GetUniqueBytes().BitAggregate64to32().ToInt32();
         }
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.GetHashKey64());
+            return (int)(Key - other.UniqueKey64());
         }
         public override int CompareTo(long key)
         {
@@ -107,7 +107,7 @@ namespace System.Instant
         }
         public          int CompareTo(IFigure other)
         {
-            return (int)(Key - other.KeyBlock);
+            return (int)(Key - other.UniqueKey);
         }
 
         public override byte[] GetBytes()
@@ -126,45 +126,45 @@ namespace System.Instant
                 return value.GetBytes();
         }
 
-        public unsafe override byte[] GetKeyBytes()
+        public unsafe override byte[] GetUniqueBytes()
         {
-            return value.GetKeyBytes();
+            return value.GetUniqueBytes();
         }
 
-        public override    int[] IdentityIndexes()
+        public override int[] UniqueOrdinals()
         {
-            if(Figures.KeyRubrics != null)
-                return Figures.KeyRubrics.Ordinals;
+            return Figures.KeyRubrics.Ordinals;
+        }
+
+        public override object[] UniqueValues()
+        {
+            int[] ordinals = UniqueOrdinals();
+            if (ordinals != null)
+                return ordinals.Select(x => value[x]).ToArray();
             return null;
         }
-        public override object[] IdentityValues()
+
+        public override long UniquesAsKey()
         {
-            int[] ordinals = IdentityIndexes();
-            if (ordinals != null)
-               return ordinals.Select(x => value[x]).ToArray();
-            return null;      
-        }
-        public override     long IdentitiesToKey()
-        {
-            long key = value.KeyBlock;
+            long key = value.UniqueKey;
             if (key == 0)
             {
-                key = Figures.KeyRubrics.Ordinals.Select(x => value[x]).ToArray().GetHashKey();           
-                value.KeyBlock = key;
+                key = Figures.KeyRubrics.Ordinals.Select(x => value[x]).ToArray().UniqueKey();
+                value.UniqueKey = key;
             }
             return key;
-        }  
+        }
 
         public override long Key
         {
-            get => value.KeyBlock;                                                   
-            set => this.value.KeyBlock = value;            
+            get => value.UniqueKey;                                                   
+            set => this.value.UniqueKey = value;            
         }
 
-        public override long KeyBlock
+        public override long UniqueKey
         {
-            get => value.KeyBlock;
-            set => this.value.KeyBlock = value;
+            get => value.UniqueKey;
+            set => this.value.UniqueKey = value;
         }
 
         public object[] ValueArray
@@ -207,7 +207,7 @@ namespace System.Instant
         {
             if (presets != null && !Figures.Prime)
             {
-                MemberRubric rubric = Figures.Rubrics[propertyName.GetHashKey()];
+                MemberRubric rubric = Figures.Rubrics[propertyName.UniqueKey()];
                 if (rubric != null)
                 {
                     object val = presets.Get(rubric.FigureFieldId);
@@ -240,7 +240,7 @@ namespace System.Instant
         }
         public void SetPreset(string propertyName, object value)
         {
-            MemberRubric rubric = Figures.Rubrics[propertyName.GetHashKey()];
+            MemberRubric rubric = Figures.Rubrics[propertyName.UniqueKey()];
             if (rubric != null)
                 SetPreset(rubric.FigureFieldId, value);
             else

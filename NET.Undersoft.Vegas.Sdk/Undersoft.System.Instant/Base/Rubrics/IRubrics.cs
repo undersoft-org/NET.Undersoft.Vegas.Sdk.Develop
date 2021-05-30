@@ -32,11 +32,11 @@ namespace System.Instant
 
         byte[] GetBytes(IFigure figure);
 
-        long GetHashKey(IFigure figure, uint seed = 0);
+        long GetUniqueKey(IFigure figure, uint seed = 0);
 
-        byte[] GetKeyBytes(IFigure figure, uint seed = 0);
+        byte[] GetUniqueBytes(IFigure figure, uint seed = 0);
 
-        void SetHashKey(IFigure figure, uint seed = 0);
+        void SetUniqueKey(IFigure figure, uint seed = 0);
 
         void Update();
 

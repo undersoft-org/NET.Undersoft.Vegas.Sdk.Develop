@@ -12,7 +12,7 @@ namespace System.Uniques
     {
         private fixed byte bytes[24];              
 
-        public long    KeyBlock
+        public long    UniqueKey
         {
             get
             {
@@ -27,7 +27,7 @@ namespace System.Uniques
             }
         }
 
-        public uint    SeedBlock
+        public uint    UniqueSeed
         {
             get
             {
@@ -155,7 +155,7 @@ namespace System.Uniques
         }
         public Ussn(object key, uint seed)
         {
-            byte[] shah = key.GetHashBytes64();
+            byte[] shah = key.UniqueBytes64();
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = shah)
@@ -191,7 +191,7 @@ namespace System.Uniques
         }
         public Ussn(object key, short z, short y, short x, BitVector32 flags, DateTime time)
         {
-            byte[] shah = key.GetHashBytes64();
+            byte[] shah = key.UniqueBytes64();
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = shah)
@@ -207,7 +207,7 @@ namespace System.Uniques
         {
             fixed (byte* n = bytes)
             {
-                *((long*)n) = key.GetHashKey64();
+                *((long*)n) = key.UniqueKey64();
                // *((long*)(n + 16)) = DateTime.Now.ToBinary();    //TODO: f.Tick - rok 2018.01.01 w tikach
             }
         }
@@ -312,7 +312,7 @@ namespace System.Uniques
             return r;
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {            
             byte[] kbytes = new byte[8];
             fixed (byte* b = bytes)
@@ -321,24 +321,24 @@ namespace System.Uniques
             return kbytes;
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            KeyBlock = value;
+            UniqueKey = value;
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return KeyBlock;
+            return UniqueKey;
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            SeedBlock = seed;
+            UniqueSeed = seed;
         }
 
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return SeedBlock;
+            return UniqueSeed;
         }       
 
         public long    ValueFromXYZ(int vectorZ, int vectorY)
@@ -390,12 +390,12 @@ namespace System.Uniques
 
         public bool IsNotEmpty
         {
-            get { return (KeyBlock != 0); }
+            get { return (UniqueKey != 0); }
         }
 
         public bool IsEmpty
         {
-            get { return (KeyBlock == 0); }
+            get { return (UniqueKey == 0); }
         }      
 
         public override int GetHashCode()
@@ -411,22 +411,22 @@ namespace System.Uniques
             if (!(value is Ussn))
                 throw new Exception();
 
-            return (int)(KeyBlock - ((Ussn)value).KeyBlock);
+            return (int)(UniqueKey - ((Ussn)value).UniqueKey);
         }
 
         public int CompareTo(Ussn g)
         {
-            return (int)(KeyBlock - g.KeyBlock);
+            return (int)(UniqueKey - g.UniqueKey);
         }
 
         public int CompareTo(IUnique g)
         {
-            return (int)(GetHashKey() - g.GetHashKey());
+            return (int)(UniqueKey - g.UniqueKey());
         }
 
         public bool Equals(long g)
         {
-            return (KeyBlock == g);
+            return (UniqueKey == g);
         }
 
         public override bool Equals(object value)
@@ -434,18 +434,18 @@ namespace System.Uniques
             if (value == null)
                 return false;
             if ((value is string))
-                return new Ussn(value.ToString()).KeyBlock == KeyBlock;
+                return new Ussn(value.ToString()).UniqueKey == UniqueKey;
 
-            return (KeyBlock == ((Ussn)value).KeyBlock);
+            return (UniqueKey == ((Ussn)value).UniqueKey);
         }
 
         public bool Equals(Ussn g)
         {
-            return (KeyBlock == g.KeyBlock);
+            return (UniqueKey == g.UniqueKey);
         }
         public bool Equals(IUnique g)
         {
-            return (GetHashKey() == g.GetHashKey());
+            return (UniqueKey == g.UniqueKey());
         }
 
         public override String ToString()
@@ -465,12 +465,12 @@ namespace System.Uniques
 
         public static bool operator ==(Ussn a, Ussn b)
         {
-            return (a.KeyBlock == b.KeyBlock);
+            return (a.UniqueKey == b.UniqueKey);
         }
 
         public static bool operator !=(Ussn a, Ussn b)
         {
-            return (a.KeyBlock != b.KeyBlock);
+            return (a.UniqueKey != b.UniqueKey);
         }
 
         public static explicit operator Ussn(String s)

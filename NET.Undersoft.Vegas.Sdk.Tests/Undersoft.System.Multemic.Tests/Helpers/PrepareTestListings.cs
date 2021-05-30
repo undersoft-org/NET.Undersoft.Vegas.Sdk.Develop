@@ -28,7 +28,7 @@ namespace Undersoft.Tests.System.Multemic
             List<long> hashes = new List<long>();
             foreach(var s in keys)
             {
-                hashes.Add(s.GetHashKey64());
+                hashes.Add(s.UniqueKey64());
             }
             return list;
         }

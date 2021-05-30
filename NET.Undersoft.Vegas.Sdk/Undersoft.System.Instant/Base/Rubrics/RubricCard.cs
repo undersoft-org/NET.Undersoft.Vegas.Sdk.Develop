@@ -13,7 +13,7 @@ namespace System.Instant
 
         public RubricCard()
         { }
-        public RubricCard(object key, MemberRubric value) : base(key.GetHashKey64(), value)
+        public RubricCard(object key, MemberRubric value) : base(key.UniqueKey64(), value)
         {           
         }
         public RubricCard(long key, MemberRubric value) : base(key, value)
@@ -29,12 +29,12 @@ namespace System.Instant
         public override void Set(object key, MemberRubric value)
         {
             this.value = value;
-            _key = key.GetHashKey64();
+            _key = key.UniqueKey64();
         }
         public override void Set(MemberRubric card)
         {
             this.value = card;
-            _key = card.GetHashKey();
+            _key = card.UniqueKey;
         }
         public override void Set(ICard<MemberRubric> card)
         {
@@ -48,7 +48,7 @@ namespace System.Instant
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.GetHashKey64());
+            return Key.Equals(y.UniqueKey64());
         }
 
         public override int GetHashCode()
@@ -58,7 +58,7 @@ namespace System.Instant
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.GetHashKey64());
+            return (int)(Key - other.UniqueKey64());
         }
         public override int CompareTo(long key)
         {
@@ -71,10 +71,10 @@ namespace System.Instant
 
         public override byte[] GetBytes()
         {
-            return GetKeyBytes();
+            return GetUniqueBytes();
         }
 
-        public unsafe override byte[] GetKeyBytes()
+        public unsafe override byte[] GetUniqueBytes()
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)

@@ -49,7 +49,7 @@ namespace System.Instant
 
         public IFigures Figures { get; set; }
 
-        public long KeyBlock { get => Figures.KeyBlock; set => Figures.KeyBlock = value; }
+        public long UniqueKey { get => Figures.UniqueKey; set => Figures.UniqueKey = value; }
 
         public IRubrics KeyRubrics { get; set; }
 
@@ -57,7 +57,7 @@ namespace System.Instant
 
         public int[] Ordinals { get => ordinals; }
 
-        public uint SeedBlock { get => Figures.SeedBlock; set => Figures.SeedBlock = value; }
+        public uint UniqueSeed { get => Figures.UniqueSeed; set => Figures.UniqueSeed = value; }
 
         public Ussn SystemSerialCode { get => Figures.SystemSerialCode; set => Figures.SystemSerialCode = value; }
 
@@ -116,12 +116,12 @@ namespace System.Instant
             return b;
         }
 
-        public long GetHashKey()
-        {
-            return Figures.GetHashKey();
-        }
+        //public long GetUniqueKey()
+        //{
+        //    return Figures.UniqueKey;
+        //}
 
-        public unsafe long GetHashKey(IFigure figure, uint seed = 0)
+        public unsafe long GetUniqueKey(IFigure figure, uint seed = 0)
         {
             int size = Figures.FigureSize;
             byte* figurePtr = stackalloc byte[size * 2];
@@ -134,22 +134,22 @@ namespace System.Instant
                 Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
                 destOffset += l;
             }
-            return (long)HashHandle64.ComputeHashKey(bufferPtr, destOffset, seed);
+            return (long)UniqueCoder64.ComputeUniqueKey(bufferPtr, destOffset, seed);
         }
 
-        public uint GetHashSeed()
+        //public uint GetUniqueSeed()
+        //{
+        //    return Figures.GetUniqueSeed();
+        //}
+
+        public byte[] GetUniqueBytes()
         {
-            return Figures.GetHashSeed();
+            return Figures.GetUniqueBytes();
         }
 
-        public byte[] GetKeyBytes()
+        public unsafe byte[] GetUniqueBytes(IFigure figure, uint seed = 0)
         {
-            return Figures.GetKeyBytes();
-        }
-
-        public unsafe byte[] GetKeyBytes(IFigure figure, uint seed = 0)
-        {
-            //return KeyRubrics.Ordinals.Select(x => figure[x]).ToArray().GetHashKey64();
+            //return KeyRubrics.Ordinals.Select(x => figure[x]).ToArray().UniqueKey64();
             int size = Figures.FigureSize;
             byte* figurePtr = stackalloc byte[size * 2];
             byte* bufferPtr = figurePtr + size;
@@ -161,7 +161,7 @@ namespace System.Instant
                 Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
                 destOffset += l;
             }
-            ulong hash = HashHandle64.ComputeHashKey(bufferPtr, destOffset, seed);
+            ulong hash = UniqueCoder64.ComputeUniqueKey(bufferPtr, destOffset, seed);
             byte[] b = new byte[8];
             fixed (byte* bp = b)
                 *((ulong*)bp) = hash;
@@ -178,27 +178,27 @@ namespace System.Instant
         }
         public override ICard<MemberRubric> NewCard(MemberRubric value)
         {
-            return new RubricCard(value.GetHashKey(), value);
+            return new RubricCard(value.UniqueKey, value);
         }
         public override ICard<MemberRubric> NewCard(object key, MemberRubric value)
         {
             return new RubricCard(key, value);
         }
 
-        public void SetHashKey(IFigure figure, uint seed = 0)
+        public void SetUniqueKey(IFigure figure, uint seed = 0)
         {
-            figure.SetHashKey(GetHashKey(figure, seed));
+            figure.UniqueKey = GetUniqueKey(figure, seed);
         }
 
-        public void SetHashKey(long value)
-        {
-            Figures.SetHashKey(value);
-        }
+        //public void SetUniqueKey(long value)
+        //{
+        //    Figures.SetUniqueKey(value);
+        //}
 
-        public void SetHashSeed(uint seed)
-        {
-            Figures.SetHashSeed(seed);
-        }
+        //public void SetUniqueSeed(uint seed)
+        //{
+        //    Figures.SetUniqueSeed(seed);
+        //}
 
         public void Update()
         {

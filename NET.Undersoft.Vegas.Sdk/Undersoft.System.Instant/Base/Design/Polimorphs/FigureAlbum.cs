@@ -1,11 +1,23 @@
-﻿using System.Uniques;
-using System.Multemic;
-using System.Instant.Linking;
-using System.Instant.Treatments;
-using System.IO;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.FigureAlbum.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (29.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant
 {
+    using System.Instant.Linking;
+    using System.Instant.Treatments;
+    using System.IO;
+    using System.Multemic;
+    using System.Uniques;
+
     public abstract class FigureAlbum : CardBook<IFigure>, IFigures
     {
         public IInstant Instant { get; set; }
@@ -22,7 +34,7 @@ namespace System.Instant
 
         public abstract IFigure NewFigure();
 
-        public abstract  Type FigureType { get; set; }
+        public abstract Type FigureType { get; set; }
 
         public abstract int FigureSize { get; set; }
 
@@ -90,7 +102,7 @@ namespace System.Instant
         }
         public override ICard<IFigure> AddNew(object key)
         {
-            ICard<IFigure> newCard = NewCard(base.GetHashKey(key), NewFigure());
+            ICard<IFigure> newCard = NewCard(base.UniqueKey(key), NewFigure());
             if (InnerAdd(newCard))
                 return newCard;
             return null;
@@ -103,7 +115,7 @@ namespace System.Instant
 
         public Type Type { get; set; }
 
-        public IFigures Picked { get; set; }
+        public IFigures Organized { get; set; }
 
         public IFigure Summary { get; set; }
 
@@ -111,14 +123,14 @@ namespace System.Instant
 
         public FigureSort Sort { get; set; }
 
-        public Func<IFigure, bool> Picker { get; set; }
+        public Func<IFigure, bool> Organizer { get; set; }
 
         public IUnique Empty => Ussn.Empty;
 
-        public long KeyBlock
+        public long UniqueKey
         {
-            get => SystemSerialCode.KeyBlock;
-            set => SystemSerialCode.SetHashKey(value);
+            get => SystemSerialCode.UniqueKey;
+            set => SystemSerialCode.SetUniqueKey(value);
         }
 
         object IFigure.this[int fieldId]
@@ -136,33 +148,33 @@ namespace System.Instant
         {
             return SystemSerialCode.GetBytes();
         }
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetKeyBytes();
+            return SystemSerialCode.GetUniqueBytes();
         }
 
-        public void   SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            SystemSerialCode.SetHashKey(value);
+            SystemSerialCode.SetUniqueKey(value);
         }
-        public long   GetHashKey()
+        public long GetUniqueKey()
         {
-            return SystemSerialCode.GetHashKey();
-        }
-
-        public uint SeedBlock
-        {
-            get => SystemSerialCode.SeedBlock;
-            set => SystemSerialCode.SetHashSeed(value);
+            return SystemSerialCode.UniqueKey;
         }
 
-        public void SetHashSeed(uint seed)
+        public uint UniqueSeed
         {
-            SystemSerialCode.SetHashSeed(seed);
+            get => SystemSerialCode.UniqueSeed;
+            set => SystemSerialCode.SetUniqueSeed(value);
         }
-        public uint GetHashSeed()
+
+        public void SetUniqueSeed(uint seed)
         {
-            return SystemSerialCode.GetHashSeed();
+            SystemSerialCode.SetUniqueSeed(seed);
+        }
+        public uint GetUniqueSeed()
+        {
+            return SystemSerialCode.GetUniqueSeed();
         }
 
         public bool Equals(IUnique other)
@@ -173,9 +185,7 @@ namespace System.Instant
         public int CompareTo(IUnique other)
         {
             return SystemSerialCode.CompareTo(other);
-        }       
-
-        #region Formatter
+        }
 
         public int SerialCount { get; set; }
         public int DeserialCount { get; set; }
@@ -211,12 +221,10 @@ namespace System.Instant
 
         public int ItemsCount => throw new NotImplementedException();
 
-        #endregion
-
         public Links Links { get; set; } = new Links();
 
         private Treatment treatment;
-        public  Treatment Treatment
+        public Treatment Treatment
         {
             get => treatment == null ? treatment = new Treatment(this) : treatment;
             set => treatment = value;

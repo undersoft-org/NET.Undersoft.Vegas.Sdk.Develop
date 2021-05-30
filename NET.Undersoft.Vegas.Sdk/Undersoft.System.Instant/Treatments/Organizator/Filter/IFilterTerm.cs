@@ -8,7 +8,7 @@
 
         OperandType Operand { get; set; }
 
-        FilterStage Stage { get; set; }
+        OrganizeStage Stage { get; set; }
 
         object Value { get; set; }
     }

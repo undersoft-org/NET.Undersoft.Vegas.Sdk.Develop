@@ -93,7 +93,7 @@ namespace System.Instant
         }
         public override ICard<IFigure> AddNew(object key)
         {
-            ICard<IFigure> newCard = NewCard(base.GetHashKey(key), NewFigure());
+            ICard<IFigure> newCard = NewCard(base.UniqueKey(key), NewFigure());
             if (InnerAdd(newCard))
                 return newCard;
             return null;
@@ -103,7 +103,7 @@ namespace System.Instant
 
         public Type Type { get; set; }
 
-        public IFigures Picked { get; set; }
+        public IFigures Organized { get; set; }
 
         public IFigure Summary { get; set; }
 
@@ -111,7 +111,7 @@ namespace System.Instant
 
         public FigureSort Sort { get; set; }
 
-        public Func<IFigure, bool> Picker { get; set; }
+        public Func<IFigure, bool> Organizer { get; set; }
 
         public Links Links { get; set; } = new Links();
 
@@ -128,7 +128,7 @@ namespace System.Instant
 
         public IUnique Empty => Ussn.Empty;
 
-        public long KeyBlock { get => SystemSerialCode.KeyBlock; set => SystemSerialCode.SetHashKey(value); }
+        public long UniqueKey { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
 
         object IFigure.this[int fieldId] { get => this[fieldId]; set => this[fieldId] = (IFigure)value; }
         public object this[string propertyName] { get => this[propertyName]; set => this[propertyName] = (IFigure)value; }
@@ -138,33 +138,33 @@ namespace System.Instant
             return SystemSerialCode.GetBytes();
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetKeyBytes();
+            return SystemSerialCode.GetUniqueBytes();
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            SystemSerialCode.SetHashKey(value);
+            SystemSerialCode.SetUniqueKey(value);
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return SystemSerialCode.GetHashKey();
+            return SystemSerialCode.UniqueKey;
         }
 
-        public uint SeedBlock
+        public uint UniqueSeed
         {
-            get => SystemSerialCode.SeedBlock;
-            set => SystemSerialCode.SetHashSeed(value);
+            get => SystemSerialCode.UniqueSeed;
+            set => SystemSerialCode.SetUniqueSeed(value);
         }
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            SystemSerialCode.SetHashSeed(seed);
+            SystemSerialCode.SetUniqueSeed(seed);
         }
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return SystemSerialCode.GetHashSeed();
+            return SystemSerialCode.GetUniqueSeed();
         }
 
         public bool Equals(IUnique other)

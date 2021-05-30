@@ -12,7 +12,7 @@ namespace System.Uniques
     {
         private fixed byte bytes[12];              
 
-        public long    KeyBlock
+        public long    UniqueKey
         {
             get
             {
@@ -27,7 +27,7 @@ namespace System.Uniques
             }
         }
 
-        public uint    SeedBlock
+        public uint    UniqueSeed
         {
             get
             {
@@ -86,7 +86,7 @@ namespace System.Uniques
         }
         public Ussc(object key, uint seed)
         {
-            byte[] shah = key.GetHashBytes64();
+            byte[] shah = key.UniqueBytes64();
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = shah)
@@ -98,7 +98,7 @@ namespace System.Uniques
         {
             fixed (byte* n = bytes)
             {
-                *((long*)n) = key.GetHashKey64();
+                *((long*)n) = key.UniqueKey64();
             }
         }
 
@@ -202,7 +202,7 @@ namespace System.Uniques
             return r;
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {            
             byte[] kbytes = new byte[8];
             fixed (byte* b = bytes)
@@ -211,34 +211,34 @@ namespace System.Uniques
             return kbytes;
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            KeyBlock = value;
+            UniqueKey = value;
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return KeyBlock;
+            return UniqueKey;
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            SeedBlock = seed;
+            UniqueSeed = seed;
         }
 
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return SeedBlock;
+            return UniqueSeed;
         }
 
         public bool IsNotEmpty
         {
-            get { return (KeyBlock != 0); }
+            get { return (UniqueKey != 0); }
         }
 
         public bool IsEmpty
         {
-            get { return (KeyBlock == 0); }
+            get { return (UniqueKey == 0); }
         }      
 
         public override int GetHashCode()
@@ -254,22 +254,22 @@ namespace System.Uniques
             if (!(value is Ussc))
                 throw new Exception();
 
-            return (int)(KeyBlock - ((Ussc)value).KeyBlock);
+            return (int)(UniqueKey - ((Ussc)value).UniqueKey);
         }
 
         public int CompareTo(Ussc g)
         {
-            return (int)(KeyBlock - g.KeyBlock);
+            return (int)(UniqueKey - g.UniqueKey);
         }
 
         public int CompareTo(IUnique g)
         {
-            return (int)(GetHashKey() - g.GetHashKey());
+            return (int)(UniqueKey - g.UniqueKey());
         }
 
         public bool Equals(long g)
         {
-            return (KeyBlock == g);
+            return (UniqueKey == g);
         }
 
         public override bool Equals(object value)
@@ -277,18 +277,18 @@ namespace System.Uniques
             if (value == null)
                 return false;
             if ((value is string))
-                return new Ussc(value.ToString()).KeyBlock == KeyBlock;
+                return new Ussc(value.ToString()).UniqueKey == UniqueKey;
 
-            return (KeyBlock == ((Ussc)value).KeyBlock);
+            return (UniqueKey == ((Ussc)value).UniqueKey);
         }
 
         public bool Equals(Ussc g)
         {
-            return (KeyBlock == g.KeyBlock);
+            return (UniqueKey == g.UniqueKey);
         }
         public bool Equals(IUnique g)
         {
-            return (GetHashKey() == g.GetHashKey());
+            return (UniqueKey == g.UniqueKey());
         }
 
         public override String ToString()
@@ -308,12 +308,12 @@ namespace System.Uniques
 
         public static bool operator ==(Ussc a, Ussc b)
         {
-            return (a.KeyBlock == b.KeyBlock);
+            return (a.UniqueKey == b.UniqueKey);
         }
 
         public static bool operator !=(Ussc a, Ussc b)
         {
-            return (a.KeyBlock != b.KeyBlock);
+            return (a.UniqueKey != b.UniqueKey);
         }
 
         public static explicit operator Ussc(String s)

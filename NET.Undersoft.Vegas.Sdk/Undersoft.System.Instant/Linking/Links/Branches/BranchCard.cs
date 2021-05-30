@@ -1,25 +1,23 @@
-﻿using System.Runtime.InteropServices;
-using System.Extract;
-using System.Uniques;
-using System.Multemic;
-using System.Instant.Linking;
-using System.Linq;
-using System.Reflection;
-using System.IO;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
 
-/******************************************************************
-    Copyright (c) 2020 Undersoft
+   System.Instant.BranchCard.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (29.05.2021) 
+   @licence MIT
+ *************************************************/
 
-    @name System.Instant.FigureCard                
-    
-    @project NET.Undersoft.Sdk
-    @author Darius Hanc                                                                               
-    @version 0.8.D (Feb 7, 2020)                                            
-    @licence MIT                                       
- 
- ******************************************************************/
 namespace System.Instant
-{     
+{
+    using System.Extract;
+    using System.Instant.Linking;
+    using System.Multemic;
+    using System.Runtime.InteropServices;
+    using System.Uniques;
+
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public class BranchCard : Card<LinkBranch>, IEquatable<LinkBranch>, IComparable<LinkBranch>
@@ -37,10 +35,10 @@ namespace System.Instant
         }
         public BranchCard(LinkBranch value) : base(value)
         {
-            
+
         }
         public BranchCard(ICard<LinkBranch> value) : base(value)
-        {            
+        {
         }
 
         public object this[int fieldId]
@@ -54,17 +52,23 @@ namespace System.Instant
             set => this.value[propertyName] = (ICard<IFigure>)value;
         }
 
+        public override void Set(long key, LinkBranch value)
+        {
+            this.value = value;
+            Member = value.Member;
+            Key = key.UniqueKey64(value.GetUniqueSeed());
+        }
         public override void Set(object key, LinkBranch value)
         {
             this.value = value;
             Member = value.Member;
-            Key = key.GetHashKey64(value.GetHashSeed());
+            Key = key.UniqueKey64(value.GetUniqueSeed());
         }
         public override void Set(LinkBranch value)
         {
             this.value = value;
             Member = value.Member;
-            Key = value.GetHashKey64(value.GetHashSeed());
+            Key = value.UniqueKey64(value.GetUniqueSeed());
         }
         public override void Set(ICard<LinkBranch> card)
         {
@@ -78,21 +82,21 @@ namespace System.Instant
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.GetHashKey());
+            return Key.Equals(y.UniqueKey());
         }
-        public          bool Equals(LinkBranch other)
+        public bool Equals(LinkBranch other)
         {
-            return Key == other.KeyBlock;
+            return Key == other.UniqueKey;
         }
 
         public override int GetHashCode()
         {
-            return Value.GetKeyBytes().BitAggregate64to32().ToInt32();
+            return Value.GetUniqueBytes().BitAggregate64to32().ToInt32();
         }
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.GetHashKey64());
+            return (int)(Key - other.UniqueKey64());
         }
         public override int CompareTo(long key)
         {
@@ -102,58 +106,58 @@ namespace System.Instant
         {
             return (int)(Key - other.Key);
         }
-        public          int CompareTo(LinkBranch other)
+        public int CompareTo(LinkBranch other)
         {
-            return (int)(Key - other.KeyBlock);
+            return (int)(Key - other.UniqueKey);
         }
 
         public override byte[] GetBytes()
         {
-           return value.GetBytes();
+            return value.GetBytes();
         }
 
-        public unsafe override byte[] GetKeyBytes()
+        public unsafe override byte[] GetUniqueBytes()
         {
-            return value.GetKeyBytes();
+            return value.GetUniqueBytes();
         }
 
-        public override    int[] IdentityIndexes()
+        public override int[]    UniqueOrdinals()
         {
             return Member.KeyRubrics.Ordinals;
         }
-        public override object[] IdentityValues()
+        public override object[] UniqueValues()
         {
             if (this.value.Count > 0)
-                return this.value[0].IdentityValues();
-            return null;      
+                return this.value[0].UniqueValues();
+            return null;
         }
-        public override     long IdentitiesToKey()
+        public override long UniquesAsKey()
         {
             if (this.value.Count > 0)
-                return this.value[0].IdentitiesToKey();
+                return this.value[0].UniquesAsKey();
             return -1;
-        }  
+        }
 
         public override long Key
         {
-            get => _key;                                                   
-            set => _key = value;            
+            get => _key;
+            set => _key = value;
         }
 
-        public override long KeyBlock
+        public override long UniqueKey
         {
-            get => value.KeyBlock;
-            set => this.value.KeyBlock = value;
-        }      
-       
-        public LinkMember Member { get; set; } 
+            get => value.UniqueKey;
+            set => this.value.UniqueKey = value;
+        }
+
+        public LinkMember Member { get; set; }
 
         public LinkBranches Branches { get; set; }
 
         public override IUnique Empty => this.value.Empty;
 
-        public override uint SeedBlock
-        { get => Member.SeedBlock; set => Member.SetHashSeed(value); }
+        public override uint UniqueSeed
+        { get => Member.UniqueSeed; set => Member.SetUniqueSeed(value); }
 
         public override int CompareTo(IUnique other)
         {
@@ -165,24 +169,24 @@ namespace System.Instant
             return this.value.Equals(other);
         }
 
-        public override long GetHashKey()
+        public override long GetUniqueKey()
         {
-            return this.value.GetHashKey();
+            return this.value.UniqueKey;
         }
 
-        public override void SetHashKey(long value)
+        public override void SetUniqueKey(long value)
         {
-            this.value.SetHashKey(value);
+            this.value.SetUniqueKey(value);
         }
 
-        public override void SetHashSeed(uint seed)
+        public override void SetUniqueSeed(uint seed)
         {
-            Member.SetHashSeed(seed);
+            Member.SetUniqueSeed(seed);
         }
 
-        public override uint GetHashSeed()
+        public override uint GetUniqueSeed()
         {
-            return Member.GetHashSeed();
+            return Member.GetUniqueSeed();
         }
 
     }

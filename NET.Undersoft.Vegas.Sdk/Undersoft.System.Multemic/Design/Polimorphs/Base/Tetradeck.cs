@@ -9,7 +9,7 @@ using System.Extract;
 /*************************************************************************************
     Copyright (c) 2020 Undersoft
 
-    System.Multemic.Basedeck.Tetradeck
+    System.Multemic.Basedeck.TetraDeck
               
     @author Darius Hanc                                                  
     @project NETStandard.Undersoft.SDK                      
@@ -18,8 +18,8 @@ using System.Extract;
  *********************************************************************************/
 namespace System.Multemic.Basedeck
 {
-    public abstract class Tetradeck<V> : HashKey, ICollection<V>, IList<V>, IDeck<V>, ICollection<ICard<V>>, IList<ICard<V>>,
-                                                  IProducerConsumerCollection<V>, IDisposable, ICollection<IUnique<V>>
+    public abstract class TetraDeck<V> : Uniqueness, ICollection<V>, IList<V>, IDeck<V>, ICollection<ICard<V>>, IList<ICard<V>>,
+                                                     IProducerConsumerCollection<V>, IDisposable, ICollection<IUnique<V>>
     {
         #region Globals       
 
@@ -71,7 +71,7 @@ namespace System.Multemic.Basedeck
 
         #region Constructor
 
-        public Tetradeck(int capacity = 16, HashBits bits = HashBits.bit64) : base(bits)
+        public TetraDeck(int capacity = 16, HashBits bits = HashBits.bit64) : base(bits)
         {
             size = capacity;
             minSize = capacity;
@@ -81,11 +81,11 @@ namespace System.Multemic.Basedeck
             first = EmptyCard();
             last = first;
         }
-        public Tetradeck(IList<ICard<V>> collection, int capacity = 16, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public TetraDeck(IList<ICard<V>> collection, int capacity = 16, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             this.Add(collection);
         }
-        public Tetradeck(IEnumerable<ICard<V>> collection, int capacity = 16, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public TetraDeck(IEnumerable<ICard<V>> collection, int capacity = 16, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             this.Add(collection);
         }
@@ -126,8 +126,8 @@ namespace System.Multemic.Basedeck
         }
         public virtual         V this[object key]
         {
-            get { return InnerGet(base.GetHashKey(key)); }
-            set { InnerPut(base.GetHashKey(key), value); }
+            get { return InnerGet(__base_.UniqueKey(key)); }
+            set { InnerPut(__base_.UniqueKey(key), value); }
         }
 
         #endregion
@@ -161,15 +161,15 @@ namespace System.Multemic.Basedeck
         }
         public virtual                  V Get(object key)
         {
-            return InnerGet(base.GetHashKey(key));
+            return InnerGet(__base_.UniqueKey(key));
         }
         public virtual                  V Get(IUnique<V> key)
         {
-            return InnerGet(base.GetHashKey(key));
+            return InnerGet(__base_.UniqueKey(key));
         }
         public virtual                  V Get(IUnique key)
         {
-            return InnerGet(base.GetHashKey(key));
+            return InnerGet(__base_.UniqueKey(key));
         }
 
         public virtual       bool InnerTryGet(long key, out ICard<V> output)
@@ -197,13 +197,13 @@ namespace System.Multemic.Basedeck
         }
         public virtual            bool TryGet(object key, out ICard<V> output)
         {
-            return InnerTryGet(base.GetHashKey(key), out output);
+            return InnerTryGet(__base_.UniqueKey(key), out output);
         }
         public virtual            bool TryGet(object key, out V output)
         {
             output = default(V);
             ICard<V> card = null;
-            if (InnerTryGet(base.GetHashKey(key), out card))
+            if (InnerTryGet(__base_.UniqueKey(key), out card))
             {
                 output = card.Value;
                 return true;
@@ -245,7 +245,7 @@ namespace System.Multemic.Basedeck
         public abstract      ICard<V> GetCard(int index);
         public virtual       ICard<V> GetCard(object key)
         {
-            return InnerGetCard(base.GetHashKey(key));
+            return InnerGetCard(__base_.UniqueKey(key));
         }       
         public               ICard<V> GetCard(long key)
         {
@@ -269,12 +269,12 @@ namespace System.Multemic.Basedeck
         }
         public virtual          ICard<V> Put(object key, V value)
         {
-            return InnerPut(base.GetHashKey(key), value);
+            return InnerPut(__base_.UniqueKey(key), value);
         }
         public virtual          ICard<V> Put(object key, object value)
         {
             if (value is V)
-                return InnerPut(base.GetHashKey(key), (V)value);
+                return InnerPut(__base_.UniqueKey(key), (V)value);
             return null;
         }
         public virtual          ICard<V> Put(ICard<V> _card)
@@ -325,7 +325,7 @@ namespace System.Multemic.Basedeck
         {
             if (value is ICard<V>)
                return InnerPut((ICard<V>)value);
-           return InnerPut(value.IdentitiesToKey(), value.Value);
+           return InnerPut(value.UniquesAsKey(), value.Value);
         }
         public virtual              void Put(IList<IUnique<V>> value)
         {
@@ -359,7 +359,7 @@ namespace System.Multemic.Basedeck
         }
         public virtual          bool Add(object key, V value)
         {
-            return InnerAdd(base.GetHashKey(key), value);
+            return InnerAdd(__base_.UniqueKey(key), value);
         }
         public virtual          void Add(ICard<V> card)
         {
@@ -381,7 +381,7 @@ namespace System.Multemic.Basedeck
         public virtual          void Add(V value)
         {
             InnerAdd(value);
-            //long key = base.GetHashKey(value);
+            //long key = __base_.UniqueKey(value);
             //if (key == 0)
             //    key = autoHashKey(value);
             //InnerAdd(key, value);
@@ -404,7 +404,7 @@ namespace System.Multemic.Basedeck
         {
             if (value is ICard<V>)
                 InnerAdd((ICard<V>)value);
-            InnerAdd(value.GetHashKey(), value.Value);
+            InnerAdd(__base_.UniqueKey(value), value.Value);
         }
         public virtual          void Add(IList<IUnique<V>> value)
         {
@@ -422,7 +422,7 @@ namespace System.Multemic.Basedeck
         }
         public virtual       bool TryAdd(V value)
         {
-            //long key = base.GetHashKey(value);
+            //long key = __base_.UniqueKey(value);
             //if (key == 0)
             //    key = autoHashKey(value);            
             //return InnerAdd(key, value); ;
@@ -446,7 +446,7 @@ namespace System.Multemic.Basedeck
         }
         public virtual ICard<V> AddNew(object key)
         {
-            ICard<V> newCard = NewCard(base.GetHashKey(key), default(V));
+            ICard<V> newCard = NewCard(__base_.UniqueKey(key), default(V));
             if (InnerAdd(newCard))
                 return newCard;
             return null;
@@ -502,7 +502,7 @@ namespace System.Multemic.Basedeck
         }
         public virtual          void Insert(int index, V item)
         {
-            Insert(index, NewCard(base.GetHashKey(item), item));
+            Insert(index, NewCard(__base_.UniqueKey(item), item));
         }
 
         #endregion
@@ -511,11 +511,11 @@ namespace System.Multemic.Basedeck
 
         public virtual bool Enqueue(V value)
         {
-            return InnerAdd(base.GetHashKey(value), value);
+            return InnerAdd(__base_.UniqueKey(value), value);
         }
         public virtual bool Enqueue(object key, V value)
         {
-            return InnerAdd(base.GetHashKey(key), value);
+            return InnerAdd(__base_.UniqueKey(key), value);
         }
         public virtual void Enqueue(ICard<V> card)
         {
@@ -628,7 +628,7 @@ namespace System.Multemic.Basedeck
         }
         public virtual bool ContainsKey(object key)
         {
-            return InnerContainsKey(base.GetHashKey(key));
+            return InnerContainsKey(__base_.UniqueKey(key));
         }
         public virtual bool ContainsKey(long key)
         {
@@ -636,7 +636,7 @@ namespace System.Multemic.Basedeck
         }
         public virtual bool ContainsKey(IUnique key)
         {
-            return InnerContainsKey(key.GetHashKey());
+            return InnerContainsKey(__base_.UniqueKey(key));
         }
 
         public virtual bool Contains(ICard<V> item)
@@ -645,11 +645,11 @@ namespace System.Multemic.Basedeck
         }
         public virtual bool Contains(IUnique<V> item)
         {
-            return InnerContainsKey(item.GetHashKey());
+            return InnerContainsKey(__base_.UniqueKey(item));
         }
         public virtual bool Contains(V item)
         {
-            return InnerContainsKey(base.GetHashKey(item));
+            return InnerContainsKey(__base_.UniqueKey(item));
         }
 
         #endregion
@@ -683,11 +683,11 @@ namespace System.Multemic.Basedeck
         }
         public virtual bool Remove(V item)
         {
-            return InnerRemove(base.GetHashKey(item)).Equals(default(V)) ? false : true;
+            return InnerRemove(__base_.UniqueKey(item)).Equals(default(V)) ? false : true;
         }
         public virtual    V Remove(object key)
         {
-            return InnerRemove(base.GetHashKey(key));
+            return InnerRemove(__base_.UniqueKey(key));
         }
         public virtual bool Remove(ICard<V> item)
         {
@@ -695,11 +695,11 @@ namespace System.Multemic.Basedeck
         }
         public virtual bool Remove(IUnique<V> item)
         {
-            return TryRemove(base.GetHashKey(item));
+            return TryRemove(__base_.UniqueKey(item));
         }
         public virtual bool TryRemove(object key)
         {
-            return InnerRemove(base.GetHashKey(key)).Equals(default(V)) ? false : true;
+            return InnerRemove(__base_.UniqueKey(key)).Equals(default(V)) ? false : true;
         }
         public virtual void RemoveAt(int index)
         {
@@ -1045,7 +1045,7 @@ namespace System.Multemic.Basedeck
         }
 
         // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~Tetradeck() {
+        // ~TetraDeck() {
         //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
         //   Dispose(false);
         // }

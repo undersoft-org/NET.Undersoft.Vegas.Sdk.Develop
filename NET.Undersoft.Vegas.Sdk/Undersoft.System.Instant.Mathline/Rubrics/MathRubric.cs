@@ -200,47 +200,47 @@ namespace System.Instant.Mathline
 
         public IUnique Empty => Ussn.Empty;
 
-        public long KeyBlock { get => systemSerialCode.KeyBlock; set => systemSerialCode.KeyBlock = value; }
-        public uint SeedBlock { get => systemSerialCode.SeedBlock; set => systemSerialCode.SeedBlock = value; }
+        public long UniqueKey { get => systemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
+        public uint UniqueSeed { get => systemSerialCode.UniqueSeed; set => systemSerialCode.UniqueSeed = value; }
 
         public byte[] GetBytes()
         {
             return systemSerialCode.GetBytes();
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return systemSerialCode.GetKeyBytes();
+            return systemSerialCode.GetUniqueBytes();
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            systemSerialCode.KeyBlock = value;
+            systemSerialCode.UniqueKey = value;
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return systemSerialCode.KeyBlock;
+            return systemSerialCode.UniqueKey;
         }
 
         public bool Equals(IUnique other)
         {
-            return KeyBlock == other.KeyBlock;
+            return UniqueKey == other.UniqueKey;
         }
 
         public int CompareTo(IUnique other)
         {
-            return (int)(KeyBlock - other.KeyBlock);
+            return (int)(UniqueKey - other.UniqueKey);
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            systemSerialCode.SetHashSeed(seed);
+            systemSerialCode.SetUniqueSeed(seed);
         }
 
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return systemSerialCode.GetHashSeed();
+            return systemSerialCode.GetUniqueSeed();
         }
 
         private Ussn systemSerialCode;

@@ -14,7 +14,7 @@ using System.Multemic.Basedeck;
  *********************************************************************************/
 namespace System.Multemic
 {
-    public abstract class CardList<V> : Hashdeck<V>
+    public abstract class CardList<V> : KeyedDeck<V>
     {
         #region Globals       
 
@@ -128,7 +128,7 @@ namespace System.Multemic
         }
         protected override ICard<V> InnerPut(V value)
         {
-            long key = base.GetHashKey(value);
+            long key = base.UniqueKey(value);
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
 
@@ -256,7 +256,7 @@ namespace System.Multemic
         }
         protected override    bool InnerAdd(V value)
         {
-            long key = base.GetHashKey(value);
+            long key = base.UniqueKey(value);
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
 

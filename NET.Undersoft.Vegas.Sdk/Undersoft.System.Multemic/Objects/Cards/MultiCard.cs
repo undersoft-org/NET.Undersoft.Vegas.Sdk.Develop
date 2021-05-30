@@ -41,12 +41,12 @@ namespace System.Multemic
         public override void Set(object key, V value)
         {
             this.value = value;
-            _key = key.GetHashKey64(value.GetHashSeed());
+            _key = key.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(V value)
         {
             this.value = value;
-            _key = value.GetHashKey64(value.GetHashSeed());
+            _key = value.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(ICard<V> card)
         {
@@ -60,17 +60,17 @@ namespace System.Multemic
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.GetHashKey64(SeedBlock));
+            return Key.Equals(y.UniqueKey64(UniqueSeed));
         }
 
         public override int GetHashCode()
         {
-            return Key.GetHashKey32();
+            return Key.UniqueKey32();
         }
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.GetHashKey64(SeedBlock));
+            return (int)(Key - other.UniqueKey64(UniqueSeed));
         }
         public override int CompareTo(long key)
         {
@@ -86,7 +86,7 @@ namespace System.Multemic
             return this.value.GetBytes();
         }
 
-        public unsafe override byte[] GetKeyBytes()
+        public unsafe override byte[] GetUniqueBytes()
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)
@@ -106,10 +106,10 @@ namespace System.Multemic
             }
         }
 
-        public override uint SeedBlock
+        public override uint UniqueSeed
         {
-            get => this.value.SeedBlock;
-            set => this.value.SeedBlock = value;
+            get => this.value.UniqueSeed;
+            set => this.value.UniqueSeed = value;
         }
 
     }

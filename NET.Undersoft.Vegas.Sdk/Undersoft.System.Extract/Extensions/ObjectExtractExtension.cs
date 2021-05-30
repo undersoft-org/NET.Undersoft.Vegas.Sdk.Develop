@@ -71,9 +71,13 @@ namespace System.Extract
             if (objvalue is IUnique)
             {
                 if (forKeys)
-                    return ((IUnique)objvalue).GetKeyBytes();
+                    return ((IUnique)objvalue).GetUniqueBytes();
                 return ((IUnique)objvalue).GetBytes();
             }
+
+            if (objvalue is IList)
+                return ((IList)objvalue).GetBytes(forKeys);
+
             if (t.IsValueType)
             {               
                 if (t.IsPrimitive)
@@ -83,13 +87,14 @@ namespace System.Extract
                 if (objvalue is Enum)
                     return Convert.ToInt32(objvalue).GetBytes();
                 return objvalue.GetStructureBytes();
-            }           
+            }
+
             if (t.IsLayoutSequential)
-                return objvalue.GetSequentialBytes();         
+                return objvalue.GetSequentialBytes();
+
             if (objvalue is String || objvalue is IFormattable)
-                return objvalue.ToString().GetBytes();
-            if (objvalue is IList)
-                return ((IList)objvalue).GetBytes(forKeys);
+                return ((string)objvalue).GetBytes();
+          
             return new byte[0];
         }
         public unsafe static bool  TryGetBytes(this Object objvalue, out Byte[] bytes, bool forKeys = false)
@@ -130,7 +135,7 @@ namespace System.Extract
                     if (forKeys && o is IUnique)
                     {
                         s = 8;
-                        *((long*)(buffer + offset)) = ((IUnique)o).GetHashKey();
+                        *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {
@@ -143,45 +148,62 @@ namespace System.Extract
 
             return offset;
         }
-        public unsafe static Byte[] GetBytes(this IList objvalue, bool forKeys = false)
+        public unsafe static Byte[] GetBytes(this IList obj, bool forKeys = false)
         {
-            int offset = 0;
-            int bl = 256;
-            int charsize = sizeof(char);
-            byte* buffer = stackalloc byte[bl];
-           
-            foreach (object o in objvalue)
+            int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
+            byte* buffer = stackalloc byte[length];
+            bool toResize = false;
+
+            for (int i = 0; i < count; i++)
             {
-                int s = 0;
+                object o = obj[i];
                 if (o is string)
                 {
-                    s = ((string)o).Length * charsize;
-                    int fs = (s + offset);
-                    if (fs > bl)
-                    {
-                        byte* _buffer = stackalloc byte[fs];
-                        Extractor.CopyBlock(_buffer, buffer, offset);
-                        buffer = _buffer;
-                        bl = fs;
-                    }
+                    string str = ((string)o);
+                    s = str.Length * charsize;
+                    postoffset = (s + offset);
 
-                    fixed (char* c = (string)o)
-                        Extractor.CopyBlock(buffer, (byte*)c, offset, s);
+                    if (postoffset > length)
+                        toResize = true;
+                    else
+                        fixed (char* c = str)
+                            Extractor.CopyBlock(buffer, (byte*)c, offset, s);
                 }
                 else
                 {
-                    if (forKeys && o is IUnique)
+                    if (o is IUnique)
                     {
-                        s = 8;                        
-                        *((long*)(buffer + offset)) = ((IUnique)o).GetHashKey(); 
+                        s = 8;
+                        postoffset = (s + offset);
+
+                        if (postoffset > length)
+                            toResize = true;
+                        else
+                            *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {
                         s = o.GetSize();
-                        Extractor.StructureToPointer(o, buffer + offset);
+                        postoffset = (s + offset);
+
+                        if (postoffset > length)
+                            toResize = true;
+                        else
+                            Extractor.StructureToPointer(o, new IntPtr(buffer + offset));
                     }
                 }
-                offset += s;
+
+                if (toResize)
+                {
+                    i--;
+                    toResize = false;
+                    byte* _buffer = stackalloc byte[postoffset];
+                    Extractor.CopyBlock(_buffer, buffer, offset);
+                    buffer = _buffer;
+                    length = postoffset;
+                }
+                else
+                    offset = postoffset;
             }
 
             byte[] result = new byte[offset];

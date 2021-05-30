@@ -53,7 +53,7 @@ namespace System.Instant
 
         public IUnique Empty => Ussn.Empty;
 
-        public long KeyBlock { get => systemSerialCode.KeyBlock; set => systemSerialCode.KeyBlock = value; }
+        public long UniqueKey { get => systemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
 
         public ParameterInfo[] Parameters { get; set; }
         public object[] ParameterValues { get; set; }
@@ -98,7 +98,7 @@ namespace System.Instant
                                    $"{Info.Name}" +
                                    $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
 
-            systemSerialCode.KeyBlock = new object[] { decription, DateTime.Now }.GetHashKey();
+            systemSerialCode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
             systemSerialCode.TimeBlock = time;
         }
 
@@ -120,7 +120,7 @@ namespace System.Instant
                                    $"{Info.Name}" +
                                    $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
 
-            systemSerialCode.KeyBlock = new object[] { decription, DateTime.Now }.GetHashKey();
+            systemSerialCode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
             systemSerialCode.TimeBlock = time;
         }
 
@@ -146,17 +146,17 @@ namespace System.Instant
         {
             return SystemSerialCode.GetBytes();
         }
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetKeyBytes();
+            return SystemSerialCode.GetUniqueBytes();
         }
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            SystemSerialCode.SetHashKey(value);
+            SystemSerialCode.SetUniqueKey(value);
         }
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return SystemSerialCode.GetHashKey();
+            return SystemSerialCode.UniqueKey;
         }
         public bool Equals(IUnique other)
         {
@@ -167,18 +167,18 @@ namespace System.Instant
             return SystemSerialCode.CompareTo(other);
         }
 
-        public uint SeedBlock
+        public uint UniqueSeed
         {
-            get => systemSerialCode.SeedBlock;
-            set => systemSerialCode.SeedBlock = value;
+            get => systemSerialCode.UniqueSeed;
+            set => systemSerialCode.UniqueSeed = value;
         }
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            systemSerialCode.SetHashSeed(seed);
+            systemSerialCode.SetUniqueSeed(seed);
         }
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return systemSerialCode.GetHashSeed();
+            return systemSerialCode.GetUniqueSeed();
         }
 
         public object Execute(params object[] FunctionParameters)

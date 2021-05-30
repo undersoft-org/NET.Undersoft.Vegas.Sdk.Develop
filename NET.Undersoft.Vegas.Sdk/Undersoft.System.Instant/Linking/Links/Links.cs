@@ -1,17 +1,36 @@
-﻿using System.Multemic;
-using System.Collections.Generic;
-using System.Linq;
-using System.Uniques;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.Links.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (29.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant.Linking
 {
-    [JsonArray]
-    [Serializable]
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Multemic;
+    using System.Uniques;
+
+    #region Enums
+
+    public enum LinkSite
+    {
+        Origin,
+        Target
+    }
+
+    #endregion
+
     public class Links : SharedAlbum<Link>, IUnique
     {
         public Links()
         {
-            LinkKeys = new Album<int[]>(5);
         }
         public Links(ICollection<Link> links)
         {
@@ -23,32 +42,24 @@ namespace System.Instant.Linking
         {
             get
             {
-                var lgcy = this[linkName];                
-                if (lgcy != null && lgcy.Links == null)
-                    lgcy.Links = this;
-                return lgcy;
+                return base[linkName];
             }
-
             set
             {
                 value.Links = this;
-                this[linkName] = value;
+                base[linkName] = value;
             }
         }
         public new Link this[int linkid]
         {
             get
             {
-                var lgcy = this[linkid];
-                if (lgcy != null && lgcy.Links == null)
-                    lgcy.Links = this;
-                return lgcy;
+                return base[linkid];
             }
-
             set
             {
                 value.Links = this;
-                this[linkid] = value;
+                base[linkid] = value;
             }
         }
 
@@ -67,16 +78,14 @@ namespace System.Instant.Linking
                 return this.Cast<Link>().ToArray();
         }
 
-        public Link GetTarget(string TargetName)
+        public Link[] GetTarget(string TargetName)
         {
-            return this.Cast<Link>().Where(c => c.TargetName == TargetName).FirstOrDefault();           
+            return AsValues().Where(c => c.TargetName == TargetName).ToArray();
         }
-        public Link GetOrigin(string OriginName)
+        public Link[] GetOrigin(string OriginName)
         {
-            return this.Cast<Link>().Where(c => c.OriginName == OriginName).FirstOrDefault();
+            return AsValues().Where(c => c.OriginName == OriginName).ToArray();
         }
-
-        public IDeck<int[]> LinkKeys { get; set; }
 
         public override ICard<Link> EmptyCard()
         {
@@ -116,71 +125,67 @@ namespace System.Instant.Linking
 
         protected override bool InnerAdd(Link value)
         {
+            value.Links = this;
             return InnerAdd(NewCard(value));
         }
+
         protected override ICard<Link> InnerPut(Link value)
         {
+            value.Links = this;
             return InnerPut(NewCard(value));
         }
 
-        private Ussn systemSerialCode;
         public Ussn SystemSerialCode
-        { get => systemSerialCode; set => systemSerialCode = value; }
+        { get; set; }
 
         public IUnique Empty => Ussn.Empty;
 
-        public long KeyBlock
-        { get => SystemSerialCode.KeyBlock; set => systemSerialCode.KeyBlock = value; }
-        public uint SeedBlock
+        public long UniqueKey
+        { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
+        public uint UniqueSeed
         {
-            get => systemSerialCode.SeedBlock;
-            set => systemSerialCode.SeedBlock = value;
+            get => SystemSerialCode.UniqueSeed;
+            set => SystemSerialCode.SetUniqueSeed(value);
         }
 
         public int CompareTo(IUnique other)
         {
-            return systemSerialCode.CompareTo(other);
+            return SystemSerialCode.CompareTo(other);
         }
 
         public bool Equals(IUnique other)
         {
-            return systemSerialCode.Equals(other);
+            return SystemSerialCode.Equals(other);
         }
 
         public byte[] GetBytes()
         {
-            return systemSerialCode.GetBytes();
+            return SystemSerialCode.GetBytes();
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return systemSerialCode.GetHashKey();
+            return SystemSerialCode.UniqueKey;
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return systemSerialCode.GetKeyBytes();
+            return SystemSerialCode.GetUniqueBytes();
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            systemSerialCode.SetHashKey(value);
+            SystemSerialCode.SetUniqueKey(value);
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            systemSerialCode.SetHashSeed(seed);
+            SystemSerialCode.SetUniqueSeed(seed);
         }
 
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return systemSerialCode.GetHashSeed();
+            return SystemSerialCode.GetUniqueSeed();
         }
-    }
-  
-    public enum LinkSite
-    {
-        Origin,
-        Target
     }
 }

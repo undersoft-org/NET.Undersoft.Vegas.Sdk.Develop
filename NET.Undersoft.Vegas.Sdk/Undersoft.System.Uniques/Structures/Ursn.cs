@@ -12,7 +12,7 @@ namespace System.Uniques
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]  
         private byte[] bytes;
 
-        public long KeyBlock
+        public long UniqueKey
         {
             get
             {                                   
@@ -114,11 +114,11 @@ namespace System.Uniques
 
             fixed (byte* n = bytes)
             {
-                fixed(byte* s = x.GetHashBytes64())
+                fixed(byte* s = x.UniqueBytes64())
                     *((long*)n) = *((long*)s);
-                fixed (byte* s = y.GetHashBytes64())
+                fixed (byte* s = y.UniqueBytes64())
                     *((long*)(n + 12)) = *((long*)s);
-                fixed (byte* s = z.GetHashBytes64())
+                fixed (byte* s = z.UniqueBytes64())
                     *((long*)(n + 16)) = *((long*)s);             
             }
         }
@@ -209,7 +209,7 @@ namespace System.Uniques
             return SureBytes;
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
             byte[] kbytes = new byte[8];
             fixed (byte* b = SureBytes)
@@ -234,12 +234,12 @@ namespace System.Uniques
 
         public bool IsNotEmpty
         {
-            get { return (!IsNull && KeyBlock != 0); }
+            get { return (!IsNull && UniqueKey != 0); }
         }
 
         public bool IsEmpty
         {
-            get { return (IsNull || KeyBlock == 0); }
+            get { return (IsNull || UniqueKey == 0); }
         }
 
         public byte[] SureBytes
@@ -258,14 +258,14 @@ namespace System.Uniques
                 return *((int*)pbyte);
         }
 
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            KeyBlock = value;
+            UniqueKey = value;
         }
 
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return KeyBlock;
+            return UniqueKey;
         }
 
         public int CompareTo(object value)
@@ -275,22 +275,22 @@ namespace System.Uniques
             if (!(value is Ursn))
                 throw new Exception();
 
-            return (int)(KeyBlock - ((Ursn)value).KeyBlock);
+            return (int)(UniqueKey - ((Ursn)value).UniqueKey);
         }
 
         public int CompareTo(Ursn g)
         {
-            return (int)(KeyBlock - g.KeyBlock);
+            return (int)(UniqueKey - g.UniqueKey);
         }
 
         public int CompareTo(IUnique g)
         {
-            return (int)(KeyBlock - g.KeyBlock);
+            return (int)(UniqueKey - g.UniqueKey);
         }
 
         public bool Equals(long g)
         {
-            return (KeyBlock == g);
+            return (UniqueKey == g);
         }
 
         public override bool Equals(object value)
@@ -298,18 +298,18 @@ namespace System.Uniques
             if (value == null || bytes == null)
                 return false;
             if ((value is string))
-                return new Ursn(value.ToString()).KeyBlock == KeyBlock;
+                return new Ursn(value.ToString()).UniqueKey == UniqueKey;
 
-            return (KeyBlock == ((Ursn)value).KeyBlock);
+            return (UniqueKey == ((Ursn)value).UniqueKey);
         }
 
         public bool Equals(Ursn g)
         {
-            return (KeyBlock == g.KeyBlock);
+            return (UniqueKey == g.UniqueKey);
         }
         public bool Equals(IUnique g)
         {
-            return (GetHashKey() == g.GetHashKey());
+            return (UniqueKey == g.UniqueKey());
         }
 
         public override String ToString()
@@ -333,12 +333,12 @@ namespace System.Uniques
 
         public static bool operator ==(Ursn a, Ursn b)
         {
-            return (a.KeyBlock == b.KeyBlock);
+            return (a.UniqueKey == b.UniqueKey);
         }
 
         public static bool operator !=(Ursn a, Ursn b)
         {
-            return (a.KeyBlock != b.KeyBlock);
+            return (a.UniqueKey != b.UniqueKey);
         }
 
         public static explicit operator Ursn(String s)
@@ -373,7 +373,7 @@ namespace System.Uniques
             }
         }
 
-        public uint SeedBlock { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public uint UniqueSeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public char[] ToHexTetraChars()
         {
@@ -460,12 +460,12 @@ namespace System.Uniques
             return true;           
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
             throw new NotImplementedException();
         }
 
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
             throw new NotImplementedException();
         }

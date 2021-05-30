@@ -41,12 +41,12 @@ namespace System.Multemic
         public override void Set(object key, V value)
         {
             this.value = value;
-            _key = key.GetHashKey64();
+            _key = key.UniqueKey64();
         }
         public override void Set(V value)
         {
             this.value = value;
-            _key = value.GetHashKey64();
+            _key = value.UniqueKey64();
         }
         public override void Set(ICard<V> card)
         {
@@ -60,7 +60,7 @@ namespace System.Multemic
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.GetHashKey64());
+            return Key.Equals(y.UniqueKey64());
         }
 
         public override int GetHashCode()
@@ -70,7 +70,7 @@ namespace System.Multemic
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.GetHashKey64());
+            return (int)(Key - other.UniqueKey64());
         }
         public override int CompareTo(long key)
         {
@@ -83,10 +83,10 @@ namespace System.Multemic
 
         public override byte[] GetBytes()
         {
-            return GetKeyBytes();
+            return GetUniqueBytes();
         }
 
-        public unsafe override byte[] GetKeyBytes()
+        public unsafe override byte[] GetUniqueBytes()
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)

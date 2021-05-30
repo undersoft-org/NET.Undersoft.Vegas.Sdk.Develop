@@ -195,9 +195,9 @@ namespace System.Instant
                                                                                         new object[] { attrib.AggregateOperand, attrib.SummaryOperand }));
         }
 
-        public void CreateGetKeyBytesMethod(TypeBuilder tb)
+        public void CreateGetUniqueBytesMethod(TypeBuilder tb)
         {
-            MethodInfo createArray = typeof(IUnique).GetMethod("GetKeyBytes");
+            MethodInfo createArray = typeof(IUnique).GetMethod("GetUniqueBytes");
 
             ParameterInfo[] args = createArray.GetParameters();
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
@@ -209,13 +209,13 @@ namespace System.Instant
             ILGenerator il = method.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldflda, fields[0]);
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("GetKeyBytes"), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("GetUniqueBytes"), null);
             il.Emit(OpCodes.Ret);
         }
 
-        public void CreateGetHashKeyMethod(TypeBuilder tb)
+        public void CreateGetUniqueKeyMethod(TypeBuilder tb)
         {
-            MethodInfo createArray = typeof(IUnique).GetMethod("GetHashKey");
+            MethodInfo createArray = typeof(IUnique).GetMethod("GetUniqueKey");
 
             ParameterInfo[] args = createArray.GetParameters();
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
@@ -228,13 +228,13 @@ namespace System.Instant
 
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldflda, fields[0]);
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("GetHashKey"), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("GetUniqueKey"), null);
             il.Emit(OpCodes.Ret);
         }
 
-        public void CreateSetHashKeyMethod(TypeBuilder tb)
+        public void CreateSetUniqueKeyMethod(TypeBuilder tb)
         {
-            MethodInfo createArray = typeof(IUnique).GetMethod("SetHashKey");
+            MethodInfo createArray = typeof(IUnique).GetMethod("SetUniqueKey");
 
             ParameterInfo[] args = createArray.GetParameters();
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
@@ -248,13 +248,13 @@ namespace System.Instant
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Ldflda, fields[0]);
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("SetHashKey"), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("SetUniqueKey"), null);
             il.Emit(OpCodes.Ret);
         }
 
-        public void CreateGetHashSeedMethod(TypeBuilder tb)
+        public void CreateGetUniqueSeedMethod(TypeBuilder tb)
         {
-            MethodInfo createArray = typeof(IUnique).GetMethod("GetHashSeed");
+            MethodInfo createArray = typeof(IUnique).GetMethod("GetUniqueSeed");
 
             ParameterInfo[] args = createArray.GetParameters();
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
@@ -267,13 +267,13 @@ namespace System.Instant
 
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldflda, fields[0]);
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("GetHashSeed"), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("GetUniqueSeed"), null);
             il.Emit(OpCodes.Ret);
         }
 
-        public void CreateSetHashSeedMethod(TypeBuilder tb)
+        public void CreateSetUniqueSeedMethod(TypeBuilder tb)
         {
-            MethodInfo createArray = typeof(IUnique).GetMethod("SetHashSeed");
+            MethodInfo createArray = typeof(IUnique).GetMethod("SetUniqueSeed");
 
             ParameterInfo[] args = createArray.GetParameters();
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
@@ -287,7 +287,7 @@ namespace System.Instant
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Ldflda, fields[0]);
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("SetHashSeed"), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetMethod("SetUniqueSeed"), null);
             il.Emit(OpCodes.Ret);
         }
 
@@ -356,13 +356,13 @@ namespace System.Instant
             il.Emit(OpCodes.Ret); // return
         }
 
-        public void CreateKeyBlockProperty(TypeBuilder tb)
+        public void CreateUniqueKeyProperty(TypeBuilder tb)
         {
 
-            PropertyBuilder prop = tb.DefineProperty("KeyBlock", PropertyAttributes.HasDefault,
+            PropertyBuilder prop = tb.DefineProperty("UniqueKey", PropertyAttributes.HasDefault,
                                                      typeof(long), new Type[] { typeof(long) });
 
-            PropertyInfo iprop = typeof(IUnique).GetProperty("KeyBlock");
+            PropertyInfo iprop = typeof(IUnique).GetProperty("UniqueKey");
 
             MethodInfo accessor = iprop.GetGetMethod();
 
@@ -378,7 +378,7 @@ namespace System.Instant
 
             il.Emit(OpCodes.Ldarg_0); // this
             il.Emit(OpCodes.Ldflda, fields[0]); // load
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("KeyBlock").GetGetMethod(), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueKey").GetGetMethod(), null);
             il.Emit(OpCodes.Ret); // return
 
             MethodInfo mutator = iprop.GetSetMethod();
@@ -396,19 +396,19 @@ namespace System.Instant
             il.Emit(OpCodes.Ldarg_0); // this
             il.Emit(OpCodes.Ldflda, fields[0]); // load
             il.Emit(OpCodes.Ldarg_1); // value
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("KeyBlock").GetSetMethod(), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueKey").GetSetMethod(), null);
             il.Emit(OpCodes.Ret); // return
 
            // return prop;
         }
 
-        public void CreateSeedBlockProperty(TypeBuilder tb)
+        public void CreateUniqueSeedProperty(TypeBuilder tb)
         {
 
-            PropertyBuilder prop = tb.DefineProperty("SeedBlock", PropertyAttributes.HasDefault,
+            PropertyBuilder prop = tb.DefineProperty("UniqueSeed", PropertyAttributes.HasDefault,
                                                      typeof(long), new Type[] { typeof(long) });
 
-            PropertyInfo iprop = typeof(IUnique).GetProperty("SeedBlock");
+            PropertyInfo iprop = typeof(IUnique).GetProperty("UniqueSeed");
 
             MethodInfo accessor = iprop.GetGetMethod();
 
@@ -424,7 +424,7 @@ namespace System.Instant
 
             il.Emit(OpCodes.Ldarg_0); // this
             il.Emit(OpCodes.Ldflda, fields[0]); // load
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("SeedBlock").GetGetMethod(), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueSeed").GetGetMethod(), null);
             il.Emit(OpCodes.Ret); // return
 
             MethodInfo mutator = iprop.GetSetMethod();
@@ -442,7 +442,7 @@ namespace System.Instant
             il.Emit(OpCodes.Ldarg_0); // this
             il.Emit(OpCodes.Ldflda, fields[0]); // load
             il.Emit(OpCodes.Ldarg_1); // value
-            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("SeedBlock").GetSetMethod(), null);
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueSeed").GetSetMethod(), null);
             il.Emit(OpCodes.Ret); // return
 
             // return prop;

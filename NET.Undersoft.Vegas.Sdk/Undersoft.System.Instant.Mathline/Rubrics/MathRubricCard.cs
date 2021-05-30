@@ -21,7 +21,7 @@ namespace System.Instant.Mathline
 
         public MathRubricCard()
         { }
-        public MathRubricCard(object key, MathRubric value) : base(key.GetHashKey64(), value)
+        public MathRubricCard(object key, MathRubric value) : base(key.UniqueKey64(), value)
         {
         }
         public MathRubricCard(long key, MathRubric value) : base(key, value)
@@ -37,12 +37,12 @@ namespace System.Instant.Mathline
         public override void Set(object key, MathRubric value)
         {
             this.value = value;
-            _key = key.GetHashKey64();
+            _key = key.UniqueKey64();
         }
         public override void Set(MathRubric value)
         {
             this.value = value;
-            _key = value.GetHashKey();
+            _key = value.GetUniqueKey();
         }
         public override void Set(ICard<MathRubric> card)
         {
@@ -56,7 +56,7 @@ namespace System.Instant.Mathline
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.GetHashKey64());
+            return Key.Equals(y.UniqueKey64());
         }
 
         public override int GetHashCode()
@@ -66,7 +66,7 @@ namespace System.Instant.Mathline
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.GetHashKey64());
+            return (int)(Key - other.UniqueKey64());
         }
         public override int CompareTo(long key)
         {
@@ -79,10 +79,10 @@ namespace System.Instant.Mathline
 
         public override byte[] GetBytes()
         {
-            return GetKeyBytes();
+            return GetUniqueBytes();
         }
 
-        public unsafe override byte[] GetKeyBytes()
+        public unsafe override byte[] GetUniqueBytes()
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)

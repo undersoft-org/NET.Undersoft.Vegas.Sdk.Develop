@@ -21,7 +21,7 @@ namespace System.Labors
 
         public IUnique Empty => Ussn.Empty;
 
-        public long KeyBlock { get => SystemCode.KeyBlock; set => SystemCode.KeyBlock = value; }
+        public long UniqueKey { get => SystemCode.UniqueKey; set => SystemCode.UniqueKey = value; }
 
 
         public Labor(string name, IDeputy method) : base(() => method.Execute())
@@ -32,8 +32,8 @@ namespace System.Labors
             Box = new NoteBox(Laborer.LaborerName);
             Box.Labor = this;
 
-            SystemCode = new Ussc(method.GetHashKey());
-            SystemSerialCode = new Ussn(SystemCode.KeyBlock, 0, 0, 0, 0, DateTime.Now.ToBinary());
+            SystemCode = new Ussc(method.UniqueKey());
+            SystemSerialCode = new Ussn(SystemCode.UniqueKey, 0, 0, 0, 0, DateTime.Now.ToBinary());
         }
         public Labor(Laborer laborer) : base(() => laborer.Work.Execute())
         {
@@ -43,8 +43,8 @@ namespace System.Labors
             Box = new NoteBox(Laborer.LaborerName);
             Box.Labor = this;
 
-            SystemCode = new Ussc(laborer.Work.GetHashKey());
-            SystemSerialCode = new Ussn(SystemCode.KeyBlock, 0, 0, 0, 0, DateTime.Now.ToBinary());
+            SystemCode = new Ussc(laborer.Work.UniqueKey());
+            SystemSerialCode = new Ussn(SystemCode.UniqueKey, 0, 0, 0, 0, DateTime.Now.ToBinary());
 
         }
 
@@ -95,14 +95,14 @@ namespace System.Labors
         public object[] ValueArray { get => ParameterValues; set => ParameterValues = value; }
         public Ussn SystemSerialCode
         {
-            get => new Ussn(SystemCode.KeyBlock, SystemCode.SeedBlock);
+            get => new Ussn(SystemCode.UniqueKey, SystemCode.UniqueSeed);
             set
             {
-                SystemCode.SeedBlock = value.SeedBlock;
-                SystemCode.KeyBlock = value.KeyBlock;
+                SystemCode.UniqueSeed = value.UniqueSeed;
+                SystemCode.UniqueKey = value.UniqueKey;
             }
         }
-        public uint SeedBlock { get => SystemCode.SeedBlock; set => SystemCode.SeedBlock = value; }
+        public uint UniqueSeed { get => SystemCode.UniqueSeed; set => SystemCode.UniqueSeed = value; }
 
         public void Elaborate(params object[] input)
         {
@@ -120,17 +120,17 @@ namespace System.Labors
         {
             return Laborer.Work.GetBytes();
         }
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return SystemCode.GetKeyBytes();
+            return SystemCode.GetUniqueBytes();
         }
-        public void SetHashKey(long value)
+        public void SetUniqueKey(long value)
         {
-            SystemCode.KeyBlock = value;
+            SystemCode.UniqueKey = value;
         }
-        public long GetHashKey()
+        public long GetUniqueKey()
         {
-            return SystemCode.GetHashKey();
+            return SystemCode.UniqueKey();
         }
         public bool Equals(IUnique other)
         {
@@ -141,14 +141,14 @@ namespace System.Labors
             return SystemCode.CompareTo(other);
         }
 
-        public void SetHashSeed(uint seed)
+        public void SetUniqueSeed(uint seed)
         {
-            SystemCode.SetHashSeed(seed);
+            SystemCode.SetUniqueSeed(seed);
         }
 
-        public uint GetHashSeed()
+        public uint GetUniqueSeed()
         {
-            return SystemCode.GetHashSeed();
+            return SystemCode.UniqueSeed;
         }
     }
 }

@@ -12,104 +12,51 @@
 
 namespace System
 {
-    /// <summary>
-    /// Defines the <see cref="IUnique{V}" />.
-    /// </summary>
-    /// <typeparam name="V">.</typeparam>
     public interface IUnique<V> : IUnique
     {
         #region Properties
 
-        /// <summary>
-        /// Gets or sets the Value.
-        /// </summary>
         V Value { get; set; }
 
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// The IdentitiesToKey.
-        /// </summary>
-        /// <returns>The <see cref="long"/>.</returns>
-        long IdentitiesToKey();
+        long UniquesAsKey();
 
-        /// <summary>
-        /// The IdentityIndexes.
-        /// </summary>
-        /// <returns>The <see cref="int[]"/>.</returns>
-        int[] IdentityIndexes();
+        int[] UniqueOrdinals();
 
-        /// <summary>
-        /// The IdentityValues.
-        /// </summary>
-        /// <returns>The <see cref="object[]"/>.</returns>
-        object[] IdentityValues();
+        object[] UniqueValues();
 
         #endregion
     }
-    /// <summary>
-    /// Defines the <see cref="IUnique" />.
-    /// </summary>
     public interface IUnique : IEquatable<IUnique>, IComparable<IUnique>
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the Empty.
-        /// </summary>
         IUnique Empty { get; }
 
-        /// <summary>
-        /// Gets or sets the KeyBlock.
-        /// </summary>
-        long KeyBlock { get; set; }
+        long UniqueKey { get; set; }
 
-        /// <summary>
-        /// Gets or sets the SeedBlock.
-        /// </summary>
-        uint SeedBlock { get; set; }
+        uint UniqueSeed { get; set; }
 
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// The GetBytes.
-        /// </summary>
-        /// <returns>The <see cref="byte[]"/>.</returns>
         byte[] GetBytes();
 
-        /// <summary>
-        /// The GetHashKey.
-        /// </summary>
-        /// <returns>The <see cref="long"/>.</returns>
-        long GetHashKey();
+        byte[] GetUniqueBytes();
 
-        /// <summary>
-        /// The GetHashSeed.
-        /// </summary>
-        /// <returns>The <see cref="uint"/>.</returns>
-        uint GetHashSeed();
+        //long GetUniqueKey();
 
-        /// <summary>
-        /// The GetKeyBytes.
-        /// </summary>
-        /// <returns>The <see cref="byte[]"/>.</returns>
-        byte[] GetKeyBytes();
+        //uint GetUniqueSeed();
 
-        /// <summary>
-        /// The SetHashKey.
-        /// </summary>
-        /// <param name="value">The value<see cref="long"/>.</param>
-        void SetHashKey(long value);
 
-        /// <summary>
-        /// The SetHashSeed.
-        /// </summary>
-        /// <param name="seed">The seed<see cref="uint"/>.</param>
-        void SetHashSeed(uint seed);
+
+        //void SetUniqueKey(long value);
+
+        //void SetUniqueSeed(uint seed);
 
         #endregion
     }

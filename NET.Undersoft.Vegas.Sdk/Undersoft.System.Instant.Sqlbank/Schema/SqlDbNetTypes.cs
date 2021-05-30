@@ -42,7 +42,7 @@ namespace System.Instant.Sqlbank
                                 sqlNetVal = Convert.ChangeType(fieldRow[fieldName], ft);
                         }
                         else if (ft == typeof(long) && fieldRow[fieldName] is Usid)
-                            sqlNetVal = ((Usid)fieldRow[fieldName]).KeyBlock;
+                            sqlNetVal = ((Usid)fieldRow[fieldName]).UniqueKey;
                         else if (ft == typeof(byte[]) && fieldRow[fieldName] is Ussn)
                             sqlNetVal = ((Ussn)fieldRow[fieldName]).GetBytes();
                         else

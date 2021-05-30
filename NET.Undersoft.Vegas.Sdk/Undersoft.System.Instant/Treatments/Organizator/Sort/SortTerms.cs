@@ -57,7 +57,7 @@ namespace System.Instant.Treatments
             value.Index = ((IList)this).Add(value);
             return value.Index;
         }
-        public void AddRange(ICollection<SortTerm> terms)
+        public void Add(ICollection<SortTerm> terms)
         {
             foreach (SortTerm term in terms)
             {
@@ -65,7 +65,7 @@ namespace System.Instant.Treatments
                 term.Index = ((IList)this).Add(term);
             }
         }
-        public void AddNewRange(ICollection<SortTerm> terms)
+        public void Renew(ICollection<SortTerm> terms)
         {
             bool diffs = false;
             if (Count != terms.Count)
@@ -105,7 +105,7 @@ namespace System.Instant.Treatments
             }
 
         }
-        public void RemoveRange(ICollection<SortTerm> value)
+        public void Remove(ICollection<SortTerm> value)
         {
             foreach (SortTerm term in value)
                 Remove(term);

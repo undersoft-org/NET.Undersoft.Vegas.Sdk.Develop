@@ -8,12 +8,12 @@ namespace System.Instant.Treatments
 {
     public static class Aggregator
     {
-        //public static  IFigures Aggregate(this IFigures figures, bool onlyFiltered = false)
+        //public static  IFigures Aggregate(this IFigures figures, bool onlyOrganized = false)
         //{
-        //    return;//Result(figures.Picked, onlyFiltered);
+        //    return;//Result(figures.Organized, onlyOrganized);
         //}
 
-        //private static IFigures Result(IFigures figures, bool onlyFiltered)
+        //private static IFigures Result(IFigures figures, bool onlyOrganized)
         //{
 
         //    MemberRubric[] aggregateRubrics = figures.Treatment.AggregateRubrics.ToArray();
@@ -25,17 +25,17 @@ namespace System.Instant.Treatments
         //                          .Select(j => targetLinkIds
         //                            .Add(j.AggregateIndex[0])).ToArray();
 
-        //        FigureLink[] allOrFiltered = figures.Linkmap
+        //        FigureLink[] allOrOrganized = figures.Linkmap
         //                                                .TargetLinks.AsValues()
         //                                                    .Cast<FigureLink>()
-        //                                                        .Where(d => d.Target.Figures.Filter.Terms.Count > 0).ToArray();
+        //                                                        .Where(d => d.Target.Figures.Organize.Terms.Count > 0).ToArray();
         //        int[] ids = null;
         //        IDeck<LinkBranch> subresult;
 
-        //        if (onlyFiltered)
+        //        if (onlyOrganized)
         //        {
-        //            ids = allOrFiltered.Select(r => figures.Linkmap.TargetLinks.IndexOf(r)).Where(id => targetLinkIds.Contains(id)).ToArray();
-        //            subresult = figures.Linkmap.CreateTargetLinks(allOrFiltered);
+        //            ids = allOrOrganized.Select(r => figures.Linkmap.TargetLinks.IndexOf(r)).Where(id => targetLinkIds.Contains(id)).ToArray();
+        //            subresult = figures.Linkmap.CreateTargetLinks(allOrOrganized);
         //        }
         //        else
         //        {

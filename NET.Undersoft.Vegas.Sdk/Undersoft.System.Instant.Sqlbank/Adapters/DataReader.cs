@@ -109,7 +109,7 @@ namespace System.Instant.Sqlbank
         {
             object o = m_values[m_nPos][i];
             if (o is Usid)
-                return ((Usid)o).KeyBlock;
+                return ((Usid)o).UniqueKey;
             else if (o is Ussn)
                 return ((Ussn)o).GetBytes();
             else if (o is DateTime)
@@ -125,7 +125,7 @@ namespace System.Instant.Sqlbank
             {
                 object o = m_values[m_nPos][j];
                 if (o is Usid)
-                    values[i] = ((Usid)o).KeyBlock;
+                    values[i] = ((Usid)o).UniqueKey;
                 else if (o is Ussn)
                     values[i] = ((Ussn)o).GetBytes();
                 else
@@ -155,7 +155,7 @@ namespace System.Instant.Sqlbank
             {
                 object o = m_values[m_nPos][i];
                 if (o is Usid)
-                    return ((Usid)o).KeyBlock;
+                    return ((Usid)o).UniqueKey;
                 else if (o is Ussn)
                     return ((Ussn)o).GetBytes();
                 else
@@ -169,7 +169,7 @@ namespace System.Instant.Sqlbank
             {
                 object o = this[GetOrdinal(name)];
                 if (o is Usid)
-                    return ((Usid)o).KeyBlock;
+                    return ((Usid)o).UniqueKey;
                 else if (o is Ussn)
                     return ((Ussn)o).GetBytes();
                 else

@@ -12,7 +12,7 @@ namespace System.Multemic.Basedeck
 {
     public struct TetraTable<V>: IDisposable
     {
-        public TetraTable(Tetradeck<V> hashdeck, int size = 8)
+        public TetraTable(TetraDeck<V> hashdeck, int size = 8)
         {
             EvenPositiveSize = hashdeck.EmptyCardTable(size);
             OddPositiveSize = hashdeck.EmptyCardTable(size);

@@ -32,19 +32,19 @@ namespace System.Instant
 
             CreateItemByStringProperty(tb);
 
-            CreateKeyBlockProperty(tb);
+            CreateUniqueKeyProperty(tb);
 
-            CreateGetHashKeyMethod(tb);
+            CreateGetUniqueKeyMethod(tb);
 
-            CreateSetHashKeyMethod(tb);
+            CreateSetUniqueKeyMethod(tb);
 
-            CreateGetHashSeedMethod(tb);
+            CreateGetUniqueSeedMethod(tb);
 
-            CreateSetHashSeedMethod(tb);
+            CreateSetUniqueSeedMethod(tb);
 
-            CreateSeedBlockProperty(tb);
+            CreateUniqueSeedProperty(tb);
 
-            CreateGetKeyBytesMethod(tb);
+            CreateGetUniqueBytesMethod(tb);
 
             CreateGetBytesMethod(tb);
 

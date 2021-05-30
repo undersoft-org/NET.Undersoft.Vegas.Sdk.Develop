@@ -26,11 +26,11 @@ namespace System.Instant
 
         public abstract IFigures Figures { get; set; }
 
-        public IFigures Picked { get => Sleeves.Picked; set => Sleeves.Picked = value; }
+        public IFigures Organized { get => Sleeves.Organized; set => Sleeves.Organized = value; }
 
         public FigureFilter Filter { get => Sleeves.Filter; set => Sleeves.Filter = value; }
         public FigureSort Sort { get => Sleeves.Sort; set => Sleeves.Sort = value; }
-        public Func<IFigure, bool> Picker { get => Sleeves.Picker; set => Sleeves.Picker = value; }
+        public Func<IFigure, bool> Organizer { get => Sleeves.Organizer; set => Sleeves.Organizer = value; }
 
         public int Serialize(Stream tostream, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary)
         {
@@ -158,7 +158,7 @@ namespace System.Instant
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                return Sleeves.Add(key, _item);
             }
@@ -169,14 +169,14 @@ namespace System.Instant
         }
         public void Add(IFigure item)
         {
-            long key = item.GetHashKey();
+            long key = item.UniqueKey;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
             {
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 Sleeves.Add(key, _item);
             }
@@ -189,13 +189,13 @@ namespace System.Instant
         public bool Add(object key, IFigure item)
         {
             IFigure _item;
-            long _key = key.GetHashKey64();
+            long _key = key.UniqueKey64();
             if (Figures.TryGet(_key, out _item))
             {
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 return Sleeves.Add(_key, _item);
             }
@@ -211,7 +211,7 @@ namespace System.Instant
                 if (!ReferenceEquals(_item.Value, item.Value))
                 {
                     _item.Value.ValueArray = item.Value.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 Sleeves.Add(_item);
             }
@@ -247,7 +247,7 @@ namespace System.Instant
                 if (!ReferenceEquals(_item, value))
                 {
                     _item.ValueArray = value.ValueArray;
-                    _item.KeyBlock = value.KeyBlock;
+                    _item.UniqueKey = value.UniqueKey;
                 }
                 Sleeves.Add(_item);
             }
@@ -266,14 +266,14 @@ namespace System.Instant
         }
         public bool TryAdd(IFigure item)
         {
-            long key = item.GetHashKey();
+            long key = item.UniqueKey;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
             {
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 return Sleeves.Add(key, _item);
             }
@@ -320,7 +320,7 @@ namespace System.Instant
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 return Sleeves.Put(key, _item);
             }
@@ -330,14 +330,14 @@ namespace System.Instant
 
         public ICard<IFigure> Put(object key, IFigure item)
         {
-            long _key = key.GetHashKey();
+            long _key = key.UniqueKey();
             IFigure _item;
             if (Figures.TryGet(_key, out _item))
             {
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 return Sleeves.Put(_key, _item);
             }
@@ -353,7 +353,7 @@ namespace System.Instant
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 return Sleeves.Put(card);
             }
@@ -383,14 +383,14 @@ namespace System.Instant
         }
         public ICard<IFigure> Put(IFigure item)
         {
-            long key = item.GetHashKey();
+            long key = item.UniqueKey;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
             {
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 return Sleeves.Put(key, _item);
             }
@@ -399,7 +399,7 @@ namespace System.Instant
         }
         public ICard<IFigure> Put(IUnique<IFigure> value)
         {
-            long key = value.GetHashKey();
+            long key = value.UniqueKey;
             IFigure item = value.Value;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
@@ -407,7 +407,7 @@ namespace System.Instant
                 if (!ReferenceEquals(_item, item))
                 {
                     _item.ValueArray = item.ValueArray;
-                    _item.KeyBlock = item.KeyBlock;
+                    _item.UniqueKey = item.UniqueKey;
                 }
                 return Sleeves.Put(key, _item);
             }
@@ -530,30 +530,30 @@ namespace System.Instant
             return Sleeves.GetBytes();
         }
 
-        public byte[] GetKeyBytes()
+        public byte[] GetUniqueBytes()
         {
-            return Sleeves.GetKeyBytes();
+            return Sleeves.GetUniqueBytes();
         }
 
-        public void SetHashKey(long value)
-        {
-            Sleeves.SetHashKey(value);
-        }
+        //public void SetUniqueKey(long value)
+        //{
+        //    Sleeves.SetUniqueKey(value);
+        //}
 
-        public long GetHashKey()
-        {
-            return Sleeves.GetHashKey();
-        }
+        //public long GetUniqueKey()
+        //{
+        //    return Sleeves.UniqueKey;
+        //}
 
-        public void SetHashSeed(uint seed)
-        {
-            Sleeves.SetHashSeed(seed);
-        }
+        //public void SetUniqueSeed(uint seed)
+        //{
+        //    Sleeves.SetUniqueSeed(seed);
+        //}
 
-        public uint GetHashSeed()
-        {
-            return Sleeves.GetHashSeed();
-        }
+        //public uint GetUniqueSeed()
+        //{
+        //    return Sleeves.GetUniqueSeed();
+        //}
 
         public bool Equals(IUnique other)
         {
@@ -639,7 +639,7 @@ namespace System.Instant
 
         public IUnique Empty => Sleeves.Empty;
 
-        public long KeyBlock { get => Sleeves.KeyBlock; set => Sleeves.KeyBlock = value; }
+        public long UniqueKey { get => Sleeves.UniqueKey; set => Sleeves.UniqueKey = value; }
 
         public Type Type { get => Figures.Type; set => Figures.Type = value; }
 
@@ -658,7 +658,7 @@ namespace System.Instant
         }
 
         public IDeck<IComputation> Computations { get => Figures.Computations; set => Figures.Computations = value; }
-        public uint SeedBlock { get => Sleeves.SeedBlock; set => Sleeves.SeedBlock = value; }
+        public uint UniqueSeed { get => Sleeves.UniqueSeed; set => Sleeves.UniqueSeed = value; }
 
         object IFigure.this[int fieldId] { get => Sleeves[fieldId]; set => Sleeves[fieldId] = (IFigure)value; }
         public object this[string propertyName] { get => Sleeves[propertyName]; set => Sleeves[propertyName] = value; }

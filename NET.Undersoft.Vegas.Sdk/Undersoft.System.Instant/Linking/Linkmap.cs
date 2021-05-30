@@ -1,70 +1,111 @@
-﻿using System.Uniques;
-using System.Multemic;
-using System.Multemic.Basedeck;
-using System.Collections.Generic;
-using System.Linq;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
 
+   System.Instant.Linkmap.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (29.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant.Linking
 {
+    using System.Collections.Generic;
+    using System.Multemic;
+    using System.Uniques;
+
     public interface ILinkmap
     {
+        #region Properties
+
         Links Links { get; }
 
         LinkBranches Map { get; }
 
-        IDeck<LinkBranch> GetMap(IList<LinkMember> members);
+        #endregion
+
+        #region Methods
+
+        void Truncate();
+
+        IDeck<Link> GetLinks(IList<LinkMember> members);
+
+        Link GetLink(LinkMember member);
+
+        IDeck<IDeck<LinkBranch>> GetMaps(IList<LinkMember> members);
+
         IDeck<LinkBranch> GetMap(LinkMember member);
 
-        IDeck<Link> GetLink(IList<LinkMember> members);
-        IDeck<Link> GetLink(LinkMember member);
+        LinkBranches Build();
 
         LinkBranches Update();
 
-        void Clear();
+        #endregion
     }
 
-    [JsonObject]
     [Serializable]
-    public static class Linkmap
+    public class Linkmap
     {
-        #region NonSerialized
-        [NonSerialized] private static Links links = new Links();
-        [NonSerialized] private static LinkBranches map = new LinkBranches(links, PRIMES_ARRAY.Get(9));
+        #region Fields
+
+        private Links links;
+        private LinkBranches map;
+
         #endregion
 
-        public static Links Links { get => links; }
+        public Linkmap()
+        {
+            links = new Links();
+            map = new LinkBranches(links, PRIMES_ARRAY.Get(9));
+        }
 
-        public static LinkBranches Map { get => map; }
+        #region Properties
 
-        public static void Clear()
+        public Links Links { get => links; }
+
+        public LinkBranches Map { get => map; }
+
+        #endregion
+
+        #region Methods
+
+        public void Truncate()
+        {
+            Map.Flush();
+        }
+
+        public IDeck<Link> GetLinks(IList<LinkMember> members)
         {
             throw new NotImplementedException();
         }
 
-        public static IDeck<Link> GetLink(IList<LinkMember> members)
+        public Link GetLink(LinkMember member)
         {
             throw new NotImplementedException();
         }
 
-        public static IDeck<Link> GetLink(LinkMember member)
+        public IDeck<IDeck<LinkBranch>> GetMaps(IList<LinkMember> members)
         {
             throw new NotImplementedException();
         }
 
-        public static IDeck<LinkBranch> GetMap(IList<LinkMember> members)
+        public IDeck<LinkBranch> GetMap(LinkMember member)
+        {
+            throw new NotImplementedException();
+        }
+         
+        public LinkBranches Build()
         {
             throw new NotImplementedException();
         }
 
-        public static IDeck<LinkBranch> GetMap(LinkMember member)
+        public LinkBranches Update()
         {
             throw new NotImplementedException();
         }
 
-        public static LinkBranches Update()
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
     }
 }
