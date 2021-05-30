@@ -41,8 +41,7 @@ namespace System.Instant
         public FigureCard(IFigure value, IFigures figures) : base(value)
         {            
             Figures = figures;
-            UniquesAsKey();
-            
+            UniquesAsKey();            
         }
         public FigureCard(ICard<IFigure> value, IFigures figures) : base(value)
         {

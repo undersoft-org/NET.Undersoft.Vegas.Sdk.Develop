@@ -73,7 +73,7 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Usid.Empty;
 
-        public long UniqueKey { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
+        public new long UniqueKey { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
 
         public LinkMember Member { get; set; }
 
@@ -110,16 +110,6 @@ namespace System.Instant.Linking
             return SystemSerialCode.GetBytes();
         }
 
-        public long GetUniqueKey()
-        {
-            return SystemSerialCode.UniqueKey;
-        }
-
-        public uint GetUniqueSeed()
-        {
-            return Member.GetUniqueSeed();
-        }
-
         public byte[] GetUniqueBytes()
         {
             return SystemSerialCode.GetUniqueBytes();
@@ -145,15 +135,25 @@ namespace System.Instant.Linking
             return new LinkCard(key, value, Member);
         }
 
-        public void SetUniqueKey(long value)
-        {
-            SystemSerialCode.SetUniqueKey(value);
-        }
+        //public long GetUniqueKey()
+        //{
+        //    return SystemSerialCode.UniqueKey;
+        //}
 
-        public void SetUniqueSeed(uint seed)
-        {
-            Member.SetUniqueSeed(seed);
-        }
+        //public uint GetUniqueSeed()
+        //{
+        //    return Member.GetUniqueSeed();
+        //}
+
+        //public void SetUniqueKey(long value)
+        //{
+        //    SystemSerialCode.SetUniqueKey(value);
+        //}
+
+        //public void SetUniqueSeed(uint seed)
+        //{
+        //    Member.SetUniqueSeed(seed);
+        //}
 
         protected override bool InnerAdd(ICard<IFigure> value)
         {

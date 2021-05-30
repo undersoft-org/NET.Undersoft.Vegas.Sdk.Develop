@@ -49,7 +49,7 @@ namespace System.Instant
 
         public IFigures Figures { get; set; }
 
-        public long UniqueKey { get => Figures.UniqueKey; set => Figures.UniqueKey = value; }
+        public new long UniqueKey { get => Figures.UniqueKey; set => Figures.UniqueKey = value; }
 
         public IRubrics KeyRubrics { get; set; }
 
@@ -134,7 +134,7 @@ namespace System.Instant
                 Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
                 destOffset += l;
             }
-            return (long)UniqueCoder64.ComputeUniqueKey(bufferPtr, destOffset, seed);
+            return (long)UniqueCode64.ComputeUniqueKey(bufferPtr, destOffset, seed);
         }
 
         //public uint GetUniqueSeed()
@@ -161,7 +161,7 @@ namespace System.Instant
                 Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
                 destOffset += l;
             }
-            ulong hash = UniqueCoder64.ComputeUniqueKey(bufferPtr, destOffset, seed);
+            ulong hash = UniqueCode64.ComputeUniqueKey(bufferPtr, destOffset, seed);
             byte[] b = new byte[8];
             fixed (byte* bp = b)
                 *((ulong*)bp) = hash;
@@ -185,10 +185,10 @@ namespace System.Instant
             return new RubricCard(key, value);
         }
 
-        public void SetUniqueKey(IFigure figure, uint seed = 0)
-        {
-            figure.UniqueKey = GetUniqueKey(figure, seed);
-        }
+        //public void SetUniqueKey(IFigure figure, uint seed = 0)
+        //{
+        //    figure.UniqueKey = GetUniqueKey(figure, seed);
+        //}
 
         //public void SetUniqueKey(long value)
         //{

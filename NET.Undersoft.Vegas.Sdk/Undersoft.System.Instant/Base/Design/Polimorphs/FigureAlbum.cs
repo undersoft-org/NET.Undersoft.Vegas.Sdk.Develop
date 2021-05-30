@@ -102,7 +102,7 @@ namespace System.Instant
         }
         public override ICard<IFigure> AddNew(object key)
         {
-            ICard<IFigure> newCard = NewCard(base.UniqueKey(key), NewFigure());
+            ICard<IFigure> newCard = NewCard(__base_.UniqueKey(key), NewFigure());
             if (InnerAdd(newCard))
                 return newCard;
             return null;
@@ -127,12 +127,6 @@ namespace System.Instant
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey
-        {
-            get => SystemSerialCode.UniqueKey;
-            set => SystemSerialCode.SetUniqueKey(value);
-        }
-
         object IFigure.this[int fieldId]
         {
             get => this[fieldId];
@@ -153,13 +147,10 @@ namespace System.Instant
             return SystemSerialCode.GetUniqueBytes();
         }
 
-        public void SetUniqueKey(long value)
+        public new long UniqueKey
         {
-            SystemSerialCode.SetUniqueKey(value);
-        }
-        public long GetUniqueKey()
-        {
-            return SystemSerialCode.UniqueKey;
+            get => SystemSerialCode.UniqueKey;
+            set => SystemSerialCode.SetUniqueKey(value);
         }
 
         public uint UniqueSeed
@@ -168,14 +159,23 @@ namespace System.Instant
             set => SystemSerialCode.SetUniqueSeed(value);
         }
 
-        public void SetUniqueSeed(uint seed)
-        {
-            SystemSerialCode.SetUniqueSeed(seed);
-        }
-        public uint GetUniqueSeed()
-        {
-            return SystemSerialCode.GetUniqueSeed();
-        }
+        //public void SetUniqueKey(long value)
+        //{
+        //    SystemSerialCode.SetUniqueKey(value);
+        //}
+        //public long GetUniqueKey()
+        //{
+        //    return SystemSerialCode.UniqueKey;
+        //}
+
+        //public void SetUniqueSeed(uint seed)
+        //{
+        //    SystemSerialCode.SetUniqueSeed(seed);
+        //}
+        //public uint GetUniqueSeed()
+        //{
+        //    return SystemSerialCode.GetUniqueSeed();
+        //}
 
         public bool Equals(IUnique other)
         {

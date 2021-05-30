@@ -44,15 +44,15 @@ namespace System.Instant
 
             CreateFigureSizeField(tb, typeof(int), "FigureSize");
 
-            CreateFigureObject(tb);
-
-            //CreateNewObject(tb);
+            CreateNewFigureObject(tb, "NewFigure");
 
             CreateItemByIntProperty(tb);
 
             CreateItemByStringProperty(tb);
 
             return tb.CreateTypeInfo();
+
+            //CreateNewObject(tb);
         }
 
         private TypeBuilder GetTypeBuilder(string typeName)
@@ -524,9 +524,9 @@ namespace System.Instant
             il.Emit(OpCodes.Ret);
         }
 
-        private void CreateFigureObject(TypeBuilder tb)
+        private void CreateNewFigureObject(TypeBuilder tb, string name)
         {
-            MethodInfo createArray = DeckType.GetMethod("NewFigure");
+            MethodInfo createArray = DeckType.GetMethod(name);
 
             ParameterInfo[] args = createArray.GetParameters();
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);

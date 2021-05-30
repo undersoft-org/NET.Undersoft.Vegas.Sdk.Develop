@@ -56,19 +56,19 @@ namespace System.Instant
         {
             this.value = value;
             Member = value.Member;
-            Key = key.UniqueKey64(value.GetUniqueSeed());
+            Key = key.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(object key, LinkBranch value)
         {
             this.value = value;
             Member = value.Member;
-            Key = key.UniqueKey64(value.GetUniqueSeed());
+            Key = key.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(LinkBranch value)
         {
             this.value = value;
             Member = value.Member;
-            Key = value.UniqueKey64(value.GetUniqueSeed());
+            Key = value.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(ICard<LinkBranch> card)
         {
@@ -135,7 +135,7 @@ namespace System.Instant
         {
             if (this.value.Count > 0)
                 return this.value[0].UniquesAsKey();
-            return -1;
+            return 0;
         }
 
         public override long Key
@@ -169,25 +169,25 @@ namespace System.Instant
             return this.value.Equals(other);
         }
 
-        public override long GetUniqueKey()
-        {
-            return this.value.UniqueKey;
-        }
+        //public override long GetUniqueKey()
+        //{
+        //    return this.value.UniqueKey;
+        //}
 
-        public override void SetUniqueKey(long value)
-        {
-            this.value.SetUniqueKey(value);
-        }
+        //public override void SetUniqueKey(long value)
+        //{
+        //    this.value.SetUniqueKey(value);
+        //}
 
-        public override void SetUniqueSeed(uint seed)
-        {
-            Member.SetUniqueSeed(seed);
-        }
+        //public override void SetUniqueSeed(uint seed)
+        //{
+        //    Member.SetUniqueSeed(seed);
+        //}
 
-        public override uint GetUniqueSeed()
-        {
-            return Member.GetUniqueSeed();
-        }
+        //public override uint GetUniqueSeed()
+        //{
+        //    return Member.GetUniqueSeed();
+        //}
 
     }
 }

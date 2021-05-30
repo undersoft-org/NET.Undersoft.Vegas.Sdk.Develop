@@ -87,23 +87,23 @@ namespace System.Multemic
             return Key == key;
         }
 
-        public virtual void SetUniqueKey(long hashcode)
-        {
-            UniqueKey = hashcode;
-        }
-        public virtual long GetUniqueKey()
-        {
-            return Key;
-        }
+        //public virtual void SetUniqueKey(long hashcode)
+        //{
+        //    UniqueKey = hashcode;
+        //}
+        //public virtual long GetUniqueKey()
+        //{
+        //    return Key;
+        //}
 
-        public virtual void SetUniqueSeed(uint hashseed)
-        {
-            UniqueSeed = hashseed;
-        }
-        public virtual uint GetUniqueSeed()
-        {
-            return UniqueSeed;
-        }
+        //public virtual void SetUniqueSeed(uint hashseed)
+        //{
+        //    UniqueSeed = hashseed;
+        //}
+        //public virtual uint GetUniqueSeed()
+        //{
+        //    return UniqueSeed;
+        //}
 
         public override abstract bool Equals(object y);
  

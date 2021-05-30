@@ -6,10 +6,14 @@ namespace System.Instant
     {       
         object this[string propertyName] { get; set; }
 
-        object this[int fieldId] { get; set; }
+        object this[int fieldId] { get; set; }      
 
         object[] ValueArray { get; set; }
 
         Ussn SystemSerialCode { get; set; }
+
+        //V Get<V>(string propertyName);
+
+        //V Set<V>(string propertyName, object value);
     }   
 }

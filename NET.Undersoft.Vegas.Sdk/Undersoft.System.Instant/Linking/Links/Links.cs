@@ -140,9 +140,10 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey
+        public new long UniqueKey
         { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
-        public uint UniqueSeed
+
+        public uint     UniqueSeed
         {
             get => SystemSerialCode.UniqueSeed;
             set => SystemSerialCode.SetUniqueSeed(value);
@@ -163,29 +164,29 @@ namespace System.Instant.Linking
             return SystemSerialCode.GetBytes();
         }
 
-        public long GetUniqueKey()
-        {
-            return SystemSerialCode.UniqueKey;
-        }
-
         public byte[] GetUniqueBytes()
         {
             return SystemSerialCode.GetUniqueBytes();
         }
 
-        public void SetUniqueKey(long value)
-        {
-            SystemSerialCode.SetUniqueKey(value);
-        }
+        //public long GetUniqueKey()
+        //{
+        //    return SystemSerialCode.UniqueKey;
+        //}
 
-        public void SetUniqueSeed(uint seed)
-        {
-            SystemSerialCode.SetUniqueSeed(seed);
-        }
+        //public void SetUniqueKey(long value)
+        //{
+        //    SystemSerialCode.SetUniqueKey(value);
+        //}
 
-        public uint GetUniqueSeed()
-        {
-            return SystemSerialCode.GetUniqueSeed();
-        }
+        //public void SetUniqueSeed(uint seed)
+        //{
+        //    SystemSerialCode.SetUniqueSeed(seed);
+        //}
+
+        //public uint GetUniqueSeed()
+        //{
+        //    return SystemSerialCode.GetUniqueSeed();
+        //}
     }
 }

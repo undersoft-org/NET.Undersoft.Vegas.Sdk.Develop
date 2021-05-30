@@ -33,14 +33,6 @@ namespace System.Instant
 
             CreateUniqueKeyProperty(tb);
 
-            CreateGetUniqueKeyMethod(tb);
-
-            CreateSetUniqueKeyMethod(tb);
-
-            CreateGetUniqueSeedMethod(tb);
-
-            CreateSetUniqueSeedMethod(tb);
-
             CreateUniqueSeedProperty(tb);
 
             CreateGetUniqueBytesMethod(tb);
@@ -54,6 +46,14 @@ namespace System.Instant
             CreateCompareToMethod(tb);
 
             return tb.CreateTypeInfo();
+
+            //CreateGetUniqueKeyMethod(tb);
+
+            //CreateSetUniqueKeyMethod(tb);
+
+            //CreateGetUniqueSeedMethod(tb);
+
+            //CreateSetUniqueSeedMethod(tb);
         }
 
         private TypeBuilder GetTypeBuilder(string typeName)

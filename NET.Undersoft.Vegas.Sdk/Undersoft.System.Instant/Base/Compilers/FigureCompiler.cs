@@ -456,7 +456,7 @@ namespace System.Instant
 
             GenericTypeParameterBuilder V = typeParameters[0];
 
-            MethodInfo mi = typeof(IFigure).GetMethod("Get", new Type[] { typeof(int) }).MakeGenericMethod();
+            MethodInfo mi = typeof(IFigure).GetMethod("Get", new Type[] { typeof(int) }).MakeGenericMethod(typeParameters);
 
             ParameterInfo[] args = mi.GetParameters();
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);

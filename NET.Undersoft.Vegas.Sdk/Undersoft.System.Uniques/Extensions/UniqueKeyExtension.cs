@@ -20,9 +20,9 @@ namespace System.Uniques
             if (obj is IUnique)
                 return ((IUnique)obj).GetUniqueBytes();
             if (obj is ValueType)
-                return GetValueTypeHashBytes64(obj);
+                return GetValueTypeHashBytes64(obj, seed);
             if (obj is string)
-                return (((string)obj)).UniqueBytes64();
+                return (((string)obj)).UniqueBytes64(seed);
             if (obj is IList)
                 return UniqueBytes64((IList)obj);
             return UniqueCode64.ComputeUniqueBytes(obj.GetBytes(true), seed);
@@ -72,7 +72,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            Extractor.StructureToPointer(o, new IntPtr(buffer + offset));
+                            Extractor.StructureToPointer(o, buffer + offset);
                     }
                 }
 
@@ -115,11 +115,11 @@ namespace System.Uniques
             if (obj is IUnique)
                 return ((IUnique)obj).UniqueKey;
             if (obj is IList)
-                return UniqueKey64((IList)obj);
+                return UniqueKey64((IList)obj, seed);
             if (obj is string)
-                return (((string)obj)).UniqueKey64();        
+                return (((string)obj)).UniqueKey64(seed);        
             if (obj is ValueType)
-                return getValueTypeUniqueKey64(obj);                    
+                return getValueTypeUniqueKey64(obj, seed);                    
             return (long)UniqueCode64.ComputeUniqueKey(obj.GetBytes(true), seed);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -168,7 +168,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            Extractor.StructureToPointer(o, new IntPtr(buffer + offset));
+                            Extractor.StructureToPointer(o, buffer + offset);
                     }
                 }
 
@@ -238,27 +238,27 @@ namespace System.Uniques
 
         public static Int64 UniqueKey(this IntPtr ptr, int length, uint seed = 0)
         {
-            return ptr.UniqueKey64(length, seed);
+            return UniqueKey64(ptr, length, seed);
         }
         public static Int64 UniqueKey<T>(this IEquatable<T> obj, uint seed = 0)
         {
-            return obj.UniqueKey64(seed);
+            return UniqueKey64(obj, seed);
         }
         public static Int64 UniqueKey(this Byte[] bytes, uint seed = 0)
         {
-            return bytes.UniqueKey64(seed);
+            return UniqueKey64(bytes, seed);
         }
         public static Int64 UniqueKey(this Object obj, uint seed = 0)
         {
-            return obj.UniqueKey64(seed);
+            return UniqueKey64(obj, seed);
         }
         public static Int64 UniqueKey(this IList obj, uint seed = 0)
         {
-            return UniqueKey64(seed);
+            return UniqueKey64(obj, seed);
         }
         public static Int64 UniqueKey(this String obj, uint seed = 0)
         {
-            return UniqueKey64(seed);
+            return UniqueKey64(obj, seed);
         }
         public static Int64 UniqueKey<V>(this IUnique<V> obj, uint seed)
         {
@@ -486,7 +486,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            Extractor.StructureToPointer(o, new IntPtr(buffer + offset));
+                            Extractor.StructureToPointer(o, buffer + offset);
                     }
                 }
 
@@ -583,7 +583,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            Extractor.StructureToPointer(o, new IntPtr(buffer + offset));
+                            Extractor.StructureToPointer(o, buffer + offset);
                     }
                 }
 
