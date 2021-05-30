@@ -7,7 +7,7 @@ namespace System.Uniques
 {
     using System.Runtime.CompilerServices;
 
-    public static class UniqueCoder64
+    public static class UniqueCode64
     {
         public static unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
         {
@@ -43,7 +43,7 @@ namespace System.Uniques
         }
     }
 
-    public static class UniqueCoder32
+    public static class UniqueCode32
     {
         public static unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
         {

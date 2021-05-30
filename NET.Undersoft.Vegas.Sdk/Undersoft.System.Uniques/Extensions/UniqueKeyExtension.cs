@@ -5,15 +5,15 @@ using System.Runtime.CompilerServices;
 
 namespace System.Uniques
 {
-    public unsafe static class UniqueKeyExtensions64
+    public unsafe static class UniqueKeyExtension64
     {
         public static Byte[] UniqueBytes64(this IntPtr bytes, int length, uint seed = 0)
         {
-            return UniqueCoder64.ComputeUniqueBytes((byte*)bytes.ToPointer(), length, seed);
+            return UniqueCode64.ComputeUniqueBytes((byte*)bytes.ToPointer(), length, seed);
         }
         public static Byte[] UniqueBytes64(this Byte[] bytes, uint seed = 0)
         {
-            return UniqueCoder64.ComputeUniqueBytes(bytes, seed);
+            return UniqueCode64.ComputeUniqueBytes(bytes, seed);
         }
         public static Byte[] UniqueBytes64(this Object obj, uint seed = 0)
         {
@@ -25,13 +25,13 @@ namespace System.Uniques
                 return (((string)obj)).UniqueBytes64();
             if (obj is IList)
                 return UniqueBytes64((IList)obj);
-            return UniqueCoder64.ComputeUniqueBytes(obj.GetBytes(true), seed);
+            return UniqueCode64.ComputeUniqueBytes(obj.GetBytes(true), seed);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Byte[] UniqueBytes64(this IList obj, uint seed = 0)
         {
             if (obj is Byte[])
-                return UniqueCoder64.ComputeUniqueBytes((Byte[])obj, seed);
+                return UniqueCode64.ComputeUniqueBytes((Byte[])obj, seed);
 
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -89,12 +89,12 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return UniqueCoder64.ComputeUniqueBytes(buffer, offset, seed);
+            return UniqueCode64.ComputeUniqueBytes(buffer, offset, seed);
         }
         public static Byte[] UniqueBytes64(this String obj, uint seed = 0)
         {
             fixed (char* c = obj)
-                return UniqueCoder64.ComputeUniqueBytes((byte*)c, obj.Length * sizeof(char), seed);
+                return UniqueCode64.ComputeUniqueBytes((byte*)c, obj.Length * sizeof(char), seed);
         }
         public static Byte[] UniqueBytes64(this IUnique obj)
         {
@@ -104,11 +104,11 @@ namespace System.Uniques
         public static unsafe 
                        Int64 UniqueKey64(this IntPtr ptr, int length, uint seed = 0)
         {
-            return (long)UniqueCoder64.ComputeUniqueKey((byte*)ptr.ToPointer(), length, seed);
+            return (long)UniqueCode64.ComputeUniqueKey((byte*)ptr.ToPointer(), length, seed);
         }
         public static  Int64 UniqueKey64(this Byte[] bytes, uint seed = 0)
         {
-            return (long)UniqueCoder64.ComputeUniqueKey(bytes, seed);
+            return (long)UniqueCode64.ComputeUniqueKey(bytes, seed);
         }
         public static  Int64 UniqueKey64(this Object obj, uint seed = 0)
         {
@@ -120,14 +120,14 @@ namespace System.Uniques
                 return (((string)obj)).UniqueKey64();        
             if (obj is ValueType)
                 return getValueTypeUniqueKey64(obj);                    
-            return (long)UniqueCoder64.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return (long)UniqueCode64.ComputeUniqueKey(obj.GetBytes(true), seed);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe 
                        Int64 UniqueKey64(this IList obj, uint seed = 0)
         {
             if (obj is Byte[])
-                return (long)UniqueCoder64.ComputeUniqueKey((Byte[])obj, seed);
+                return (long)UniqueCode64.ComputeUniqueKey((Byte[])obj, seed);
           
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -185,13 +185,13 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return (long)UniqueCoder64.ComputeUniqueKey(buffer, offset, seed);
+            return (long)UniqueCode64.ComputeUniqueKey(buffer, offset, seed);
         }      
         public static  Int64 UniqueKey64(this String obj, uint seed = 0)
         {
             fixed (char* c = obj)
             {
-                return (long)UniqueCoder64.ComputeUniqueKey((byte*)c, obj.Length * sizeof(char), seed);
+                return (long)UniqueCode64.ComputeUniqueKey((byte*)c, obj.Length * sizeof(char), seed);
             }
         }
         public static  Int64 UniqueKey64<V>(this IUnique<V> obj, uint seed)
@@ -200,7 +200,7 @@ namespace System.Uniques
         }
         public static Int64  UniqueKey64(this IUnique obj, uint seed)
         {
-            return (long)UniqueCoder64.ComputeUniqueKey(obj.GetUniqueBytes(), seed);
+            return (long)UniqueCode64.ComputeUniqueKey(obj.GetUniqueBytes(), seed);
         }
         public static  Int64 UniqueKey64(this IUnique obj)
         {
@@ -351,7 +351,7 @@ namespace System.Uniques
             if (t == typeof(Enum))
                 return Convert.ToInt32(obj);
 
-            return (long)UniqueCoder64.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return (long)UniqueCode64.ComputeUniqueKey(obj.GetBytes(true), seed);
         }
 
         private static Byte[] GetValueTypeHashBytes64(object obj, uint seed = 0)
@@ -372,11 +372,11 @@ namespace System.Uniques
             if (t == typeof(Enum))
                 return Convert.ToInt32(obj).GetBytes();
 
-            return ((long)UniqueCoder64.ComputeUniqueKey(obj.GetBytes(true), seed)).GetBytes(true);
+            return ((long)UniqueCode64.ComputeUniqueKey(obj.GetBytes(true), seed)).GetBytes(true);
         }
     }
 
-    public unsafe static class UniqueKeyExtensions32
+    public unsafe static class UniqueKeyExtension32
     {
         public static Int32 BitAggregate64to32(byte* bytes)
         {
@@ -421,12 +421,12 @@ namespace System.Uniques
 
         public static unsafe Byte[] UniqueBytes32(this IntPtr ptr, int length, uint seed = 0)
         {
-            return UniqueCoder32.ComputeUniqueBytes((byte*)ptr.ToPointer(), length, seed);
+            return UniqueCode32.ComputeUniqueBytes((byte*)ptr.ToPointer(), length, seed);
         }
 
         public static Byte[] UniqueBytes32(this Byte[] bytes, uint seed = 0)
         {
-            return UniqueCoder32.ComputeUniqueBytes(bytes, seed);
+            return UniqueCode32.ComputeUniqueBytes(bytes, seed);
         }
         public static Byte[] UniqueBytes32(this Object obj, uint seed = 0)
         {
@@ -438,14 +438,14 @@ namespace System.Uniques
                 return (((string)obj)).UniqueBytes32(seed);
             if (obj is IList)
                 return UniqueBytes32((IList)obj, seed);
-            return UniqueCoder32.ComputeUniqueBytes(obj.GetBytes(true), seed);
+            return UniqueCode32.ComputeUniqueBytes(obj.GetBytes(true), seed);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Byte[] UniqueBytes32(this IList obj, uint seed = 0)
         {
             if (obj is Byte[])
-                return UniqueCoder32.ComputeUniqueBytes((Byte[])obj, seed);
+                return UniqueCode32.ComputeUniqueBytes((Byte[])obj, seed);
 
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -503,13 +503,13 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return UniqueCoder32.ComputeUniqueBytes(buffer, offset, seed);
+            return UniqueCode32.ComputeUniqueBytes(buffer, offset, seed);
         }
 
         public static Byte[] UniqueBytes32(this String obj, uint seed = 0)
         {
             fixed (char* c = obj)
-                return UniqueCoder32.ComputeUniqueBytes((byte*)c, obj.Length * sizeof(char), seed);
+                return UniqueCode32.ComputeUniqueBytes((byte*)c, obj.Length * sizeof(char), seed);
         }
         public static Byte[] UniqueBytes32(this IUnique obj)
         {
@@ -518,12 +518,12 @@ namespace System.Uniques
 
         public static unsafe Int32 UniqueKey32(this IntPtr ptr, int length, uint seed = 0)
         {
-            return (int)UniqueCoder32.ComputeUniqueKey((byte*)ptr.ToPointer(), length, seed);
+            return (int)UniqueCode32.ComputeUniqueKey((byte*)ptr.ToPointer(), length, seed);
         }
 
         public static Int32 UniqueKey32(this Byte[] obj, uint seed = 0)
         {
-            return (int)UniqueCoder32.ComputeUniqueKey(obj, seed);
+            return (int)UniqueCode32.ComputeUniqueKey(obj, seed);
         }
         public static Int32 UniqueKey32(this Object obj, uint seed = 0)
         {
@@ -535,14 +535,14 @@ namespace System.Uniques
                 return (((string)obj)).UniqueKey32(seed);
             if (obj is IList)
                 return UniqueKey32((IList)obj, seed);
-            return (int)UniqueCoder32.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return (int)UniqueCode32.ComputeUniqueKey(obj.GetBytes(true), seed);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Int32 UniqueKey32(this IList obj, uint seed = 0)
         {
             if (obj is Byte[])
-                return (int)UniqueCoder32.ComputeUniqueKey((Byte[])obj, seed);
+                return (int)UniqueCode32.ComputeUniqueKey((Byte[])obj, seed);
 
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -600,13 +600,13 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return (int)UniqueCoder32.ComputeUniqueKey(buffer, offset, seed);
+            return (int)UniqueCode32.ComputeUniqueKey(buffer, offset, seed);
         }
 
         public static Int32 UniqueKey32(this string obj, uint seed = 0)
         {
             fixed (char* c = obj)
-                return (int)UniqueCoder32.ComputeUniqueKey((byte*)c, obj.Length * sizeof(char), seed);
+                return (int)UniqueCode32.ComputeUniqueKey((byte*)c, obj.Length * sizeof(char), seed);
         }
         public static Int32 UniqueKey32<V>(this IUnique<V> obj, uint seed)
         {
@@ -614,7 +614,7 @@ namespace System.Uniques
         }
         public static Int32 UniqueKey32(this IUnique obj, uint seed)
         {
-            return (int)UniqueCoder32.ComputeUniqueKey(obj.GetUniqueBytes(), seed);
+            return (int)UniqueCode32.ComputeUniqueKey(obj.GetUniqueBytes(), seed);
         }
         public static Int32 UniqueKey32(this IUnique obj)
         {
@@ -669,7 +669,7 @@ namespace System.Uniques
             if (t == typeof(Enum))
                 return Convert.ToInt32(obj);
 
-            return (int)UniqueCoder32.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return (int)UniqueCode32.ComputeUniqueKey(obj.GetBytes(true), seed);
         }
 
         private static Byte[] getValueTypeUniqueBytes32(object obj, uint seed = 0)
@@ -692,7 +692,7 @@ namespace System.Uniques
             if (t == typeof(Enum))
                 return Convert.ToInt32(obj).GetBytes();
 
-            return ((int)UniqueCoder32.ComputeUniqueKey(obj.GetBytes(true)), seed).GetBytes(true);
+            return ((int)UniqueCode32.ComputeUniqueKey(obj.GetBytes(true)), seed).GetBytes(true);
         }
     }
 

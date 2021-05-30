@@ -188,7 +188,7 @@ namespace System.Uniques
         {
             fixed (byte* pbyte = bytes)
             {
-                return (int)UniqueCoder32.ComputeUniqueKey(pbyte, 8);
+                return (int)UniqueCode32.ComputeUniqueKey(pbyte, 8);
             }
         }
 

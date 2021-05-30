@@ -13,19 +13,19 @@ namespace System.Uniques
 
         public override unsafe Byte[] ComputeUniqueBytes(byte* bytes, int length, uint seed = 0)
         {
-            return UniqueCoder32.ComputeUniqueBytes(bytes, length, seed);
+            return UniqueCode32.ComputeUniqueBytes(bytes, length, seed);
         }
         public override unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
         {
-            return UniqueCoder32.ComputeUniqueBytes(bytes, seed);
+            return UniqueCode32.ComputeUniqueBytes(bytes, seed);
         }
         public override unsafe UInt64 ComputeUniqueKey(byte* bytes, int length, uint seed = 0)
         {
-            return UniqueCoder32.ComputeUniqueKey(bytes, length, seed);
+            return UniqueCode32.ComputeUniqueKey(bytes, length, seed);
         }
         public override unsafe UInt64 ComputeUniqueKey(byte[] bytes, uint seed = 0)
         {
-            return UniqueCoder32.ComputeUniqueKey(bytes, seed);
+            return UniqueCode32.ComputeUniqueKey(bytes, seed);
         }
 
         protected override unsafe Byte[] UniqueBytes(byte* obj, int length, uint seed = 0)
@@ -110,19 +110,19 @@ namespace System.Uniques
 
         public override unsafe Byte[] ComputeUniqueBytes(byte* bytes, int length, uint seed = 0)
         {
-            return UniqueCoder64.ComputeUniqueBytes(bytes, length, seed);
+            return UniqueCode64.ComputeUniqueBytes(bytes, length, seed);
         }
         public override unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
         {
-            return UniqueCoder64.ComputeUniqueBytes(bytes, seed);
+            return UniqueCode64.ComputeUniqueBytes(bytes, seed);
         }
         public override unsafe UInt64 ComputeUniqueKey(byte* bytes, int length, uint seed = 0)
         {
-            return UniqueCoder64.ComputeUniqueKey(bytes, length, seed);
+            return UniqueCode64.ComputeUniqueKey(bytes, length, seed);
         }
         public override unsafe UInt64 ComputeUniqueKey(byte[] bytes, uint seed = 0)
         {
-            return UniqueCoder64.ComputeUniqueKey(bytes, seed);
+            return UniqueCode64.ComputeUniqueKey(bytes, seed);
         }
 
         protected override unsafe Byte[] UniqueBytes(byte* obj, int length, uint seed = 0)

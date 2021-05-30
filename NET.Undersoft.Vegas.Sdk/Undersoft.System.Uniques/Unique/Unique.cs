@@ -112,7 +112,7 @@ namespace System.Uniques
             for (int i = 0; i < count; i++)
             {
                 long keyNo = nextKeyNumber();
-                keys.Enqueue((long)UniqueCoder64.ComputeUniqueKey(((byte*)&keyNo), 8, seed));
+                keys.Enqueue((long)UniqueCode64.ComputeUniqueKey(((byte*)&keyNo), 8, seed));
             }
             Stop();
         }
