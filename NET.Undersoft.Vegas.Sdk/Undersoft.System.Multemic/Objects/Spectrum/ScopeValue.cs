@@ -1,38 +1,44 @@
-﻿using System.Collections.Generic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
 
-/*********************************************************************************       
-    Copyright (c) 2020 Undersoft
+   System.Multemic.ScopeValue.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: PhD Radoslaw Rudek, Dariusz Hanc
+   @date: (30.05.2021) 
+   @licence MIT
+ *************************************************/
 
-    System.Multemic.Spectrum.ScopeValue
-    
-    @authors PhD Radoslaw Rudek, Darius Hanc
-    @project NETStandard.Undersoft.SDK                                    
-    @version 0.8.D (Feb 7, 2020)                                           
-    @licence MIT
- **********************************************************************************/
 namespace System.Multemic.Spectrum
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// Defines the <see cref="ScopeValue" />.
+    /// </summary>
     public class ScopeValue : Scope
     {
-        private static int MINIMUM_UNIVERSE_SIZE_U4 = 4;
-        public  static int NULL_KEY = -1;
+        #region Fields
 
+        public static int NULL_KEY = -1;
+        internal Scope sigmaNode;
+        private static int MINIMUM_UNIVERSE_SIZE_U4 = 4;
+        private int childSqrt;
+        private byte level;
+        private IList<vEBTreeLevel> levels;
+        private int max;
+        private int min;
+        private byte nodeId;
+        private int parentSqrt;
+        private int registryId;
+        private IDeck<Scope> scopes;
+        private IDeck<Scope> sigmaScopes;
         private int size;
 
-        private int parentSqrt;
-        private int childSqrt;
+        #endregion
 
-        private int min;
-        private int max;
-
-        Scope sigmaNode;
-        private IDeck<Scope> sigmaScopes;  
-        private IDeck<Scope> scopes;  
-
-        private IList<vEBTreeLevel> levels;
-        private byte nodeId;
-        private byte level;
-        private int  registryId;
+        #region Constructors
 
         public ScopeValue(int Size, IDeck<Scope> Scopes, IDeck<Scope> SigmaScopes, IList<vEBTreeLevel> Levels, byte Level, byte NodeIndex, int DeckIndex)
         {
@@ -53,268 +59,67 @@ namespace System.Multemic.Spectrum
             this.registryId = DeckIndex;
         }
 
-        public override int Size
-        {
-            get { return size; }
-        }
+        #endregion
 
-        public override int IndexMin
-        {
-            get { return min; }
-        }
+        #region Properties
 
+        /// <summary>
+        /// Gets the IndexMax.
+        /// </summary>
         public override int IndexMax
         {
             get { return max; }
         }
 
-        public override bool Contains(int x)
+        /// <summary>
+        /// Gets the IndexMin.
+        /// </summary>
+        public override int IndexMin
         {
-            return Contains(0, 1, 0, x);
-        }
-        public override bool Contains(int offsetBase, int offsetFactor, int indexOffset, int x)
-        {
-            if (x == min || x == max)
-            {
-                return true;
-            }
-            else
-            {
-                if ((size == MINIMUM_UNIVERSE_SIZE_U4) || (x < min) || (x > max))
-                {
-                    return false;
-                }
-                else
-                {
-                    int scopesKey = offsetBase + indexOffset * parentSqrt + highest(x);
-                    Scope scopesItem;
-                    if (!scopes.TryGet(scopesKey, out scopesItem)) return false;
-                    return scopesItem.Contains(offsetBase + offsetFactor * parentSqrt, offsetFactor * parentSqrt, indexOffset * parentSqrt + highest(x), lowest(x));
-                }
-            }
+            get { return min; }
         }
 
-        public override int Next(int offsetBase, int offsetFactor, int indexOffset, int x)
+        /// <summary>
+        /// Gets the Size.
+        /// </summary>
+        public override int Size
         {
-            if (min != NULL_KEY && x < min)
-            {
-                return min;
-            }
-
-            Scope scopesItem;
-            int x_highest = highest(x);
-            int scopesKey;
-
-            scopesKey = offsetBase + (indexOffset * parentSqrt) + x_highest;
-
-            int maximumLow = NULL_KEY;
-            if (scopes.TryGet(scopesKey, out scopesItem))
-            {
-                maximumLow = scopesItem.IndexMax;
-            }
-
-            if (maximumLow != NULL_KEY && lowest(x) < maximumLow)
-            {
-                int _offset = scopesItem.Next(offsetBase + (offsetFactor * parentSqrt), (offsetFactor * parentSqrt), (indexOffset * parentSqrt) + x_highest, lowest(x));
-
-                return index(x_highest, _offset);
-            }
-
-            if (sigmaNode == null)
-            {
-                return NULL_KEY;
-            }
-
-            //======================//
-            //from sigmaNode part 
-            //======================//
-            int successorCluster = sigmaNode.Next(x_highest); 
-
-            if (successorCluster == NULL_KEY)
-            {
-                return NULL_KEY;
-            }
-
-            scopesKey = offsetBase + (indexOffset * parentSqrt) + successorCluster;
-
-            scopes.TryGet(scopesKey, out scopesItem);
-            int offset = scopesItem.IndexMin;
-
-            return index(successorCluster, offset);
-        }
-        public override int Next(int x)
-        {
-            if (min != NULL_KEY && x < min) 
-            {
-                return min;
-            }
-
-            int x_highest = highest(x);
-
-            //--- sigmaScopes common for all sigmaNode scopes ---->                
-            Scope sigmaScopesItem;
-
-            
-            vEBTreeNode nodeTypeInfo = levels[level].Scopes[nodeId];
-            int sigmaScopesKey =
-                nodeTypeInfo.IndexOffset    
-                + nodeTypeInfo.NodeSize 
-                * registryId     
-                + x_highest; 
-            //<-----sigmaNode key --- global
-
-            int maximumLow = NULL_KEY;
-
-            if (sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem))
-            {
-                maximumLow = sigmaScopesItem.IndexMax;
-            }
-
-            if (maximumLow != NULL_KEY && lowest(x) < maximumLow)
-            {
-                int _offset = sigmaScopesItem.Next(lowest(x));
-                return index(x_highest, _offset);
-            }
-
-            if (sigmaNode == null)
-            {
-                return NULL_KEY;
-            }
-
-            //======================//
-            //from sigmaNode part 
-            //======================//
-
-            int successorCluster = sigmaNode.Next(x_highest);
-            if (successorCluster == NULL_KEY)
-            {
-                return NULL_KEY;
-            }
-
-            //--- sigmaScopes common for all sigmaNode scopes ----> 
-            sigmaScopesKey = nodeTypeInfo.IndexOffset + nodeTypeInfo.NodeSize * registryId + successorCluster;
-            //<-----sigmaNode key --- global
-
-            sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem);
-            int offset = sigmaScopesItem.IndexMin;
-            return index(successorCluster, offset);
-        }    // used only for sigmaNode
-
-        public override int Previous(int offsetBase, int offsetFactor, int indexOffset, int x)
-        {
-            if (max != NULL_KEY && x > max)
-            {
-                return max;
-            }
-
-            Scope scopesItem;
-            int x_highest = highest(x);
-            int scopesKey;
-
-            scopesKey = offsetBase + (indexOffset * parentSqrt) + x_highest;
-
-            int minimumLow = NULL_KEY;
-            if (scopes.TryGet(scopesKey, out scopesItem))
-            {
-                minimumLow = scopesItem.IndexMin;
-            }
-
-            if (minimumLow != NULL_KEY && lowest(x) > minimumLow)
-            {
-                int _offset = scopesItem.Previous(offsetBase + (offsetFactor * parentSqrt), 
-                                                (offsetFactor * parentSqrt), 
-                                                (indexOffset * parentSqrt) + x_highest, 
-                                                lowest(x));
-                return index(x_highest, _offset);
-            }
-
-            if (sigmaNode == null)
-            {
-                return NULL_KEY;
-            }
-
-            //======================//
-            //from sigmaNode part 
-            //======================//
-            int predecessorCluster = sigmaNode.Previous(x_highest);
-            if (predecessorCluster == NULL_KEY)  
-            {
-                if (min != NULL_KEY && x > min)
-                {
-                    return min;
-                }
-
-                return NULL_KEY;
-            }
-            scopesKey = offsetBase + (indexOffset * parentSqrt) + predecessorCluster;
-
-            scopes.TryGet(scopesKey, out scopesItem);
-            int offset = scopesItem.IndexMax;
-            return index(predecessorCluster, offset);
-        }
-        public override  int Previous(int x)
-        {
-
-            if (max != NULL_KEY && x > max)
-            {
-                return max;
-            }
-
-            int x_highest = highest(x);
-
-            //--- sigmaScopes common for all sigmaNode scopes ---->                
-            Scope sigmaScopesItem;
-
-           
-            vEBTreeNode nodeTypeInfo = levels[level].Scopes[nodeId];
-            int sigmaScopesKey =
-                nodeTypeInfo.IndexOffset   
-                + nodeTypeInfo.NodeSize 
-                * registryId       
-                + x_highest; 
-            //<-----sigmaNode key --- global
-
-            int minimumLow = NULL_KEY;
-            if (sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem))
-            {
-                minimumLow = sigmaScopesItem.IndexMin;
-            }
-
-            if (minimumLow != NULL_KEY && lowest(x) > minimumLow)
-            {
-                int _offset = sigmaScopesItem.Previous(lowest(x));
-                return index(x_highest, _offset);
-            }
-
-            if (sigmaNode == null)
-            {
-                return NULL_KEY;
-            }
-
-            //======================//
-            //from sigmaNode part 
-            //======================//
-
-            int predecessorCluster = sigmaNode.Previous(x_highest);
-            if (predecessorCluster == NULL_KEY)     
-            {
-                if (min != NULL_KEY && x > min)
-                {
-                    return min;
-                }
-
-                return NULL_KEY;
-            }
-
-            //--- sigmaScopes common for all sigmaNode scopes ----> 
-            sigmaScopesKey = nodeTypeInfo.IndexOffset + nodeTypeInfo.NodeSize * registryId + predecessorCluster; 
-            //<-----sigmaNode key --- global
-
-            sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem);
-            int offset = sigmaScopesItem.IndexMax;
-            return index(predecessorCluster, offset);
+            get { return size; }
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The ChildSqrt.
+        /// </summary>
+        /// <param name="number">The number<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        public static int ChildSqrt(int number)
+        {
+            double exponent = Math.Floor(Math.Log(number) / Math.Log(2.0) / 2.0);
+            return (int)Math.Pow(2.0, exponent);
+        }
+
+        /// <summary>
+        /// The ParentSqrt.
+        /// </summary>
+        /// <param name="number">The number<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        public static int ParentSqrt(int number)
+        {
+            double exponent = Math.Ceiling(Math.Log(number) / Math.Log(2.0) / 2.0);
+            return (int)Math.Pow(2.0, exponent);
+        }
+
+        /// <summary>
+        /// The Add.
+        /// </summary>
+        /// <param name="offsetBase">The offsetBase<see cref="int"/>.</param>
+        /// <param name="offsetFactor">The offsetFactor<see cref="int"/>.</param>
+        /// <param name="indexOffset">The indexOffset<see cref="int"/>.</param>
+        /// <param name="x">The x<see cref="int"/>.</param>
         public override void Add(int offsetBase, int offsetFactor, int indexOffset, int x)
         {
             if ((min == x) || (max == x))
@@ -388,6 +193,11 @@ namespace System.Multemic.Spectrum
                 max = x;
             }
         }
+
+        /// <summary>
+        /// The Add.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
         public override void Add(int x)
         {
             if ((min == x) || (max == x))
@@ -408,16 +218,16 @@ namespace System.Multemic.Spectrum
 
                 //--- sigmaScopes common for all sigmaNode scopes ---->                
                 Scope sigmaScopesItem;
-                
-                int sigmaScopesKey =
-                    levels[level].Scopes[nodeId].IndexOffset 
-                    + levels[level].Scopes[nodeId].NodeSize 
-                    * registryId      
-                    + x_highest;
-                              //<-----sigmaNode key --- global
 
-             
-                if (!sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem)) 
+                int sigmaScopesKey =
+                    levels[level].Scopes[nodeId].IndexOffset
+                    + levels[level].Scopes[nodeId].NodeSize
+                    * registryId
+                    + x_highest;
+                //<-----sigmaNode key --- global
+
+
+                if (!sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem))
                 {
                     if (parentSqrt == MINIMUM_UNIVERSE_SIZE_U4)
                     {
@@ -428,7 +238,7 @@ namespace System.Multemic.Spectrum
                         }
                         else
                         {
-                            sigmaNode.Add(x_highest);   
+                            sigmaNode.Add(x_highest);
                         }
 
                         //--- sigmaScopes common for all sigmaNode scopes ---->
@@ -470,24 +280,333 @@ namespace System.Multemic.Spectrum
             {
                 max = x;
             }
-        }   
+        }
 
+        /// <summary>
+        /// The Contains.
+        /// </summary>
+        /// <param name="offsetBase">The offsetBase<see cref="int"/>.</param>
+        /// <param name="offsetFactor">The offsetFactor<see cref="int"/>.</param>
+        /// <param name="indexOffset">The indexOffset<see cref="int"/>.</param>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
+        public override bool Contains(int offsetBase, int offsetFactor, int indexOffset, int x)
+        {
+            if (x == min || x == max)
+            {
+                return true;
+            }
+            else
+            {
+                if ((size == MINIMUM_UNIVERSE_SIZE_U4) || (x < min) || (x > max))
+                {
+                    return false;
+                }
+                else
+                {
+                    int scopesKey = offsetBase + indexOffset * parentSqrt + highest(x);
+                    Scope scopesItem;
+                    if (!scopes.TryGet(scopesKey, out scopesItem)) return false;
+                    return scopesItem.Contains(offsetBase + offsetFactor * parentSqrt, offsetFactor * parentSqrt, indexOffset * parentSqrt + highest(x), lowest(x));
+                }
+            }
+        }
+
+        /// <summary>
+        /// The Contains.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
+        public override bool Contains(int x)
+        {
+            return Contains(0, 1, 0, x);
+        }
+
+        /// <summary>
+        /// The FirstAdd.
+        /// </summary>
+        /// <param name="offsetBase">The offsetBase<see cref="int"/>.</param>
+        /// <param name="offsetFactor">The offsetFactor<see cref="int"/>.</param>
+        /// <param name="indexOffset">The indexOffset<see cref="int"/>.</param>
+        /// <param name="x">The x<see cref="int"/>.</param>
         public override void FirstAdd(int offsetBase, int offsetFactor, int indexOffset, int x)
         {
             min = x;
             max = x;
         }
+
+        /// <summary>
+        /// The FirstAdd.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
         public override void FirstAdd(int x)
         {
             min = x;
             max = x;
         }
 
+        /// <summary>
+        /// The Next.
+        /// </summary>
+        /// <param name="offsetBase">The offsetBase<see cref="int"/>.</param>
+        /// <param name="offsetFactor">The offsetFactor<see cref="int"/>.</param>
+        /// <param name="indexOffset">The indexOffset<see cref="int"/>.</param>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        public override int Next(int offsetBase, int offsetFactor, int indexOffset, int x)
+        {
+            if (min != NULL_KEY && x < min)
+            {
+                return min;
+            }
+
+            Scope scopesItem;
+            int x_highest = highest(x);
+            int scopesKey;
+
+            scopesKey = offsetBase + (indexOffset * parentSqrt) + x_highest;
+
+            int maximumLow = NULL_KEY;
+            if (scopes.TryGet(scopesKey, out scopesItem))
+            {
+                maximumLow = scopesItem.IndexMax;
+            }
+
+            if (maximumLow != NULL_KEY && lowest(x) < maximumLow)
+            {
+                int _offset = scopesItem.Next(offsetBase + (offsetFactor * parentSqrt), (offsetFactor * parentSqrt), (indexOffset * parentSqrt) + x_highest, lowest(x));
+
+                return index(x_highest, _offset);
+            }
+
+            if (sigmaNode == null)
+            {
+                return NULL_KEY;
+            }
+
+            //======================//
+            //from sigmaNode part 
+            //======================//
+            int successorCluster = sigmaNode.Next(x_highest);
+
+            if (successorCluster == NULL_KEY)
+            {
+                return NULL_KEY;
+            }
+
+            scopesKey = offsetBase + (indexOffset * parentSqrt) + successorCluster;
+
+            scopes.TryGet(scopesKey, out scopesItem);
+            int offset = scopesItem.IndexMin;
+
+            return index(successorCluster, offset);
+        }
+
+        /// <summary>
+        /// The Next.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        public override int Next(int x)
+        {
+            if (min != NULL_KEY && x < min)
+            {
+                return min;
+            }
+
+            int x_highest = highest(x);
+
+            //--- sigmaScopes common for all sigmaNode scopes ---->                
+            Scope sigmaScopesItem;
+
+
+            vEBTreeNode nodeTypeInfo = levels[level].Scopes[nodeId];
+            int sigmaScopesKey =
+                nodeTypeInfo.IndexOffset
+                + nodeTypeInfo.NodeSize
+                * registryId
+                + x_highest;
+            //<-----sigmaNode key --- global
+
+            int maximumLow = NULL_KEY;
+
+            if (sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem))
+            {
+                maximumLow = sigmaScopesItem.IndexMax;
+            }
+
+            if (maximumLow != NULL_KEY && lowest(x) < maximumLow)
+            {
+                int _offset = sigmaScopesItem.Next(lowest(x));
+                return index(x_highest, _offset);
+            }
+
+            if (sigmaNode == null)
+            {
+                return NULL_KEY;
+            }
+
+            //======================//
+            //from sigmaNode part 
+            //======================//
+
+            int successorCluster = sigmaNode.Next(x_highest);
+            if (successorCluster == NULL_KEY)
+            {
+                return NULL_KEY;
+            }
+
+            //--- sigmaScopes common for all sigmaNode scopes ----> 
+            sigmaScopesKey = nodeTypeInfo.IndexOffset + nodeTypeInfo.NodeSize * registryId + successorCluster;
+            //<-----sigmaNode key --- global
+
+            sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem);
+            int offset = sigmaScopesItem.IndexMin;
+            return index(successorCluster, offset);
+        }
+
+        /// <summary>
+        /// The Previous.
+        /// </summary>
+        /// <param name="offsetBase">The offsetBase<see cref="int"/>.</param>
+        /// <param name="offsetFactor">The offsetFactor<see cref="int"/>.</param>
+        /// <param name="indexOffset">The indexOffset<see cref="int"/>.</param>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        public override int Previous(int offsetBase, int offsetFactor, int indexOffset, int x)
+        {
+            if (max != NULL_KEY && x > max)
+            {
+                return max;
+            }
+
+            Scope scopesItem;
+            int x_highest = highest(x);
+            int scopesKey;
+
+            scopesKey = offsetBase + (indexOffset * parentSqrt) + x_highest;
+
+            int minimumLow = NULL_KEY;
+            if (scopes.TryGet(scopesKey, out scopesItem))
+            {
+                minimumLow = scopesItem.IndexMin;
+            }
+
+            if (minimumLow != NULL_KEY && lowest(x) > minimumLow)
+            {
+                int _offset = scopesItem.Previous(offsetBase + (offsetFactor * parentSqrt),
+                                                (offsetFactor * parentSqrt),
+                                                (indexOffset * parentSqrt) + x_highest,
+                                                lowest(x));
+                return index(x_highest, _offset);
+            }
+
+            if (sigmaNode == null)
+            {
+                return NULL_KEY;
+            }
+
+            //======================//
+            //from sigmaNode part 
+            //======================//
+            int predecessorCluster = sigmaNode.Previous(x_highest);
+            if (predecessorCluster == NULL_KEY)
+            {
+                if (min != NULL_KEY && x > min)
+                {
+                    return min;
+                }
+
+                return NULL_KEY;
+            }
+            scopesKey = offsetBase + (indexOffset * parentSqrt) + predecessorCluster;
+
+            scopes.TryGet(scopesKey, out scopesItem);
+            int offset = scopesItem.IndexMax;
+            return index(predecessorCluster, offset);
+        }
+
+        /// <summary>
+        /// The Previous.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        public override int Previous(int x)
+        {
+
+            if (max != NULL_KEY && x > max)
+            {
+                return max;
+            }
+
+            int x_highest = highest(x);
+
+            //--- sigmaScopes common for all sigmaNode scopes ---->                
+            Scope sigmaScopesItem;
+
+
+            vEBTreeNode nodeTypeInfo = levels[level].Scopes[nodeId];
+            int sigmaScopesKey =
+                nodeTypeInfo.IndexOffset
+                + nodeTypeInfo.NodeSize
+                * registryId
+                + x_highest;
+            //<-----sigmaNode key --- global
+
+            int minimumLow = NULL_KEY;
+            if (sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem))
+            {
+                minimumLow = sigmaScopesItem.IndexMin;
+            }
+
+            if (minimumLow != NULL_KEY && lowest(x) > minimumLow)
+            {
+                int _offset = sigmaScopesItem.Previous(lowest(x));
+                return index(x_highest, _offset);
+            }
+
+            if (sigmaNode == null)
+            {
+                return NULL_KEY;
+            }
+
+            //======================//
+            //from sigmaNode part 
+            //======================//
+
+            int predecessorCluster = sigmaNode.Previous(x_highest);
+            if (predecessorCluster == NULL_KEY)
+            {
+                if (min != NULL_KEY && x > min)
+                {
+                    return min;
+                }
+
+                return NULL_KEY;
+            }
+
+            //--- sigmaScopes common for all sigmaNode scopes ----> 
+            sigmaScopesKey = nodeTypeInfo.IndexOffset + nodeTypeInfo.NodeSize * registryId + predecessorCluster;
+            //<-----sigmaNode key --- global
+
+            sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem);
+            int offset = sigmaScopesItem.IndexMax;
+            return index(predecessorCluster, offset);
+        }
+
+        /// <summary>
+        /// The Remove.
+        /// </summary>
+        /// <param name="offsetBase">The offsetBase<see cref="int"/>.</param>
+        /// <param name="offsetFactor">The offsetFactor<see cref="int"/>.</param>
+        /// <param name="indexOffset">The indexOffset<see cref="int"/>.</param>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
         public override bool Remove(int offsetBase, int offsetFactor, int indexOffset, int x)
         {
             if (min == max)
             {
-                if (min != x) return false; 
+                if (min != x) return false;
                 min = NULL_KEY;
                 max = NULL_KEY;
                 sigmaNode = null;
@@ -498,14 +617,14 @@ namespace System.Multemic.Spectrum
             int x_highest;
             int scopesKey;
 
-            if (min == x)   
+            if (min == x)
             {
                 int firstCluster = sigmaNode.IndexMin;
 
                 scopesKey = offsetBase + (indexOffset * parentSqrt) + firstCluster;
                 scopes.TryGet(scopesKey, out scopesItem);
-                x = index(firstCluster, scopesItem.IndexMin); 
-                
+                x = index(firstCluster, scopesItem.IndexMin);
+
                 min = x;
 
             }
@@ -513,26 +632,26 @@ namespace System.Multemic.Spectrum
             x_highest = highest(x);
             scopesKey = offsetBase + (indexOffset * parentSqrt) + x_highest;
 
-            if (!scopes.TryGet(scopesKey, out scopesItem)) return false;    
+            if (!scopes.TryGet(scopesKey, out scopesItem)) return false;
 
-            scopesItem.Remove(offsetBase + (offsetFactor * parentSqrt), (offsetFactor * parentSqrt), (indexOffset * parentSqrt) + x_highest, lowest(x));         
+            scopesItem.Remove(offsetBase + (offsetFactor * parentSqrt), (offsetFactor * parentSqrt), (indexOffset * parentSqrt) + x_highest, lowest(x));
 
-            if (scopesItem.IndexMin == NULL_KEY) 
-            {                                           
+            if (scopesItem.IndexMin == NULL_KEY)
+            {
                 scopes.Remove(scopesKey);
 
-                sigmaNode.Remove(highest(x));   
+                sigmaNode.Remove(highest(x));
 
-                if (x == max)  
+                if (x == max)
                 {
-                    int sigmaNodeMaximum = sigmaNode.IndexMax; 
+                    int sigmaNodeMaximum = sigmaNode.IndexMax;
 
-                    if (sigmaNodeMaximum == NULL_KEY) 
+                    if (sigmaNodeMaximum == NULL_KEY)
                     {
                         max = min;
                         sigmaNode = null;
                     }
-                    else 
+                    else
                     {
                         scopesKey = offsetBase + (indexOffset * parentSqrt) + sigmaNodeMaximum;
                         scopes.TryGet(scopesKey, out scopesItem);
@@ -542,25 +661,30 @@ namespace System.Multemic.Spectrum
                     }
                 }
             }
-            else if (x == max)     
-            {           
-                scopesKey = offsetBase + (indexOffset * parentSqrt) + highest(x); 
+            else if (x == max)
+            {
+                scopesKey = offsetBase + (indexOffset * parentSqrt) + highest(x);
                 scopes.TryGet(scopesKey, out scopesItem);
                 int maximumKey = scopesItem.IndexMax;
 
-                max = index(highest(x), maximumKey); 
+                max = index(highest(x), maximumKey);
             }
             return true;
         }
 
+        /// <summary>
+        /// The Remove.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="bool"/>.</returns>
         public override bool Remove(int x)
         {
             if (min == max)
             {
-                if (min != x) return true;  
+                if (min != x) return true;
                 min = NULL_KEY;
                 max = NULL_KEY;
-                sigmaNode = null;           
+                sigmaNode = null;
                 return true;
             }
 
@@ -570,44 +694,44 @@ namespace System.Multemic.Spectrum
             int sigmaScopesKey;
             //<-----sigmaNode key --- global
             int x_highest;
-       
+
             if (min == x)
             {
                 int first = sigmaNode.IndexMin;
 
                 //--- sigmaScopes common for all sigmaNode scopes ---->                            
                 sigmaScopesKey = nodeTypeInfo.IndexOffset + nodeTypeInfo.NodeSize * registryId + first;
-                sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem);   
-                x = index(first, sigmaScopesItem.IndexMin); 
+                sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem);
+                x = index(first, sigmaScopesItem.IndexMin);
                 //<-----sigmaNode key --- global
-                min = x;             
+                min = x;
             }
 
             x_highest = highest(x);
             //--- sigmaScopes common for all sigmaNode scopes ---->
             sigmaScopesKey = nodeTypeInfo.IndexOffset + nodeTypeInfo.NodeSize * registryId + x_highest;
-            if (!sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem)) return false;   
+            if (!sigmaScopes.TryGet(sigmaScopesKey, out sigmaScopesItem)) return false;
             sigmaScopesItem.Remove(lowest(x));
             //<-----sigmaNode key --- global
 
-            if (sigmaScopesItem.IndexMin == NULL_KEY)   
+            if (sigmaScopesItem.IndexMin == NULL_KEY)
             {
                 //--- sigmaScopes common for all sigmaNode scopes ---->
                 sigmaScopes.Remove(sigmaScopesKey);
                 //<-----sigmaNode key --- global
 
-                sigmaNode.Remove(highest(x));   
+                sigmaNode.Remove(highest(x));
 
-                if (x == max) 
+                if (x == max)
                 {
-                    int sigmaNodeMaximum = sigmaNode.IndexMax; 
+                    int sigmaNodeMaximum = sigmaNode.IndexMax;
 
                     if (sigmaNodeMaximum == NULL_KEY)
                     {
                         max = min;
-                        sigmaNode = null; 
+                        sigmaNode = null;
                     }
-                    else  
+                    else
                     {
 
                         //--- sigmaScopes common for all sigmaNode scopes ---->
@@ -620,7 +744,7 @@ namespace System.Multemic.Spectrum
                     }
                 }
             }
-            else if (x == max)     
+            else if (x == max)
             {
                 //--- sigmaScopes common for all sigmaNode scopes ---->
                 sigmaScopesKey = nodeTypeInfo.IndexOffset + nodeTypeInfo.NodeSize * registryId + highest(x);
@@ -628,35 +752,42 @@ namespace System.Multemic.Spectrum
                 int maximumKey = sigmaScopesItem.IndexMax;
                 //<-----sigmaNode key --- global
 
-                max = index(highest(x), maximumKey); 
+                max = index(highest(x), maximumKey);
             }
             return true;
-        }    
+        }
 
+        /// <summary>
+        /// The highest.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
         private int highest(int x)
         {
             return x / childSqrt;
         }
 
-        private int lowest(int x)
-        {
-            return x & (childSqrt - 1);
-        }
-
+        /// <summary>
+        /// The index.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <param name="y">The y<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
         private int index(int x, int y)
         {
             return (x * childSqrt + y);
         }
 
-        public static int ParentSqrt(int number)
+        /// <summary>
+        /// The lowest.
+        /// </summary>
+        /// <param name="x">The x<see cref="int"/>.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        private int lowest(int x)
         {
-            double exponent = Math.Ceiling(Math.Log(number) / Math.Log(2.0) / 2.0);
-            return (int)Math.Pow(2.0, exponent);
+            return x & (childSqrt - 1);
         }
-        public static int ChildSqrt(int number)
-        {
-            double exponent = Math.Floor(Math.Log(number) / Math.Log(2.0) / 2.0);
-            return (int)Math.Pow(2.0, exponent);
-        }
+
+        #endregion
     }
 }

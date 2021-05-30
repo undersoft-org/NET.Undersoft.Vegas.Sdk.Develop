@@ -49,17 +49,17 @@ namespace System.Instant
 
         public IFigures Figures { get; set; }
 
-        public new long UniqueKey { get => Figures.UniqueKey; set => Figures.UniqueKey = value; }
-
         public IRubrics KeyRubrics { get; set; }
 
         public FieldMappings Mappings { get; set; }
 
         public int[] Ordinals { get => ordinals; }
 
-        public uint UniqueSeed { get => Figures.UniqueSeed; set => Figures.UniqueSeed = value; }
+        public Ussn SerialCode { get => Figures.SerialCode; set => Figures.SerialCode = value; }
 
-        public Ussn SystemSerialCode { get => Figures.SystemSerialCode; set => Figures.SystemSerialCode = value; }
+        public new long UniqueKey { get => Figures.UniqueKey; set => Figures.UniqueKey = value; }
+
+        public uint UniqueSeed { get => Figures.UniqueSeed; set => Figures.UniqueSeed = value; }
 
         public object[] ValueArray { get => Figures.ValueArray; set => Figures.ValueArray = value; }
 
@@ -116,32 +116,6 @@ namespace System.Instant
             return b;
         }
 
-        //public long GetUniqueKey()
-        //{
-        //    return Figures.UniqueKey;
-        //}
-
-        public unsafe long GetUniqueKey(IFigure figure, uint seed = 0)
-        {
-            int size = Figures.FigureSize;
-            byte* figurePtr = stackalloc byte[size * 2];
-            byte* bufferPtr = figurePtr + size;
-            figure.StructureTo(figurePtr);
-            int destOffset = 0;
-            foreach (var rubric in AsValues())
-            {
-                int l = rubric.RubricSize;
-                Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
-                destOffset += l;
-            }
-            return (long)UniqueCode64.ComputeUniqueKey(bufferPtr, destOffset, seed);
-        }
-
-        //public uint GetUniqueSeed()
-        //{
-        //    return Figures.GetUniqueSeed();
-        //}
-
         public byte[] GetUniqueBytes()
         {
             return Figures.GetUniqueBytes();
@@ -168,37 +142,46 @@ namespace System.Instant
             return b;
         }
 
+        public unsafe long GetUniqueKey(IFigure figure, uint seed = 0)
+        {
+            int size = Figures.FigureSize;
+            byte* figurePtr = stackalloc byte[size * 2];
+            byte* bufferPtr = figurePtr + size;
+            figure.StructureTo(figurePtr);
+            int destOffset = 0;
+            foreach (var rubric in AsValues())
+            {
+                int l = rubric.RubricSize;
+                Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
+                destOffset += l;
+            }
+            return (long)UniqueCode64.ComputeUniqueKey(bufferPtr, destOffset, seed);
+        }
+
         public override ICard<MemberRubric> NewCard(ICard<MemberRubric> value)
         {
             return new RubricCard(value);
         }
+
         public override ICard<MemberRubric> NewCard(long key, MemberRubric value)
         {
             return new RubricCard(key, value);
         }
+
         public override ICard<MemberRubric> NewCard(MemberRubric value)
         {
-            return new RubricCard(value.UniqueKey, value);
+            return new RubricCard(value);
         }
+
         public override ICard<MemberRubric> NewCard(object key, MemberRubric value)
         {
             return new RubricCard(key, value);
         }
 
-        //public void SetUniqueKey(IFigure figure, uint seed = 0)
-        //{
-        //    figure.UniqueKey = GetUniqueKey(figure, seed);
-        //}
-
-        //public void SetUniqueKey(long value)
-        //{
-        //    Figures.SetUniqueKey(value);
-        //}
-
-        //public void SetUniqueSeed(uint seed)
-        //{
-        //    Figures.SetUniqueSeed(seed);
-        //}
+        public void SetUniqueKey(IFigure figure, uint seed = 0)
+        {
+            figure.UniqueKey = GetUniqueKey(figure, seed);
+        }
 
         public void Update()
         {

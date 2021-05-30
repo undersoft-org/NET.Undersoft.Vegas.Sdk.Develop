@@ -19,22 +19,22 @@ namespace System.Multemic
 {     
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class MultiCard<V> : Card<V> where V : IUnique
+    public class MassCard<V> : Card<V> where V : IUnique
     {
         private long _key;
 
-        public MultiCard()
+        public MassCard()
         { }
-        public MultiCard(object key, V value) : base(key, value)
+        public MassCard(object key, V value) : base(key, value)
         {
         }
-        public MultiCard(long key, V value) : base(key, value)
+        public MassCard(long key, V value) : base(key, value)
         {
         }
-        public MultiCard(V value) : base(value)
+        public MassCard(V value) : base(value)
         {
         }
-        public MultiCard(ICard<V> value) : base(value)
+        public MassCard(ICard<V> value) : base(value)
         {
         }
 

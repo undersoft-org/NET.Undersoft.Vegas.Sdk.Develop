@@ -6,7 +6,7 @@ using System.Multemic.Basedeck;
 /*******************************************************************************
     Copyright (c) 2020 Undersoft
 
-    System.Multemic.MultiCardBook   
+    System.Multemic.CardMassBook   
         
     @author Darius Hanc                                                  
     @project NETStandard.Undersoft.SDK                                   
@@ -16,7 +16,7 @@ using System.Multemic.Basedeck;
  ********************************************************************************/
 namespace System.Multemic
 {
-    public abstract class MultiCardBook<V> : SeededDeck<V>, IEnumerable<V>, IEnumerable, ICollection<V> where V : IUnique
+    public abstract class CardMassBook<V> : SeededDeck<V>, IEnumerable<V>, IEnumerable, ICollection<V> where V : IUnique
     {
         #region Globals       
 
@@ -47,33 +47,33 @@ namespace System.Multemic
 
         #region Constructor
 
-        public MultiCardBook() : base(17, HashBits.bit64)
+        public CardMassBook() : base(17, HashBits.bit64)
         {
             list = EmptyCardList(17);
         }
-        public MultiCardBook(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public CardMassBook(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {
             list = EmptyCardList(capacity);
         }
-        public MultiCardBook(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
-        {
-            list = EmptyCardList(capacity);
-            foreach (var c in collection)
-                this.Add(c);
-        }
-        public MultiCardBook(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public CardMassBook(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             list = EmptyCardList(capacity);
             foreach (var c in collection)
                 this.Add(c);
         }
-        public MultiCardBook(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public CardMassBook(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             list = EmptyCardList(capacity);
             foreach (var c in collection)
                 this.Add(c);
         }
-        public MultiCardBook(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public CardMassBook(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        {
+            list = EmptyCardList(capacity);
+            foreach (var c in collection)
+                this.Add(c);
+        }
+        public CardMassBook(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             list = EmptyCardList(capacity);
             foreach (var c in collection)
@@ -433,6 +433,28 @@ namespace System.Multemic
             list = EmptyCardList(minSize);
         }
 
+        protected override void renewClear(int capacity)
+        {
+            if (capacity != size || count > 0)
+            {
+                size = capacity;
+                maxId = capacity - 1;
+                conflicts = 0;
+                removed = 0;
+                count = 0;
+                table = EmptyCardTable(size);
+                list = EmptyCardList(size);
+                first = EmptyCard();
+                last = first;
+            }
+        }
+
+        public override void Flush()
+        {
+            base.Flush();
+            list = EmptyCardList(size);
+        }
+
         public override   ICard<V> Next(ICard<V> card)
         {
             ICard<V> _card = list[card.Index + 1];
@@ -454,50 +476,53 @@ namespace System.Multemic
         protected override void Rehash(int newsize)
         {
             int finish = count;
-            int listsize = newsize; //+ (int)(newsize * REMOVED_PERCENT_LIMIT) + 10;
-            ICard<V>[] newcardTable = EmptyCardTable(newsize);
+            int _newsize = newsize; //+ (int)(newsize * REMOVED_PERCENT_LIMIT) + 10;
+            int newMaxId = _newsize - 1;
+            ICard<V>[] newCardTable = EmptyCardTable(_newsize);
             if (removed != 0)
             {
-                ICard<V>[] newcardList = EmptyCardList(listsize);
-                rehashAndReindex(newcardTable, newcardList, newsize);
-                list = newcardList;
+                ICard<V>[] newCardList = EmptyCardList(_newsize);
+                rehashAndReindex(newCardTable, newCardList, newMaxId);
+                list = newCardList;
             }
             else
             {
-                ICard<V>[] newcardList = EmptyCardList(listsize);
-                rehash(newcardTable, newsize);
-                Array.Copy(list, 0, newcardList, 0, finish);
-                list = newcardList;
+                ICard<V>[] newCardList = EmptyCardList(_newsize);
+                rehash(newCardTable, newMaxId);
+                Array.Copy(list, 0, newCardList, 0, finish);
+                list = newCardList;
             }
-            table = newcardTable;
+            table = newCardTable;
+            maxId = newMaxId;
             size = newsize;
         }
 
-        private         void rehashAndReindex(ICard<V>[] newcardTable, ICard<V>[] newcardList, int newsize)
+        private void rehashAndReindex(ICard<V>[] newCardTable, ICard<V>[] newCardList, int newMaxId)
         {
             int _conflicts = 0;
             int _counter = 0;
             int total = count + removed;
-            ulong newMixMask = Submix.Mask((ulong)newsize);
-            int newMsbId = Submix.MsbId(newsize);
+            int _newMaxId = newMaxId;
+            ICard<V>[] _newCardTable = newCardTable;
+            ICard<V>[] _newCardList = newCardList;
             ICard<V> card = null;
             ICard<V> mem = null;
-            for(int i = 0; i < total; i++ )
+            for (int i = 0; i < total; i++)
             {
                 card = list[i];
 
                 if (card != null && !card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize);
+                    ulong pos = getPosition(card.Key, _newMaxId);
 
-                    mem = newcardTable[pos];
+                    mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
                         card.Extent = null;
                         card.Index = _counter;
-                        newcardTable[pos] = card;
-                        newcardList[_counter++] = card;
+                        _newCardTable[pos] = card;
+                        _newCardList[_counter++] = card;
                     }
                     else
                     {
@@ -508,7 +533,7 @@ namespace System.Multemic
                                 card.Extent = null;
                                 mem.Extent = card;
                                 card.Index = _counter;
-                                newcardList[_counter++] = card;
+                                _newCardList[_counter++] = card;
                                 _conflicts++;
                                 break;
                             }
@@ -516,18 +541,18 @@ namespace System.Multemic
                                 mem = mem.Extent;
                         }
                     }
-                }             
-            } 
+                }
+            }
             conflicts = _conflicts;
             removed = 0;
         }
 
-        private         void rehash(ICard<V>[] newcardTable, int newsize)
+        private void rehash(ICard<V>[] newCardTable, int newMaxId)
         {
             int _conflicts = 0;
             int total = count + removed;
-            ulong newMixMask = Submix.Mask((ulong)newsize);
-            int newMsbId = Submix.MsbId(newsize);
+            int _newMaxId = newMaxId;
+            ICard<V>[] _newCardTable = newCardTable;
             ICard<V> card = null;
             ICard<V> mem = null;
             for (int i = 0; i < total; i++)
@@ -535,13 +560,13 @@ namespace System.Multemic
                 card = list[i];
                 if (card != null && !card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize);
-                    mem = newcardTable[pos];
+                    ulong pos = getPosition(card.Key, _newMaxId);
+                    mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
                         card.Extent = null;
-                        newcardTable[pos] = card;
+                        _newCardTable[pos] = card;
                     }
                     else
                     {
@@ -559,11 +584,11 @@ namespace System.Multemic
                         }
                     }
                 }
-            } 
+            }
             conflicts = _conflicts;
         }
 
-        protected virtual  void Reindex()
+        protected virtual void Reindex()
         {
             ICard<V> card = null;
             int total = count + removed;
@@ -581,7 +606,7 @@ namespace System.Multemic
             removed = 0;
         }
 
-        private         void reindexWithInsert(int index, ICard<V> item)
+        private void reindexWithInsert(int index, ICard<V> item)
         {
             ICard<V> card = null;
             int _counter = 0;

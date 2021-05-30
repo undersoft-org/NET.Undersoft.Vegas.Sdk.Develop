@@ -42,7 +42,7 @@ namespace System.Instant.Mathline
         public override void Set(MathRubric value)
         {
             this.value = value;
-            _key = value.GetUniqueKey();
+            _key = value.UniqueKey;
         }
         public override void Set(ICard<MathRubric> card)
         {
@@ -52,29 +52,29 @@ namespace System.Instant.Mathline
 
         public override bool Equals(long key)
         {
-            return Key == key;
+            return _key == key;
         }
         public override bool Equals(object y)
         {
-            return Key.Equals(y.UniqueKey64());
+            return _key.Equals(y.UniqueKey64());
         }
 
         public override int GetHashCode()
         {
-            return (int)Key;
+            return (int)_key;
         }
 
         public override int CompareTo(object other)
         {
-            return (int)(Key - other.UniqueKey64());
+            return (int)(_key - other.UniqueKey64());
         }
         public override int CompareTo(long key)
         {
-            return (int)(Key - key);
+            return (int)(_key - key);
         }
         public override int CompareTo(ICard<MathRubric> other)
         {
-            return (int)(Key - other.Key);
+            return (int)(_key - other.Key);
         }
 
         public override byte[] GetBytes()

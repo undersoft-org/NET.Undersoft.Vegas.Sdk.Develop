@@ -25,7 +25,7 @@ namespace System.Extract
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray = new byte[10];
 
-        public Ussn SerialCode = Ussn.Empty;
+        public Ussn SystemKey = Ussn.Empty;
 
         public bool Status;
 
@@ -53,7 +53,7 @@ namespace System.Extract
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray { get; set; }
 
-        public Ussn SerialCode { get; set; } = Ussn.Empty;
+        public Ussn SystemKey { get; set; } = Ussn.Empty;
 
         public bool Status { get; set; }
 
@@ -81,7 +81,7 @@ namespace System.Extract
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray { get; set; }
 
-        public Ussn SerialCode { get; set; } = Ussn.Empty;
+        public Ussn SystemKey { get; set; } = Ussn.Empty;
 
         public bool Status { get; set; }
 

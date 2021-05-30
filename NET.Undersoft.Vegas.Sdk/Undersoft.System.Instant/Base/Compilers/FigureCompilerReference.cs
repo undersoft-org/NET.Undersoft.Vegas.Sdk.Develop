@@ -21,7 +21,7 @@ namespace System.Instant
 
             TypeBuilder tb = GetTypeBuilder(typeName);
 
-            CreateSerialCodeProperty(tb, typeof(Ussn), "SystemSerialCode");
+            CreateSerialCodeProperty(tb, typeof(Ussn), "SerialCode");
 
             CreateFieldsAndProperties(tb, members);
 
@@ -87,7 +87,7 @@ namespace System.Instant
             PropertyBuilder prop = tb.DefineProperty(name,  PropertyAttributes.HasDefault,
                                                      type, new Type[] { type });
 
-            PropertyInfo iprop = typeof(IFigure).GetProperty("SystemSerialCode");
+            PropertyInfo iprop = typeof(IFigure).GetProperty("SerialCode");
 
             MethodInfo accessor = iprop.GetGetMethod();
 

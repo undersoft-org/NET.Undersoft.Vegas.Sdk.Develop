@@ -53,8 +53,8 @@ namespace System.Instant
                 this.Type = compiledType.New().GetType();
                 Size = Marshal.SizeOf(this.Type);
 
-                if (!members.Where(m => m.Name == "SystemSerialCode").Any())
-                    members = new MemberRubric[] { new MemberRubric(this.Type.GetProperty("SystemSerialCode")) }.Concat(members).ToArray();
+                if (!members.Where(m => m.Name == "SerialCode").Any())
+                    members = new MemberRubric[] { new MemberRubric(this.Type.GetProperty("SerialCode")) }.Concat(members).ToArray();
 
                 members.Select((m, y) => m.RubricId = y).ToArray();
 
@@ -64,6 +64,7 @@ namespace System.Instant
                     .Select((f, y) => new object[]
                     {
                     f.FigureFieldId = y - 1,
+                    f.RubricId = y - 1,
                     f.RubricOffset = (int)Marshal.OffsetOf(this.Type, "_" + f.RubricName)
                     }).ToArray();
 

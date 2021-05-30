@@ -16,19 +16,19 @@ using System.Threading;
  *********************************************************************************/
 namespace System.Multemic
 {  
-    public class MultiBoard<V> : SharedMultiDeck<V> where V : IUnique                                                    
+    public class MassBoard<V> : SharedMassDeck<V> where V : IUnique                                                    
     {
         #region Constructor
 
-        public MultiBoard(int capacity = 9, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public MassBoard(int capacity = 9, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {
         }
-        public MultiBoard(IList<ICard<V>> collection, int capacity = 9, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public MassBoard(IList<ICard<V>> collection, int capacity = 9, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public MultiBoard(IEnumerable<ICard<V>> collection, int capacity = 9, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public MassBoard(IEnumerable<ICard<V>> collection, int capacity = 9, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
@@ -38,29 +38,29 @@ namespace System.Multemic
 
         public override   ICard<V> EmptyCard()
         {
-            return new MultiCard<V>();
+            return new MassCard<V>();
         }
 
         public override   ICard<V> NewCard(long key, V value)
         {
-            return new MultiCard<V>(key, value);
+            return new MassCard<V>(key, value);
         }
         public override   ICard<V> NewCard(object key, V value)
         {
-            return new MultiCard<V>(key, value);
+            return new MassCard<V>(key, value);
         }
         public override   ICard<V> NewCard(V value)
         {
-            return new MultiCard<V>(value, value);
+            return new MassCard<V>(value, value);
         }
         public override   ICard<V> NewCard(ICard<V> card)
         {
-            return new MultiCard<V>(card);
+            return new MassCard<V>(card);
         }
 
         public override ICard<V>[] EmptyCardTable(int size)
         {
-            return new MultiCard<V>[size];
+            return new MassCard<V>[size];
         }      
     }
 

@@ -20,7 +20,7 @@ namespace System.Instant.Mathline
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray { get; set; } = new byte[10];
 
-        public Ussn SerialCode { get; set; } = Ussn.Empty;
+        public Ussn SystemKey { get; set; } = Ussn.Empty;
 
         public bool Status { get; set; }
 

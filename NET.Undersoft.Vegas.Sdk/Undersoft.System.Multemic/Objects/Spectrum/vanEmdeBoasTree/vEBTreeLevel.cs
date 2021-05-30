@@ -1,28 +1,57 @@
-﻿using System.Collections.Generic;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
 
-/*********************************************************************************       
-    Copyright (c) 2020 Undersoft
+   System.Multemic.vEBTreeLevel.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: PhD Radoslaw Rudek, Dariusz Hanc
+   @date: (30.05.2021) 
+   @licence MIT
+ *************************************************/
 
-    System.Multemic.Spectrum.vEBTreeLevel
-    
-    @authors PhD Radoslaw Rudek, Darius Hanc
-    @project NETStandard.Undersoft.SDK                                    
-    @version 0.8.D (Feb 7, 2020)                                           
-    @licence MIT
- **********************************************************************************/
 namespace System.Multemic.Spectrum
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// Defines the <see cref="vEBTreeLevel" />.
+    /// </summary>
     public class vEBTreeLevel
     {
-        public byte Level { get; set; }
-        public byte Count { get; set; }
-        public int BaseOffset { get; set; }
-        public IList<vEBTreeNode> Scopes { get; set; }
+        #region Constructors
+
         public vEBTreeLevel()
         {
             Level = 0;
             BaseOffset = 0;
             Scopes = null;
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the BaseOffset.
+        /// </summary>
+        public int BaseOffset { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Count.
+        /// </summary>
+        public byte Count { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Level.
+        /// </summary>
+        public byte Level { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Scopes.
+        /// </summary>
+        public IList<vEBTreeNode> Scopes { get; set; }
+
+        #endregion
     }
 }

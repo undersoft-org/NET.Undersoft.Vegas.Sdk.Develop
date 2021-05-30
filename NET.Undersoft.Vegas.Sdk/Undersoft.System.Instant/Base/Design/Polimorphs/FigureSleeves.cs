@@ -635,7 +635,7 @@ namespace System.Instant
 
         public object[] ValueArray { get => Sleeves.ValueArray; set => Sleeves.ValueArray = value; }
 
-        public Ussn SystemSerialCode { get => Sleeves.SystemSerialCode; set => Sleeves.SystemSerialCode = value; }
+        public Ussn SerialCode { get => Sleeves.SerialCode; set => Sleeves.SerialCode = value; }
 
         public IUnique Empty => Sleeves.Empty;
 

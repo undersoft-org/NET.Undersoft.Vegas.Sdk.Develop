@@ -26,7 +26,7 @@ namespace System.Instant
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray = new byte[10];
 
-        public Ussn SerialCode = Ussn.Empty;
+        public Ussn SystemKey = Ussn.Empty;
 
         public bool Status;
 
@@ -61,7 +61,7 @@ namespace System.Instant
         [FigureTreatment( AggregateOperand = AggregateOperand.Avg, SummaryOperand = AggregateOperand.Sum )]
         public double Price { get; set; }
 
-        public Usid SerialCode { get; set; } = Usid.Empty;
+        public Usid SystemKey { get; set; } = Usid.Empty;
 
         public bool Status { get; set; }
 
@@ -94,7 +94,7 @@ namespace System.Instant
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] ByteArray { get; set; } = new byte[10];
 
-        public Usid SerialCode { get; set; } = Usid.Empty;
+        public Usid SystemKey { get; set; } = Usid.Empty;
 
         public bool Status { get; set; }
 

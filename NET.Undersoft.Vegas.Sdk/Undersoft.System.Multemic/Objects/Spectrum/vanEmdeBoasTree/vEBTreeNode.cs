@@ -1,19 +1,39 @@
-﻿/*********************************************************************************       
-    Copyright (c) 2020 Undersoft
+﻿/*************************************************
+  Copyright (c) 2021 Undersoft
 
-    System.Multemic.Spectrum.vEBTreeNode
-    
-    @authors PhD Radoslaw Rudek, Darius Hanc
-    @project NETStandard.Undersoft.SDK                                    
-    @version 0.8.D (Feb 7, 2020)                                           
-    @licence MIT
- **********************************************************************************/
+  System.Multemic.vEBTreeNode.cs
+
+  @project: Undersoft.Vegas.Sdk
+  @stage: Development
+  @author: PhD Radoslaw Rudek, Dariusz Hanc
+  @date: (30.05.2021) 
+  @licence MIT
+*************************************************/
+
 namespace System.Multemic.Spectrum
 {
+    /// <summary>
+    /// Defines the <see cref="vEBTreeNode" />.
+    /// </summary>
     public class vEBTreeNode
-    {        
-        public int IndexOffset { get; set; }        //start index in the global cluster of this type
-        public int NodeCounter { get; set; }        //number of elements of given type
-        public int NodeSize { get; set; }        // cluster size of the given type of a node      
+    {
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the IndexOffset.
+        /// </summary>
+        public int IndexOffset { get; set; }
+
+        /// <summary>
+        /// Gets or sets the NodeCounter.
+        /// </summary>
+        public int NodeCounter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the NodeSize.
+        /// </summary>
+        public int NodeSize { get; set; }
+
+        #endregion
     }
 }

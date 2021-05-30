@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 /*******************************************************************************
     Copyright (c) 2020 Undersoft
 
-    System.Multemic.SharedMultiAlbum
+    System.Multemic.SharedMassAlbum
     
     abstract class for Safe-Thread MultiCardBook, 
         
@@ -19,7 +19,7 @@ using System.Runtime.CompilerServices;
  ********************************************************************************/
 namespace System.Multemic
 {
-    public abstract class SharedMultiAlbum<V> : MultiCardBook<V> where V : IUnique
+    public abstract class SharedMassAlbum<V> : CardMassBook<V> where V : IUnique
     {
         #region Globals       
 
@@ -76,28 +76,28 @@ namespace System.Multemic
 
         #region Constructor
 
-        public SharedMultiAlbum() : base(16, HashBits.bit64)
+        public SharedMassAlbum() : base(16, HashBits.bit64)
         {
         }
-        public SharedMultiAlbum(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public SharedMassAlbum(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {      
         }
-        public SharedMultiAlbum(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public SharedMassAlbum(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public SharedMultiAlbum(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public SharedMassAlbum(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public SharedMultiAlbum(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public SharedMassAlbum(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public SharedMultiAlbum(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public SharedMassAlbum(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);

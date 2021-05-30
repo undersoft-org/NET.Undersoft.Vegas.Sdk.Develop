@@ -5,7 +5,7 @@ using System.Multemic.Basedeck;
 /*************************************************************************************
     Copyright (c) 2020 Undersoft
 
-    System.Multemic.Deck    
+    System.Multemic.CardMassList    
         
     @author Darius Hanc                                                  
     @project  NETStandard.Undersoft.Library                               
@@ -14,18 +14,18 @@ using System.Multemic.Basedeck;
  *********************************************************************************/
 namespace System.Multemic
 {
-    public abstract class MultiCardList<V> : SeededDeck<V> where V : IUnique
+    public abstract class CardMassList<V> : SeededDeck<V> where V : IUnique
     {
         #region Globals       
 
-        protected      ICard<V> addNew(long key, V value)
+        protected      ICard<V> createNew(long key, V value)
         {
             var newcard = NewCard(key, value);
             last.Next = newcard;
             last = newcard;
             return newcard;
         }
-        protected      ICard<V> addNew(ICard<V> value)
+        protected      ICard<V> createNew(ICard<V> value)
         {
             last.Next = value;
             last = value;
@@ -36,25 +36,25 @@ namespace System.Multemic
 
         #region Constructor
 
-        public MultiCardList(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public CardMassList(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {
         }
-        public MultiCardList(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity > collection.Count ? capacity : collection.Count, bits)
-        {
-            foreach (var c in collection)
-                this.Add(c);
-        }
-        public MultiCardList(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity > collection.Count ? capacity : collection.Count, bits)
+        public CardMassList(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public MultiCardList(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public CardMassList(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public MultiCardList(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public CardMassList(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        {
+            foreach (var c in collection)
+                this.Add(c);
+        }
+        public CardMassList(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
@@ -93,7 +93,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(key, value);
+                card = createNew(key, value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -118,7 +118,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(key, value);
+                    var newcard = createNew(key, value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -136,7 +136,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(key, value);
+                card = createNew(key, value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -161,7 +161,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(key, value);
+                    var newcard = createNew(key, value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -179,7 +179,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(value);
+                card = createNew(value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -204,7 +204,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(value);
+                    var newcard = createNew(value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -222,7 +222,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(key, value);
+                table[pos] = createNew(key, value);
                 countIncrement();
                 return true;
             }
@@ -247,7 +247,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    card.Extent = addNew(key, value);
+                    card.Extent = createNew(key, value);
                     conflictIncrement();
                     return true;
                 }
@@ -264,7 +264,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(key, value);
+                table[pos] = createNew(key, value);
                 countIncrement();
                 return true;
             }
@@ -289,7 +289,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    card.Extent = addNew(key, value);
+                    card.Extent = createNew(key, value);
                     conflictIncrement();
                     return true;
                 }
@@ -306,7 +306,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(value);
+                table[pos] = createNew(value);
                 countIncrement();
                 return true;
             }
@@ -331,7 +331,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    card.Extent = addNew(value);
+                    card.Extent = createNew(value);
                     conflictIncrement();
                     return true;
                 }

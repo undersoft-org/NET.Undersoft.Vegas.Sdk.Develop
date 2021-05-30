@@ -13,34 +13,34 @@ using System.Uniques;
  ********************************************************************************/
 namespace System.Multemic
 {
-    public class MultiAlbum<V> : MultiCardBook<V> where V : IUnique
+    public class MassAlbum<V> : CardMassBook<V> where V : IUnique
     {
         #region Constructor
 
-        public MultiAlbum() : base(17, HashBits.bit64)
+        public MassAlbum() : base(17, HashBits.bit64)
         {
         }
-        public MultiAlbum(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public MassAlbum(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {
         }
-        public MultiAlbum(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
-        {
-
-            foreach (var c in collection)
-                this.Add(c);
-        }
-        public MultiAlbum(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public MassAlbum(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
 
             foreach (var c in collection)
                 this.Add(c);
         }
-        public MultiAlbum(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public MassAlbum(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        {
+
+            foreach (var c in collection)
+                this.Add(c);
+        }
+        public MassAlbum(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public MultiAlbum(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public MassAlbum(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
@@ -50,33 +50,33 @@ namespace System.Multemic
 
         public override ICard<V> EmptyCard()
         {
-            return new MultiCard<V>();
+            return new MassCard<V>();
         }
 
         public override ICard<V> NewCard(long key, V value)
         {
-            return new MultiCard<V>(key, value);
+            return new MassCard<V>(key, value);
         }
         public override ICard<V> NewCard(object key, V value)
         {
-            return new MultiCard<V>(key, value);
+            return new MassCard<V>(key, value);
         }
         public override ICard<V> NewCard(V value)
         {
-            return new MultiCard<V>(value);
+            return new MassCard<V>(value);
         }
         public override ICard<V> NewCard(ICard<V> card)
         {
-            return new MultiCard<V>(card);
+            return new MassCard<V>(card);
         }
 
         public override ICard<V>[] EmptyCardTable(int size)
         {
-            return new MultiCard<V>[size];
+            return new MassCard<V>[size];
         }
         public override ICard<V>[] EmptyCardList(int size)
         {
-            return new MultiCard<V>[size];
+            return new MassCard<V>[size];
         }
 
     }

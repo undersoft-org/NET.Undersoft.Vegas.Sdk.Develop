@@ -22,7 +22,7 @@ namespace System.Multemic
 
         protected ICard<V>[] list;
 
-        protected ICard<V> addNew(long key, V value)
+        protected ICard<V> createNew(long key, V value)
         {
             int id = count + removed;
             var newcard = NewCard(key, value);
@@ -30,7 +30,7 @@ namespace System.Multemic
             list[id] = newcard;
             return newcard;
         }
-        protected ICard<V> addNew(ICard<V> card)
+        protected ICard<V> createNew(ICard<V> card)
         {
             int id = count + removed;
             card.Index = id;
@@ -103,7 +103,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(key, value);
+                card = createNew(key, value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -129,7 +129,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(key, value);
+                    var newcard = createNew(key, value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -146,7 +146,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(key, value);
+                card = createNew(key, value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -172,7 +172,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(key, value);
+                    var newcard = createNew(key, value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -191,7 +191,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(value);
+                card = createNew(value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -216,7 +216,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(value);
+                    var newcard = createNew(value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -234,7 +234,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(key, value); 
+                table[pos] = createNew(key, value); 
                 countIncrement();
                 return true;
             }
@@ -260,7 +260,7 @@ namespace System.Multemic
                 if (card.Extent == null)
                 {
                     /// assign new card as extent reference and increase conflicts
-                    card.Extent = addNew(key, value);
+                    card.Extent = createNew(key, value);
                     conflictIncrement();
                     return true;
                 }
@@ -278,7 +278,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(key, value);
+                table[pos] = createNew(key, value);
                 countIncrement();
                 return true;
             }
@@ -304,7 +304,7 @@ namespace System.Multemic
                 if (card.Extent == null)
                 {
                     /// assign new card as extent reference and increase conflicts
-                    card.Extent = addNew(key, value);
+                    card.Extent = createNew(key, value);
                     conflictIncrement();
                     return true;
                 }
@@ -322,7 +322,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(value);
+                table[pos] = createNew(value);
                 countIncrement();
                 return true;
             }
@@ -347,7 +347,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    card.Extent = addNew(value);
+                    card.Extent = createNew(value);
                     conflictIncrement();
                     return true;
                 }
@@ -433,6 +433,28 @@ namespace System.Multemic
             list = EmptyCardList(minSize);
         }
 
+        protected override void renewClear(int capacity)
+        {
+            if (capacity != size || count > 0)
+            {
+                size = capacity;
+                maxId = capacity - 1;
+                conflicts = 0;
+                removed = 0;
+                count = 0;
+                table = EmptyCardTable(size);
+                list = EmptyCardList(size);
+                first = EmptyCard();
+                last = first;
+            }
+        }
+
+        public override void Flush()
+        {
+            base.Flush();
+            list = EmptyCardList(size);
+        }
+
         public override   ICard<V> Next(ICard<V> card)
         {
             ICard<V> _card = list[card.Index + 1];
@@ -454,30 +476,35 @@ namespace System.Multemic
         protected override void Rehash(int newsize)
         {
             int finish = count;
-            int listsize = newsize; //+ (int)(newsize * REMOVED_PERCENT_LIMIT) + 10;
-            ICard<V>[] newcardTable = EmptyCardTable(newsize);
+            int _newsize = newsize; //+ (int)(newsize * REMOVED_PERCENT_LIMIT) + 10;
+            int newMaxId = _newsize - 1;
+            ICard<V>[] newCardTable = EmptyCardTable(_newsize);
             if (removed != 0)
             {
-                ICard<V>[] newcardList = EmptyCardList(listsize);
-                rehashAndReindex(newcardTable, newcardList, newsize);
-                list = newcardList;
+                ICard<V>[] newCardList = EmptyCardList(_newsize);
+                rehashAndReindex(newCardTable, newCardList, newMaxId);
+                list = newCardList;
             }
             else
             {
-                ICard<V>[] newcardList = EmptyCardList(listsize);
-                rehash(newcardTable, newsize);
-                Array.Copy(list, 0, newcardList, 0, finish);
-                list = newcardList;
+                ICard<V>[] newCardList = EmptyCardList(_newsize);
+                rehash(newCardTable, newMaxId);
+                Array.Copy(list, 0, newCardList, 0, finish);
+                list = newCardList;
             }
-            table = newcardTable;
+            table = newCardTable;
+            maxId = newMaxId;
             size = newsize;
         }
 
-        private         void rehashAndReindex(ICard<V>[] newcardTable, ICard<V>[] newcardList, int newsize)
+        private         void rehashAndReindex(ICard<V>[] newCardTable, ICard<V>[] newCardList, int newMaxId)
         {
             int _conflicts = 0;
             int _counter = 0;
             int total = count + removed;
+            int _newMaxId = newMaxId;
+            ICard<V>[] _newCardTable = newCardTable;
+            ICard<V>[] _newCardList = newCardList;
             ICard<V> card = null;
             ICard<V> mem = null;
             for(int i = 0; i < total; i++ )
@@ -486,16 +513,16 @@ namespace System.Multemic
 
                 if (card != null && !card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize);
+                    ulong pos = getPosition(card.Key, _newMaxId);
 
-                    mem = newcardTable[pos];
+                    mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
                         card.Extent = null;
                         card.Index = _counter;
-                        newcardTable[pos] = card;
-                        newcardList[_counter++] = card;
+                        _newCardTable[pos] = card;
+                        _newCardList[_counter++] = card;
                     }
                     else
                     {
@@ -506,7 +533,7 @@ namespace System.Multemic
                                 card.Extent = null;
                                 mem.Extent = card;
                                 card.Index = _counter;
-                                newcardList[_counter++] = card;
+                                _newCardList[_counter++] = card;
                                 _conflicts++;
                                 break;
                             }
@@ -520,10 +547,12 @@ namespace System.Multemic
             removed = 0;
         }
 
-        private         void rehash(ICard<V>[] newcardTable, int newsize)
+        private         void rehash(ICard<V>[] newCardTable, int newMaxId)
         {
             int _conflicts = 0;
             int total = count + removed;
+            int _newMaxId = newMaxId;
+            ICard<V>[] _newCardTable = newCardTable;
             ICard<V> card = null;
             ICard<V> mem = null;
             for (int i = 0; i < total; i++)
@@ -531,13 +560,13 @@ namespace System.Multemic
                 card = list[i];
                 if (card != null && !card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize);
-                    mem = newcardTable[pos];
+                    ulong pos = getPosition(card.Key, _newMaxId);
+                    mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
                         card.Extent = null;
-                        newcardTable[pos] = card;
+                        _newCardTable[pos] = card;
                     }
                     else
                     {

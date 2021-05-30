@@ -85,10 +85,10 @@ namespace System.Instant.Mathline
         }
 
         private Ussn systemSerialCode;
-        public Ussn SystemSerialCode { get => systemSerialCode; set => systemSerialCode = value; }
+        public Ussn SerialCode { get => systemSerialCode; set => systemSerialCode = value; }
         public IUnique Empty => Ussn.Empty;
         public long UniqueKey
-        { get => SystemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
+        { get => SerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
        
 
         public int CompareTo(IUnique other)

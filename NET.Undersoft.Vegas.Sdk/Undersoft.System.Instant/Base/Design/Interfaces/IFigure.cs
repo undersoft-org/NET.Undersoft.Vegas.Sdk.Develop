@@ -10,10 +10,10 @@ namespace System.Instant
 
         object[] ValueArray { get; set; }
 
-        Ussn SystemSerialCode { get; set; }
-
+        Ussn SerialCode { get; set; }
+           
         //V Get<V>(string propertyName);
-
-        //V Set<V>(string propertyName, object value);
+         
+        //void Set<V>(string propertyName, V value);
     }   
 }

@@ -16,31 +16,32 @@ namespace System.Instant.Linking
     using System.Uniques;
 
     [Serializable]
-    public class LinkBranch : CardList<ICard<IFigure>>, IUnique
+    public class BranchDeck : CardList<ICard<IFigure>>, IUnique
     {
         #region Fields
 
         private ICard<ICard<IFigure>>[] cards;
+        private Usid serialcode;
 
         #endregion
 
         #region Constructors
 
-        public LinkBranch(LinkMember member, ICard<IFigure> value) : base(5, HashBits.bit64)
+        public BranchDeck(LinkMember member, ICard<IFigure> value) : base(5, HashBits.bit64)
         {
             Member = member;
             var card = NewCard(value);
             UniqueKey = card.UniquesAsKey();
             InnerAdd(card);
         }
-        public LinkBranch(LinkMember member, ICard<IFigure> value, int _cardSize) : base(_cardSize, HashBits.bit64)
+        public BranchDeck(LinkMember member, ICard<IFigure> value, int _cardSize) : base(_cardSize, HashBits.bit64)
         {
             Member = member;
             var card = NewCard(value);
             UniqueKey = card.UniquesAsKey();
             InnerAdd(card);
         }
-        public LinkBranch(LinkMember member, ICollection<ICard<IFigure>> collections, int _cardSize = 5) : base(_cardSize, HashBits.bit64)
+        public BranchDeck(LinkMember member, ICollection<ICard<IFigure>> collections, int _cardSize = 5) : base(_cardSize, HashBits.bit64)
         {
             Member = member;
             if (collections.Any())
@@ -52,7 +53,7 @@ namespace System.Instant.Linking
             foreach (var card in collections.Skip(1))
                 InnerAdd(card);
         }
-        public LinkBranch(LinkMember member, IEnumerable<ICard<IFigure>> collections, int _cardSize = 5) : base(_cardSize, HashBits.bit64)
+        public BranchDeck(LinkMember member, IEnumerable<ICard<IFigure>> collections, int _cardSize = 5) : base(_cardSize, HashBits.bit64)
         {
             Member = member;
             if (collections.Any())
@@ -73,13 +74,13 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Usid.Empty;
 
-        public new long UniqueKey { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
+        public new long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public LinkMember Member { get; set; }
 
-        public uint UniqueSeed { get => Member.UniqueSeed; set => Member.SetUniqueSeed(value); }
+        public uint UniqueSeed { get => Member.UniqueSeed; set => Member.UniqueSeed = value; }
 
-        public Usid SystemSerialCode { get; set; }
+        public Usid SerialCode { get => serialcode; set => serialcode = value; }
 
         #endregion
 
@@ -87,73 +88,53 @@ namespace System.Instant.Linking
 
         public int CompareTo(IUnique other)
         {
-            return SystemSerialCode.CompareTo(other);
+            return SerialCode.CompareTo(other);
         }
 
         public override ICard<ICard<IFigure>> EmptyCard()
         {
-            return new LinkCard(Member);
+            return new BranchCard(Member);
         }
 
         public override ICard<ICard<IFigure>>[] EmptyCardTable(int size)
         {
-            return new LinkCard[size];
+            return new BranchCard[size];
         }
 
         public bool Equals(IUnique other)
         {
-            return SystemSerialCode.Equals(other);
+            return SerialCode.Equals(other);
         }
 
         public byte[] GetBytes()
         {
-            return SystemSerialCode.GetBytes();
+            return SerialCode.GetBytes();
         }
 
         public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
 
         public override ICard<ICard<IFigure>> NewCard(ICard<ICard<IFigure>> value)
         {
-            return new LinkCard(value, Member);
+            return new BranchCard(value, Member);
         }
 
         public override ICard<ICard<IFigure>> NewCard(ICard<IFigure> value)
         {
-            return new LinkCard(value, Member);
+            return new BranchCard(value, Member);
         }
 
         public override ICard<ICard<IFigure>> NewCard(long key, ICard<IFigure> value)
         {
-            return new LinkCard(key, value, Member);
+            return new BranchCard(key, value, Member);
         }
 
         public override ICard<ICard<IFigure>> NewCard(object key, ICard<IFigure> value)
         {
-            return new LinkCard(key, value, Member);
+            return new BranchCard(key, value, Member);
         }
-
-        //public long GetUniqueKey()
-        //{
-        //    return SystemSerialCode.UniqueKey;
-        //}
-
-        //public uint GetUniqueSeed()
-        //{
-        //    return Member.GetUniqueSeed();
-        //}
-
-        //public void SetUniqueKey(long value)
-        //{
-        //    SystemSerialCode.SetUniqueKey(value);
-        //}
-
-        //public void SetUniqueSeed(uint seed)
-        //{
-        //    Member.SetUniqueSeed(seed);
-        //}
 
         protected override bool InnerAdd(ICard<IFigure> value)
         {

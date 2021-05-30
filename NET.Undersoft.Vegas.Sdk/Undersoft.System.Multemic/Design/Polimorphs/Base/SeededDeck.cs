@@ -28,7 +28,7 @@ namespace System.Multemic.Basedeck
 
         protected ICard<V> first, last;
         protected ICard<V>[] table;
-        protected int count, conflicts, removed, minSize, size;     
+        protected int count, conflicts, removed, minSize, size, maxId;     
         
         protected int nextSize()
         {          
@@ -79,6 +79,7 @@ namespace System.Multemic.Basedeck
         {
             size = capacity;
             minSize = capacity;
+            maxId = capacity - 1;
             table = EmptyCardTable(capacity);
             first = EmptyCard();
             last = first;
@@ -166,6 +167,11 @@ namespace System.Multemic.Basedeck
             get { return InnerGet(__base_.UniqueKey(key, seed)); }
             set { InnerPut(__base_.UniqueKey(key, seed), value); }
         }
+        public virtual              V this[IUnique key, uint seed]
+        {
+            get { return InnerGet(__base_.UniqueKey(key, seed)); }
+            set { InnerPut(__base_.UniqueKey(key, seed), value); }
+        }
 
         #endregion
 
@@ -173,7 +179,7 @@ namespace System.Multemic.Basedeck
 
         protected virtual         V InnerGet(long key)
         {
-            ICard<V> mem = table[getPosition(key, size)];
+            ICard<V> mem = table[getPosition(key)];
 
             while (mem != null)
             {
@@ -218,7 +224,7 @@ namespace System.Multemic.Basedeck
         protected virtual      bool InnerTryGet(long key, out ICard<V> output)
         {
             output = null;
-            ICard<V> mem = table[getPosition(key, size)];
+            ICard<V> mem = table[getPosition(key)];
             while (mem != null)
             {
                 if (mem.Equals(key))
@@ -294,7 +300,7 @@ namespace System.Multemic.Basedeck
 
         protected virtual   ICard<V> InnerGetCard(long key)
         {
-            ICard<V> mem = table[getPosition(key, size)];
+            ICard<V> mem = table[getPosition(key)];
 
             while (mem != null)
             {
@@ -712,11 +718,12 @@ namespace System.Multemic.Basedeck
         #endregion
 
         #region Renew
-        private void renewClear(int capacity)
+        protected virtual void renewClear(int capacity)
         {
             if (capacity != size || count > 0)
             {
                 size = capacity;
+                maxId = capacity - 1;
                 conflicts = 0;
                 removed = 0;
                 count = 0;
@@ -756,7 +763,7 @@ namespace System.Multemic.Basedeck
 
         protected bool      InnerContainsKey(long key)
         {
-            ICard<V> mem = table[getPosition(key, size)];
+            ICard<V> mem = table[getPosition(key)];
 
             while (mem != null)
             {
@@ -810,7 +817,7 @@ namespace System.Multemic.Basedeck
 
         protected virtual V InnerRemove(long key)
         {
-            ICard<V> mem = table[getPosition(key, size)];
+            ICard<V> mem = table[getPosition(key)];
 
             while (mem != null)
             {
@@ -865,6 +872,7 @@ namespace System.Multemic.Basedeck
         public virtual      void Clear()
         {
             size = minSize;
+            maxId = size - 1;
             conflicts = 0;
             removed = 0;
             count = 0;
@@ -1055,7 +1063,7 @@ namespace System.Multemic.Basedeck
         {
             // standard hashmap method to establish position / index in table
 
-            return ((ulong)key % (uint)size);
+            return ((ulong)key % (uint)maxId);
 
             // author's algorithm to establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type) 
@@ -1063,11 +1071,11 @@ namespace System.Multemic.Basedeck
 
             // return Submix.Map(key, size - 1, mixMask, msbId);           
         }
-        protected ulong getPosition(long key, int tableSize)
+        protected static ulong getPosition(long key, int tableMaxId)
         {
             // standard hashmap method to establish position / index in table 
 
-             return ((ulong)key % ((ulong)(tableSize - 1)));
+             return ((ulong)key % (ulong)tableMaxId);
 
             // author's algorithm to establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type)
@@ -1080,40 +1088,43 @@ namespace System.Multemic.Basedeck
         {
             int finish = count;
             int newsize = newSize;
-            ICard<V>[] newcardTable = EmptyCardTable(newsize);
+            int newMaxId = newsize - 1;
+            ICard<V>[] newCardTable = EmptyCardTable(newsize);
             ICard<V> card = first;
             card = card.Next;
             if (removed > 0)
             {
-                rehashAndReindex(card, newcardTable, newsize);
+                rehashAndReindex(card, newCardTable, newMaxId);
             }
             else
             {
-                rehash(card, newcardTable, newsize);
+                rehash(card, newCardTable, newMaxId);
             }
 
-            table = newcardTable;
+            table = newCardTable;
+            maxId = newMaxId;
             size = newsize;
         }
 
-        private         void rehashAndReindex(ICard<V> card, ICard<V>[] newcardTable, int newSize)
+        private         void rehashAndReindex(ICard<V> card, ICard<V>[] newCardTable, int newMaxId)
         {
             int _conflicts = 0;
-            int newsize = newSize;
+            int _newMaxId = newMaxId;
+            ICard<V>[] _newCardTable = newCardTable;
             ICard<V> _firstcard = EmptyCard();
             ICard<V> _lastcard = _firstcard;
             do
             {
                 if (!card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize);
+                    ulong pos = getPosition(card.Key, _newMaxId);
 
-                    ICard<V> mem = newcardTable[pos];
+                    ICard<V> mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
                         card.Extent = null;
-                        newcardTable[pos] = _lastcard = _lastcard.Next = card;
+                        _newCardTable[pos] = _lastcard = _lastcard.Next = card;
                     }
                     else
                     {
@@ -1142,24 +1153,23 @@ namespace System.Multemic.Basedeck
             last = _lastcard;
         }
 
-        private         void rehash(ICard<V> card, ICard<V>[] newcardTable, int newSize)
+        private         void rehash(ICard<V> card, ICard<V>[] newCardTable, int newMaxId)
         {
             int _conflicts = 0;
-            int newsize = newSize;
-            ulong newMixMask = Submix.Mask((ulong)newsize);
-            int newMsbId = Submix.MsbId(newsize);
+            int _newMaxId = newMaxId;
+            ICard<V>[] _newCardTable = newCardTable;
             do
             {
                 if (!card.Removed)
                 {
-                    ulong pos = getPosition(card.Key, newsize);
+                    ulong pos = getPosition(card.Key, _newMaxId);
 
-                    ICard<V> mem = newcardTable[pos];
+                    ICard<V> mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
                         card.Extent = null;
-                        newcardTable[pos] = card;
+                        _newCardTable[pos] = card;
                     }
                     else
                     {

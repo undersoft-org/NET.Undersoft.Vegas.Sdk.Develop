@@ -21,7 +21,7 @@ namespace System.Labors
 
         private Board<object> input;
         private Board<object> output;
-        private Ussc SystemCode;
+        private Ussc SerialCode;
 
         #endregion
 
@@ -38,7 +38,7 @@ namespace System.Labors
             Work = Method;
             LaborerName = Name;
 
-            SystemCode = new Ussc(($"{Work.UniqueKey}.{DateTime.Now.ToBinary()}").UniqueKey());
+            SerialCode = new Ussc(($"{Work.UniqueKey}.{DateTime.Now.ToBinary()}").UniqueKey());
         }
 
         #endregion
@@ -84,9 +84,9 @@ namespace System.Labors
             }
         }
 
-        public long UniqueKey { get => SystemCode.UniqueKey; set => SystemCode.UniqueKey = value; }
+        public long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.UniqueKey = value; }
 
-        public uint UniqueSeed { get => ((IUnique)SystemCode).UniqueSeed; set => ((IUnique)SystemCode).UniqueSeed = value; }
+        public uint UniqueSeed { get => ((IUnique)SerialCode).UniqueSeed; set => ((IUnique)SerialCode).UniqueSeed = value; }
 
         public IDeputy Work { get; set; }
 
@@ -116,42 +116,42 @@ namespace System.Labors
 
         public int CompareTo(IUnique other)
         {
-            return SystemCode.CompareTo(other);
+            return SerialCode.CompareTo(other);
         }
 
         public bool Equals(IUnique other)
         {
-            return SystemCode.Equals(other);
+            return SerialCode.Equals(other);
         }
 
         public byte[] GetBytes()
         {
-            return SystemCode.GetBytes();
+            return SerialCode.GetBytes();
         }
 
         public byte[] GetUniqueBytes()
         {
-            return SystemCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
 
         //public uint GetUniqueSeed()
         //{
-        //    return ((IUnique)SystemCode).UniqueSeed;
+        //    return ((IUnique)SerialCode).UniqueSeed;
         //}
 
         //public void SetUniqueKey(long value)
         //{
-        //    SystemCode.UniqueKey = value;
+        //    SerialCode.UniqueKey = value;
         //}
 
         //public void SetUniqueSeed(uint seed)
         //{
-        //    ((IUnique)SystemCode).SetUniqueSeed(seed);
+        //    ((IUnique)SerialCode).SetUniqueSeed(seed);
         //}
 
         //public long UniqueKey()
         //{
-        //    return SystemCode.UniqueKey();
+        //    return SerialCode.UniqueKey();
         //}
 
         #endregion

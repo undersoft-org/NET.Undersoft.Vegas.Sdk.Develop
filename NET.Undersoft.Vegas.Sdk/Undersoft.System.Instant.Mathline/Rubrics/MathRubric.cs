@@ -26,7 +26,7 @@ namespace System.Instant.Mathline
         {
             memberRubric = rubric;
             mathlineRubrics = rubrics;
-            SystemSerialCode = rubric.SystemSerialCode;
+            SerialCode = rubric.SerialCode;
         }
 
         #region Mathline Formula
@@ -200,28 +200,28 @@ namespace System.Instant.Mathline
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey { get => systemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
-        public uint UniqueSeed { get => systemSerialCode.UniqueSeed; set => systemSerialCode.UniqueSeed = value; }
+        public long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
+        public uint UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.SetUniqueSeed(value); }
 
         public byte[] GetBytes()
         {
-            return systemSerialCode.GetBytes();
+            return SerialCode.GetBytes();
         }
 
         public byte[] GetUniqueBytes()
         {
-            return systemSerialCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
 
-        public void SetUniqueKey(long value)
-        {
-            systemSerialCode.UniqueKey = value;
-        }
+        //public void SetUniqueKey(long value)
+        //{
+        //    systemSerialCode.UniqueKey = value;
+        //}
 
-        public long GetUniqueKey()
-        {
-            return systemSerialCode.UniqueKey;
-        }
+        //public long GetUniqueKey()
+        //{
+        //    return systemSerialCode.UniqueKey;
+        //}
 
         public bool Equals(IUnique other)
         {
@@ -233,18 +233,17 @@ namespace System.Instant.Mathline
             return (int)(UniqueKey - other.UniqueKey);
         }
 
-        public void SetUniqueSeed(uint seed)
-        {
-            systemSerialCode.SetUniqueSeed(seed);
-        }
+        //public void SetUniqueSeed(uint seed)
+        //{
+        //    systemSerialCode.SetUniqueSeed(seed);
+        //}
 
-        public uint GetUniqueSeed()
-        {
-            return systemSerialCode.GetUniqueSeed();
-        }
+        //public uint GetUniqueSeed()
+        //{
+        //    return systemSerialCode.GetUniqueSeed();
+        //}
 
-        private Ussn systemSerialCode;
-        public Ussn SystemSerialCode { get => systemSerialCode; set => systemSerialCode = value; }
+        public Ussn SerialCode { get; set; }
 
     }
 

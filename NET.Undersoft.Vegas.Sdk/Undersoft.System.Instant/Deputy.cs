@@ -53,14 +53,14 @@ namespace System.Instant
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey { get => systemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
+        public long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public ParameterInfo[] Parameters { get; set; }
         public object[] ParameterValues { get; set; }
         public object[] ValueArray { get => ParameterValues; set => ParameterValues = value; }
 
-        private Ussn systemSerialCode;
-        public Ussn SystemSerialCode { get => systemSerialCode; set => systemSerialCode = value; }
+        private Ussn serialcode;
+        public Ussn SerialCode { get => serialcode; set => serialcode = value; }
 
         public object this[int fieldId] { get => ParameterValues[fieldId]; set => ParameterValues[fieldId] = value; }
         public object this[string propertyName]
@@ -95,11 +95,11 @@ namespace System.Instant
             Parameters = m.GetParameters();
             long time = DateTime.Now.ToBinary();
             string decription = $"{Info.DeclaringType.FullName}." +
-                                   $"{Info.Name}" +
-                                   $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
+                                $"{Info.Name}" +
+                                $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
 
-            systemSerialCode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
-            systemSerialCode.TimeBlock = time;
+            serialcode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
+            serialcode.TimeBlock = time;
         }
 
         public Deputy(Object TargetObject, String MethodName) : this(TargetObject, MethodName, null)
@@ -117,11 +117,11 @@ namespace System.Instant
             Parameters = m.GetParameters();
             long time = DateTime.Now.ToBinary();
             string decription = $"{Info.DeclaringType.FullName}." +
-                                   $"{Info.Name}" +
-                                   $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
+                                $"{Info.Name}" +
+                                $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
 
-            systemSerialCode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
-            systemSerialCode.TimeBlock = time;
+            serialcode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
+            serialcode.TimeBlock = time;
         }
 
         public Deputy(Type TargetType, String MethodName) : this(Summon.New(TargetType), MethodName, null)
@@ -144,41 +144,41 @@ namespace System.Instant
 
         public byte[] GetBytes()
         {
-            return SystemSerialCode.GetBytes();
+            return SerialCode.GetBytes();
         }
         public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
         public void SetUniqueKey(long value)
         {
-            SystemSerialCode.SetUniqueKey(value);
+            SerialCode.SetUniqueKey(value);
         }
         public long GetUniqueKey()
         {
-            return SystemSerialCode.UniqueKey;
+            return SerialCode.UniqueKey;
         }
         public bool Equals(IUnique other)
         {
-            return SystemSerialCode.Equals(other);
+            return SerialCode.Equals(other);
         }
         public int CompareTo(IUnique other)
         {
-            return SystemSerialCode.CompareTo(other);
+            return SerialCode.CompareTo(other);
         }
 
         public uint UniqueSeed
         {
-            get => systemSerialCode.UniqueSeed;
-            set => systemSerialCode.UniqueSeed = value;
+            get => serialcode.UniqueSeed;
+            set => serialcode.UniqueSeed = value;
         }
         public void SetUniqueSeed(uint seed)
         {
-            systemSerialCode.SetUniqueSeed(seed);
+            SerialCode.SetUniqueSeed(seed);
         }
         public uint GetUniqueSeed()
         {
-            return systemSerialCode.GetUniqueSeed();
+            return SerialCode.GetUniqueSeed();
         }
 
         public object Execute(params object[] FunctionParameters)

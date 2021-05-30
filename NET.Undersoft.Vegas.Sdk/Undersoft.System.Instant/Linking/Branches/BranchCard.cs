@@ -19,28 +19,25 @@ namespace System.Instant
     using System.Runtime.InteropServices;
     using System.Uniques;
 
-    [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
-    public class LinkCard : Card<ICard<IFigure>>, IFigure, IEquatable<ICard<IFigure>>, IComparable<ICard<IFigure>>
+    public class BranchCard : Card<ICard<IFigure>>, IFigure, IEquatable<ICard<IFigure>>, IComparable<ICard<IFigure>>
     {
-        public LinkCard(LinkMember member)
+        public BranchCard(LinkMember member)
         {
             Member = member;
         }
-        public LinkCard(object key, ICard<IFigure> value, LinkMember member) : base(key, value)
+        public BranchCard(object key, ICard<IFigure> value, LinkMember member) : base(key, value)
         {
             Member = member;
         }
-        public LinkCard(long key, ICard<IFigure> value, LinkMember member) : base(key, value)
+        public BranchCard(long key, ICard<IFigure> value, LinkMember member) : base(key, value)
         {
             Member = member;
         }
-        public LinkCard(ICard<IFigure> value, LinkMember member) : base(value)
+        public BranchCard(ICard<IFigure> value, LinkMember member) : base(value)
         {
             Member = member;
-
         }
-        public LinkCard(ICard<ICard<IFigure>> value, LinkMember member) : base(value)
+        public BranchCard(ICard<ICard<IFigure>> value, LinkMember member) : base(value)
         {
             Member = member;
         }
@@ -78,7 +75,7 @@ namespace System.Instant
         {
             return Key.Equals(y.UniqueKey());
         }
-        public bool Equals(ICard<IFigure> other)
+        public          bool Equals(ICard<IFigure> other)
         {
             return Key == other.UniqueKey;
         }
@@ -100,7 +97,7 @@ namespace System.Instant
         {
             return (int)(Key - other.Key);
         }
-        public int CompareTo(ICard<IFigure> other)
+        public          int CompareTo(ICard<IFigure> other)
         {
             return (int)(Key - other.UniqueKey);
         }
@@ -115,7 +112,7 @@ namespace System.Instant
             return value.GetUniqueBytes();
         }
 
-        public override int[] UniqueOrdinals()
+        public override    int[] UniqueOrdinals()
         {
             return Member.KeyRubrics.Ordinals;
         }
@@ -123,7 +120,7 @@ namespace System.Instant
         {
             return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray();
         }
-        public override long UniquesAsKey()
+        public override     long UniquesAsKey()
         {
             return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray().UniqueKey();
         }
@@ -152,10 +149,10 @@ namespace System.Instant
             }
         }
 
-        public Ussn SystemSerialCode
+        public Ussn SerialCode
         {
-            get => value.Value.SystemSerialCode;
-            set => this.value.Value.SystemSerialCode = value;
+            get => value.Value.SerialCode;
+            set => this.value.Value.SerialCode = value;
         }
 
         public LinkMember Member { get; set; }

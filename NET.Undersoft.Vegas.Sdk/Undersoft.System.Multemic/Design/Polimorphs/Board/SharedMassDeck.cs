@@ -17,7 +17,7 @@ using System.Threading;
  *********************************************************************************/
 namespace System.Multemic
 {
-    public abstract class SharedMultiDeck<V> : MultiCardList<V> where V : IUnique
+    public abstract class SharedMassDeck<V> : CardMassList<V> where V : IUnique
     {
         #region Globals
 
@@ -74,25 +74,25 @@ namespace System.Multemic
 
         #region Constructor
 
-        public SharedMultiDeck(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public SharedMassDeck(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {
         }
-        public SharedMultiDeck(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
-        {
-            foreach (var c in collection)
-                this.Add(c);
-        }
-        public SharedMultiDeck(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public SharedMassDeck(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public SharedMultiDeck(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public SharedMassDeck(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public SharedMultiDeck(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public SharedMassDeck(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        {
+            foreach (var c in collection)
+                this.Add(c);
+        }
+        public SharedMassDeck(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);

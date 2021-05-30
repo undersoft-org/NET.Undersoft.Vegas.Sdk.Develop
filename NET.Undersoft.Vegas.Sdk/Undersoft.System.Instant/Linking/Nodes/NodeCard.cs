@@ -20,24 +20,24 @@ namespace System.Instant
 
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class BranchCard : Card<LinkBranch>, IEquatable<LinkBranch>, IComparable<LinkBranch>
+    public class NodeCard : Card<BranchDeck>, IEquatable<BranchDeck>, IComparable<BranchDeck>
     {
         private long _key;
 
-        public BranchCard()
+        public NodeCard()
         {
         }
-        public BranchCard(object key, LinkBranch value) : base(key, value)
+        public NodeCard(object key, BranchDeck value) : base(key, value)
         {
         }
-        public BranchCard(long key, LinkBranch value) : base(key, value)
+        public NodeCard(long key, BranchDeck value) : base(key, value)
         {
         }
-        public BranchCard(LinkBranch value) : base(value)
+        public NodeCard(BranchDeck value) : base(value)
         {
 
         }
-        public BranchCard(ICard<LinkBranch> value) : base(value)
+        public NodeCard(ICard<BranchDeck> value) : base(value)
         {
         }
 
@@ -52,25 +52,25 @@ namespace System.Instant
             set => this.value[propertyName] = (ICard<IFigure>)value;
         }
 
-        public override void Set(long key, LinkBranch value)
+        public override void Set(long key, BranchDeck value)
         {
             this.value = value;
             Member = value.Member;
             Key = key.UniqueKey64(value.UniqueSeed);
         }
-        public override void Set(object key, LinkBranch value)
+        public override void Set(object key, BranchDeck value)
         {
             this.value = value;
             Member = value.Member;
             Key = key.UniqueKey64(value.UniqueSeed);
         }
-        public override void Set(LinkBranch value)
+        public override void Set(BranchDeck value)
         {
             this.value = value;
             Member = value.Member;
             Key = value.UniqueKey64(value.UniqueSeed);
         }
-        public override void Set(ICard<LinkBranch> card)
+        public override void Set(ICard<BranchDeck> card)
         {
             this.value = card.Value;
             this.Key = card.Key;
@@ -84,7 +84,7 @@ namespace System.Instant
         {
             return Key.Equals(y.UniqueKey());
         }
-        public bool Equals(LinkBranch other)
+        public bool Equals(BranchDeck other)
         {
             return Key == other.UniqueKey;
         }
@@ -102,11 +102,11 @@ namespace System.Instant
         {
             return (int)(Key - key);
         }
-        public override int CompareTo(ICard<LinkBranch> other)
+        public override int CompareTo(ICard<BranchDeck> other)
         {
             return (int)(Key - other.Key);
         }
-        public int CompareTo(LinkBranch other)
+        public int CompareTo(BranchDeck other)
         {
             return (int)(Key - other.UniqueKey);
         }
@@ -152,12 +152,12 @@ namespace System.Instant
 
         public LinkMember Member { get; set; }
 
-        public LinkBranches Branches { get; set; }
+        public NodeCatalog Branches { get; set; }
 
         public override IUnique Empty => this.value.Empty;
 
         public override uint UniqueSeed
-        { get => Member.UniqueSeed; set => Member.SetUniqueSeed(value); }
+        { get => Member.UniqueSeed; set => Member.UniqueSeed = value; }
 
         public override int CompareTo(IUnique other)
         {
@@ -168,26 +168,5 @@ namespace System.Instant
         {
             return this.value.Equals(other);
         }
-
-        //public override long GetUniqueKey()
-        //{
-        //    return this.value.UniqueKey;
-        //}
-
-        //public override void SetUniqueKey(long value)
-        //{
-        //    this.value.SetUniqueKey(value);
-        //}
-
-        //public override void SetUniqueSeed(uint seed)
-        //{
-        //    Member.SetUniqueSeed(seed);
-        //}
-
-        //public override uint GetUniqueSeed()
-        //{
-        //    return Member.GetUniqueSeed();
-        //}
-
     }
 }

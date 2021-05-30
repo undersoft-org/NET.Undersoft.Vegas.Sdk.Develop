@@ -135,58 +135,58 @@ namespace System.Instant.Linking
             return InnerPut(NewCard(value));
         }
 
-        public Ussn SystemSerialCode
+        public Ussn SerialCode
         { get; set; }
 
         public IUnique Empty => Ussn.Empty;
 
         public new long UniqueKey
-        { get => SystemSerialCode.UniqueKey; set => SystemSerialCode.SetUniqueKey(value); }
+        { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
 
         public uint     UniqueSeed
         {
-            get => SystemSerialCode.UniqueSeed;
-            set => SystemSerialCode.SetUniqueSeed(value);
+            get => SerialCode.UniqueSeed;
+            set => SerialCode.SetUniqueSeed(value);
         }
 
         public int CompareTo(IUnique other)
         {
-            return SystemSerialCode.CompareTo(other);
+            return SerialCode.CompareTo(other);
         }
 
         public bool Equals(IUnique other)
         {
-            return SystemSerialCode.Equals(other);
+            return SerialCode.Equals(other);
         }
 
         public byte[] GetBytes()
         {
-            return SystemSerialCode.GetBytes();
+            return SerialCode.GetBytes();
         }
 
         public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
 
         //public long GetUniqueKey()
         //{
-        //    return SystemSerialCode.UniqueKey;
+        //    return SerialCode.UniqueKey;
         //}
 
         //public void SetUniqueKey(long value)
         //{
-        //    SystemSerialCode.SetUniqueKey(value);
+        //    SerialCode.SetUniqueKey(value);
         //}
 
         //public void SetUniqueSeed(uint seed)
         //{
-        //    SystemSerialCode.SetUniqueSeed(seed);
+        //    SerialCode.SetUniqueSeed(seed);
         //}
 
         //public uint GetUniqueSeed()
         //{
-        //    return SystemSerialCode.GetUniqueSeed();
+        //    return SerialCode.GetUniqueSeed();
         //}
     }
 }

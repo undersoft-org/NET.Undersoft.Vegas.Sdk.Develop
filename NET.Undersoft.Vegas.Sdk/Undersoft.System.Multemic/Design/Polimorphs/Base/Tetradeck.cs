@@ -25,15 +25,14 @@ namespace System.Multemic.Basedeck
 
         static protected readonly float CONFLICTS_PERCENT_LIMIT = 0.25f;
         static protected readonly float REMOVED_PERCENT_LIMIT = 0.15f;
-        static protected readonly ulong MAX_BIT_MASK = 0xFFFFFFFFFFFFFFFF;
-        static protected readonly long AUTO_KEY_SEED = DateTime.Now.Ticks;
+        //static protected readonly ulong MAX_BIT_MASK = 0xFFFFFFFFFFFFFFFF;      
 
         protected ICard<V> first, last;
         protected TetraTable<V> table;
         protected TetraSize tsize;
         protected TetraCount tcount;
-        protected int[] msbId;
-        protected ulong[] mixMask;
+        //protected int[] msbId;
+        //protected ulong[] mixMask;
         protected int count, conflicts, removed, size, minSize;     
 
         protected void countIncrement(int tid)
@@ -873,7 +872,7 @@ namespace System.Multemic.Basedeck
 
         #region Hashtable
 
-        protected long  getTetraId(long key)
+        protected static long  getTetraId(long key)
         {
             return ((key & 1L) - ((key & -1L) * 2));
         }
@@ -881,7 +880,7 @@ namespace System.Multemic.Basedeck
         {
             // standard hashmap method to establish position / index in table
 
-            return ((ulong)key % (uint)size);
+            return ((ulong)key % (uint)(size -1));
 
             // author's algorithm to establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type) 
@@ -889,11 +888,11 @@ namespace System.Multemic.Basedeck
 
             //return Submix.Map(key, tsize - 1, mixMask[tid], msbId[tid]);
         }
-        protected ulong getPosition(long key, int newsize)// ulong newMixMask, int newMsbId)
+        protected static ulong getPosition(long key, int newsize)// ulong newMixMask, int newMsbId)
         {
             // standard hashmap method to establish position / index in table 
 
-            return ((ulong)key % (uint)newsize);
+            return ((ulong)key % (uint)(newsize - 1));
 
             // author's algorithm to establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type)
@@ -906,30 +905,29 @@ namespace System.Multemic.Basedeck
         {
             int finish = tcount[tid];
             int _tsize = tsize[tid];
-            ICard<V>[] newcardTable = EmptyCardTable(newsize);
+            ICard<V>[] newCardTable = EmptyCardTable(newsize);
             ICard<V> card = first;
             card = card.Next;
             if (removed > 0)
             {
-                rehashAndReindex(card, newcardTable, newsize, tid);
+                rehashAndReindex(card, newCardTable, newsize, tid);
             }
             else
             {
-                rehashOnly(card, newcardTable, newsize, tid);
+                rehashOnly(card, newCardTable, newsize, tid);
             }
 
-            table[tid] = newcardTable;
+            table[tid] = newCardTable;
             size = newsize - _tsize;
 
         }
 
-        private void rehashAndReindex(ICard<V> card, ICard<V>[] newcardTable, int newsize, int tid)
+        private void rehashAndReindex(ICard<V> card, ICard<V>[] newCardTable, int newsize, int tid)
         {
             int _conflicts = 0;
             int _oldconflicts = 0;
             int _removed = 0;
-            //ulong newMixMask = Submix.Mask((ulong)newsize);
-            //int newMsbId = Submix.MsbId(newsize);
+            ICard<V>[] _newCardTable = newCardTable;
             ICard<V> _firstcard = EmptyCard();
             ICard<V> _lastcard = _firstcard;
             do
@@ -938,7 +936,7 @@ namespace System.Multemic.Basedeck
                 {
                     ulong pos = getPosition(card.Key, newsize);//, newMixMask, newMsbId);
 
-                    ICard<V> mem = newcardTable[pos];
+                    ICard<V> mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
@@ -946,7 +944,7 @@ namespace System.Multemic.Basedeck
                             _oldconflicts++;
 
                         card.Extent = null;
-                        newcardTable[pos] = _lastcard = _lastcard.Next = card;
+                        _newCardTable[pos] = _lastcard = _lastcard.Next = card;
                     }
                     else
                     {
@@ -974,23 +972,20 @@ namespace System.Multemic.Basedeck
             removed -= _removed;
             first = _firstcard;
             last = _lastcard;
-            //mixMask[tid] = newMixMask;
-            //msbId[tid] = newMsbId;
         }
 
-        private void rehashOnly(ICard<V> card, ICard<V>[] newcardTable, int newsize, int tid)
+        private void rehashOnly(ICard<V> card, ICard<V>[] newCardTable, int newsize, int tid)
         {
             int _conflicts = 0;
             int _oldconflicts = 0;
-            //ulong newMixMask = Submix.Mask((ulong)newsize);
-            //int newMsbId = Submix.MsbId(newsize);
+            ICard<V>[] _newCardTable = newCardTable;
             do
             {
                 if (!card.Removed)
                 {
                     ulong pos = getPosition(card.Key, newsize);//, newMixMask, newMsbId);
 
-                    ICard<V> mem = newcardTable[pos];
+                    ICard<V> mem = _newCardTable[pos];
 
                     if (mem == null)
                     {
@@ -998,7 +993,7 @@ namespace System.Multemic.Basedeck
                             _oldconflicts++;
 
                         card.Extent = null;
-                        newcardTable[pos] = card;
+                        _newCardTable[pos] = card;
                     }
                     else
                     {
@@ -1021,8 +1016,6 @@ namespace System.Multemic.Basedeck
 
             } while (card != null);
             conflicts -= _oldconflicts;// _conflicts;
-            //mixMask[tid] = newMixMask;
-            //msbId[tid] = newMsbId;
         }
 
         #region IDisposable Support

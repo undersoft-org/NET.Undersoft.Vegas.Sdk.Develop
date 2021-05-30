@@ -76,10 +76,10 @@ namespace System.Extract
             Assert.NotEqual(fom.Id, (rts)[nameof(fom.Id)]);
             (rts)[nameof(fom.Name)] = fom.Name;
             Assert.Equal(fom.Name, (rts)[nameof(fom.Name)]);
-            (rts).SystemSerialCode = new Ussn(DateTime.Now.ToBinary());
-            string hexTetra = (rts).SystemSerialCode.ToString();
+            (rts).SerialCode = new Ussn(DateTime.Now.ToBinary());
+            string hexTetra = (rts).SerialCode.ToString();
             Ussn ssn = new Ussn(hexTetra);
-            Assert.Equal(ssn, (rts).SystemSerialCode);
+            Assert.Equal(ssn, (rts).SerialCode);
 
             for (int i = 1; i < str.Rubrics.Count; i++)
             {

@@ -7,8 +7,6 @@ namespace System.Instant
 {   
     public class FiguresLinkmapTest
     {
-        private DateTime seedKeyTick = DateTime.Now;
-
         private IFigure FiguresLinkmap_SetValues_Helper_Test(IFigures str, object fom)
         {
             IFigure rts = str.NewFigure();          
@@ -32,12 +30,13 @@ namespace System.Instant
             return rts;           
         }
 
-        private IFigures FiguresLinkmap_AddFigures_Helper_Test(IFigures figures)
+        private IFigures FiguresLinkmap_AddFigures_A_Helper_Test(IFigures figures)
         {
             IFigures _figures = figures;
             FieldsAndPropertiesModel fom = new FieldsAndPropertiesModel();
             IFigure figureMock = FiguresLinkmap_SetValues_Helper_Test(_figures, fom);
             int idSeed = (int)figureMock["Id"];
+            DateTime seedKeyTick = DateTime.Now;
             for (int i = 0; i < 100000; i++)
             {
                 IFigure figure = _figures.NewFigure();               
@@ -49,16 +48,37 @@ namespace System.Instant
             return _figures;
         }
 
+        private IFigures FiguresLinkmap_AddFigures_B_Helper_Test(IFigures figures)
+        {
+            IFigures _figures = figures;
+            FieldsAndPropertiesModel fom = new FieldsAndPropertiesModel();
+            IFigure figureMock = FiguresLinkmap_SetValues_Helper_Test(_figures, fom);
+            int idSeed = (int)figureMock["Id"];
+            DateTime seedKeyTick = DateTime.Now;
+            for (int i = 0; i < 100000; i++)
+            {
+                for (int y = 0; i < 3; i++)
+                {
+                    IFigure figure = _figures.NewFigure();
+                    figure.ValueArray = figureMock.ValueArray;
+                    figure["Id"] = idSeed + i;
+                    figure["Time"] = seedKeyTick.AddMinutes(y);
+                    _figures.Put(figure);
+                }
+            }
+            return _figures;
+        }
+
         [Fact]
-        public void FiguresLinkmap__Test()
+        public void FiguresLinkmap_Test()
         {
             IFigures figuresA = new Figures(typeof(FieldsAndPropertiesModel), "Figures_A_Test").Generate();
 
             IFigures figuresB = new Figures(typeof(FieldsAndPropertiesModel), "Figures_B_Test").Generate();
 
-            FiguresLinkmap_AddFigures_Helper_Test(figuresA);
+            FiguresLinkmap_AddFigures_A_Helper_Test(figuresA);
      
-            FiguresLinkmap_AddFigures_Helper_Test(figuresB);
+            FiguresLinkmap_AddFigures_B_Helper_Test(figuresB);
 
             Link fl = new Link(figuresA, figuresB);
             fl.OriginKeys.Put(figuresA.Rubrics.KeyRubrics.AsValues());

@@ -22,7 +22,7 @@ namespace System.Labors
 
         public List<Labor> RelationLabors = new List<Labor>();
         public List<string> RelationNames = new List<string>();
-        private Usid SystemCode;
+        private Usid SerialCode;
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace System.Labors
             SenderName = sender.Laborer.LaborerName;
             Recipient = recipient;
             RecipientName = recipient.Laborer.LaborerName;
-            SystemCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
+            SerialCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
             RelationLabors = relayLabors;
             RelationNames.AddRange(RelationLabors.Select(rn => rn.Laborer.LaborerName));
         }
@@ -44,7 +44,7 @@ namespace System.Labors
             SenderName = sender.Laborer.LaborerName;
             Recipient = recipient;
             RecipientName = recipient.Laborer.LaborerName;
-            SystemCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
+            SerialCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
             RelationNames = relayNames;
             RelationLabors = Sender.Scope.Subjects.AsCards()
                                     .Where(m => m.Value.Labors.AsIdentifiers()
@@ -58,7 +58,7 @@ namespace System.Labors
             Sender = sender;
             SenderName = sender.Laborer.LaborerName;
             RecipientName = recipientName;
-            SystemCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
+            SerialCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
             List<Labor> objvl = Sender.Scope.Subjects.AsCards()
                                         .Where(m => m.Value.Labors.ContainsKey(recipientName))
                                             .SelectMany(os => os.Value.Labors.AsCards().Select(o => o.Value)).ToList();
@@ -75,7 +75,7 @@ namespace System.Labors
             if (objvl.Any())
                 Recipient = objvl.First();
             RecipientName = recipientName;
-            SystemCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
+            SerialCode = new Usid(($"{SenderName}.{RecipientName}").UniqueKey());
             RelationNames = new List<string>(relayNames);
             RelationLabors = Sender.Scope.Subjects.AsCards().Where(m => m.Value.Labors.AsIdentifiers().Where(k => relayNames.Select(rn => rn.UniqueKey()).Contains(k.UniqueKey)).Any()).SelectMany(os => os.Value.Labors.AsCards().Select(o => o.Value)).ToList();
         }
@@ -98,9 +98,9 @@ namespace System.Labors
 
         public string SenderName { get; set; }
 
-        public new long UniqueKey { get => SystemCode.UniqueKey; set => SystemCode.UniqueKey = value; }
+        public new long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.UniqueKey = value; }
 
-        public uint UniqueSeed { get => SystemCode.UniqueSeed; set => SystemCode.UniqueSeed = value; }
+        public uint UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.UniqueSeed = value; }
 
         #endregion
 
@@ -108,12 +108,12 @@ namespace System.Labors
 
         public int CompareTo(IUnique other)
         {
-            return SystemCode.CompareTo(other);
+            return SerialCode.CompareTo(other);
         }
 
         public bool Equals(IUnique other)
         {
-            return SystemCode.Equals(other);
+            return SerialCode.Equals(other);
         }
 
         public byte[] GetBytes()
@@ -123,27 +123,27 @@ namespace System.Labors
 
         public byte[] GetUniqueBytes()
         {
-            return SystemCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
 
         //public uint GetUniqueSeed()
         //{
-        //    return SystemCode.UniqueSeed;
+        //    return SerialCode.UniqueSeed;
         //}
 
         //public void SetUniqueKey(long value)
         //{
-        //    SystemCode.UniqueKey = value;
+        //    SerialCode.UniqueKey = value;
         //}
 
         //public void SetUniqueSeed(uint seed)
         //{
-        //    SystemCode.SetUniqueSeed(seed);
+        //    SerialCode.SetUniqueSeed(seed);
         //}
 
         //public long UniqueKey()
         //{
-        //    return SystemCode.UniqueKey();
+        //    return SerialCode.UniqueKey();
         //}
 
         #endregion

@@ -29,15 +29,15 @@ using System.Runtime.CompilerServices;
  ****************************************/
 namespace System.Multemic
 {
-    [StructLayout(LayoutKind.Sequential)] [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public abstract class Card<V> : IEquatable<ICard<V>>, IEquatable<object>, IEquatable<long>, IComparable<object>, 
                                     IComparable<long>, IComparable<ICard<V>>, ICard<V>
-    {
-        [NonSerialized] private ICard<V> extent;
-        [NonSerialized] private ICard<V> next;
-                      protected       V  value;
-                      protected      int index = -1;
-                      protected     bool removed;
+    {       
+        protected      int index = -1;
+        protected     bool removed;
+        protected       V  value;
+        private   ICard<V> extent;
+        private   ICard<V> next;
 
         public Card()
         { }
@@ -86,24 +86,6 @@ namespace System.Multemic
         {
             return Key == key;
         }
-
-        //public virtual void SetUniqueKey(long hashcode)
-        //{
-        //    UniqueKey = hashcode;
-        //}
-        //public virtual long GetUniqueKey()
-        //{
-        //    return Key;
-        //}
-
-        //public virtual void SetUniqueSeed(uint hashseed)
-        //{
-        //    UniqueSeed = hashseed;
-        //}
-        //public virtual uint GetUniqueSeed()
-        //{
-        //    return UniqueSeed;
-        //}
 
         public override abstract bool Equals(object y);
  

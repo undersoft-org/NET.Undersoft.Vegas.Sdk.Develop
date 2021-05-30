@@ -22,7 +22,7 @@ namespace System.Instant.Sqlbank
             m_resultset = resultset.Rubrics;
             x_size = resultset.Rubrics.Count;
             m_values = resultset.Select(p => 
-                                    new object[] { p.SystemSerialCode }
+                                    new object[] { p.SerialCode }
                                             .Concat(p.ValueArray).ToArray()).ToArray();
             y_size = m_values.Length;
         }
@@ -34,7 +34,7 @@ namespace System.Instant.Sqlbank
                 m_resultset = resultset.First().Figures.Rubrics;
                 x_size = m_resultset.Count;
                 m_values = resultset.Select(p =>
-                                   new object[] { p.SystemSerialCode }
+                                   new object[] { p.SerialCode }
                                            .Concat(p.ValueArray).ToArray()).ToArray();
                 y_size = m_values.Length;
             }

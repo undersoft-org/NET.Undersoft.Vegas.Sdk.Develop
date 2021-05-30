@@ -22,7 +22,7 @@ namespace System.Instant.Linking
 
         Links Links { get; }
 
-        LinkBranches Map { get; }
+        NodeCatalog Map { get; }
 
         #endregion
 
@@ -34,13 +34,13 @@ namespace System.Instant.Linking
 
         Link GetLink(LinkMember member);
 
-        IDeck<IDeck<LinkBranch>> GetMaps(IList<LinkMember> members);
+        IDeck<IDeck<BranchDeck>> GetMaps(IList<LinkMember> members);
 
-        IDeck<LinkBranch> GetMap(LinkMember member);
+        IDeck<BranchDeck> GetMap(LinkMember member);
 
-        LinkBranches Build();
+        NodeCatalog Build();
 
-        LinkBranches Update();
+        NodeCatalog Update();
 
         #endregion
     }
@@ -51,21 +51,21 @@ namespace System.Instant.Linking
         #region Fields
 
         private Links links;
-        private LinkBranches map;
+        private NodeCatalog map;
 
         #endregion
 
         public Linkmap()
         {
             links = new Links();
-            map = new LinkBranches(links, PRIMES_ARRAY.Get(9));
+            map = new NodeCatalog(links, PRIMES_ARRAY.Get(9));
         }
 
         #region Properties
 
         public Links Links { get => links; }
 
-        public LinkBranches Map { get => map; }
+        public NodeCatalog Map { get => map; }
 
         #endregion
 
@@ -86,22 +86,22 @@ namespace System.Instant.Linking
             throw new NotImplementedException();
         }
 
-        public IDeck<IDeck<LinkBranch>> GetMaps(IList<LinkMember> members)
+        public IDeck<IDeck<BranchDeck>> GetMaps(IList<LinkMember> members)
         {
             throw new NotImplementedException();
         }
 
-        public IDeck<LinkBranch> GetMap(LinkMember member)
+        public IDeck<BranchDeck> GetMap(LinkMember member)
         {
             throw new NotImplementedException();
         }
          
-        public LinkBranches Build()
+        public NodeCatalog Build()
         {
             throw new NotImplementedException();
         }
 
-        public LinkBranches Update()
+        public NodeCatalog Update()
         {
             throw new NotImplementedException();
         }

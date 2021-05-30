@@ -48,16 +48,6 @@ namespace System
 
         byte[] GetUniqueBytes();
 
-        //long GetUniqueKey();
-
-        //uint GetUniqueSeed();
-
-
-
-        //void SetUniqueKey(long value);
-
-        //void SetUniqueSeed(uint seed);
-
         #endregion
     }
 }

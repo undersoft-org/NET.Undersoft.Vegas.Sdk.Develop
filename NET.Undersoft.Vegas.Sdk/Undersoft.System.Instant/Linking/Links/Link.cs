@@ -20,8 +20,8 @@ namespace System.Instant.Linking
     {
         #region Fields
 
-        [NonSerialized] public Links Links;
-        private Ussc systemSerialCode;
+        public Links Links { get; set; }
+        private Ussc serialcode;
 
         #endregion
 
@@ -29,21 +29,49 @@ namespace System.Instant.Linking
 
         public Link()
         {
-            Name = "FiguresLink#" + DateTime.Now.ToBinary().ToString();
-            Origin = new LinkMember();
-            Origin.Site = LinkSite.Origin;
-            Target = new LinkMember();
-            Target.Site = LinkSite.Target;
-            SetUniqueKey(Name.UniqueKey64());
+            Name = Unique.NewKey.ToString() + "_Link";
+            UniqueKey = Name.UniqueKey64();
+            Origin = new LinkMember(this, LinkSite.Origin);
+            Target = new LinkMember(this, LinkSite.Target);
         }
         public Link(IFigures origin, IFigures target)
         {
             Name = origin.Type.Name + "_" + target.Type.Name;
+            UniqueKey = Name.UniqueKey64();
             Origin = new LinkMember(origin, this, LinkSite.Origin);
-            Target = new LinkMember(target, this, LinkSite.Target);
-            SetUniqueKey(Name.UniqueKey64());
+            Target = new LinkMember(target, this, LinkSite.Target);            
             origin.Links.Put(this);
             target.Links.Put(this);
+        }
+        public Link(IFigures origin, IFigures target, IRubrics keyRubrics) : this(origin, target)
+        {
+            foreach(var rubric in keyRubrics)
+            {
+                var originRubric = origin.Rubrics[rubric];
+                var targetRubric = target.Rubrics[rubric];
+                if (originRubric != null && targetRubric != null)
+                {
+                    OriginKeys.Add(originRubric);
+                    TargetKeys.Add(targetRubric);
+                }
+                else
+                    throw new IndexOutOfRangeException("Rubric not found");
+            }
+        }
+        public Link(IFigures origin, IFigures target, string[] keyRubricNames) : this(origin, target)
+        {
+            foreach (var name in keyRubricNames)
+            {
+                var originRubric = origin.Rubrics[name];
+                var targetRubric = target.Rubrics[name];
+                if (originRubric != null && targetRubric != null)
+                {
+                    OriginKeys.Add(originRubric);
+                    TargetKeys.Add(targetRubric);
+                }
+                else
+                    throw new IndexOutOfRangeException("Rubric not found");
+            }
         }
 
         #endregion
@@ -52,7 +80,7 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey { get => systemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
+        public long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public string Name { get; set; }
 
@@ -66,7 +94,7 @@ namespace System.Instant.Linking
             }
             set
             {
-                Origin.KeyRubrics = value;
+                Origin.KeyRubrics.Renew(value);
             }
         }
 
@@ -84,7 +112,7 @@ namespace System.Instant.Linking
                         Origin.Figures = figures;
                         Origin.Name = figures.Type.Name;
                         Origin.Rubrics = figures.Rubrics;
-                        Origin.KeyRubrics = new MemberRubrics();
+                        Origin.KeyRubrics.Clear();
                     }
                     Target.Name = value;
                 }
@@ -103,16 +131,12 @@ namespace System.Instant.Linking
             }
         }
 
-        public uint UniqueSeed { get => systemSerialCode.UniqueSeed; set => systemSerialCode.UniqueSeed = value; }
+        public uint UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
 
-        public Ussc SystemSerialCode
+        public Ussc SerialCode
         {
-            get => systemSerialCode;
-            set
-            {
-                systemSerialCode.UniqueKey = value.UniqueKey;
-                systemSerialCode.UniqueSeed = value.UniqueSeed;
-            }
+            get => serialcode;
+            set => serialcode = value;            
         }
 
         public LinkMember Target { get; set; }
@@ -125,7 +149,7 @@ namespace System.Instant.Linking
             }
             set
             {
-                Target.KeyRubrics = value;
+                Target.KeyRubrics.Renew(value);
             }
         }
 
@@ -143,7 +167,7 @@ namespace System.Instant.Linking
                         Target.Figures = figures;
                         Target.Name = figures.Type.Name;
                         Target.Rubrics = figures.Rubrics;
-                        Target.KeyRubrics = new MemberRubrics();
+                        Target.KeyRubrics.Clear();
                     }
                 }
                 Target.Name = value;
@@ -168,42 +192,22 @@ namespace System.Instant.Linking
 
         public int CompareTo(IUnique other)
         {
-            return systemSerialCode.CompareTo(other);
+            return serialcode.CompareTo(other);
         }
 
         public bool Equals(IUnique other)
         {
-            return systemSerialCode.Equals(other);
+            return serialcode.Equals(other);
         }
 
         public byte[] GetBytes()
         {
-            return systemSerialCode.GetBytes();
-        }
-
-        public long GetUniqueKey()
-        {
-            return systemSerialCode.UniqueKey;
-        }
-
-        public uint GetUniqueSeed()
-        {
-            return systemSerialCode.GetUniqueSeed();
+            return serialcode.GetBytes();
         }
 
         public byte[] GetUniqueBytes()
         {
-            return systemSerialCode.GetUniqueBytes();
-        }
-
-        public void SetUniqueKey(long value)
-        {
-            systemSerialCode.SetUniqueKey(value);
-        }
-
-        public void SetUniqueSeed(uint seed)
-        {
-            systemSerialCode.SetUniqueSeed(seed);
+            return serialcode.GetUniqueBytes();
         }
 
         #endregion

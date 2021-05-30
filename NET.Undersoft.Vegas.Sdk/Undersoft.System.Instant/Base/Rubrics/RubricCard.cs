@@ -31,10 +31,10 @@ namespace System.Instant
             this.value = value;
             _key = key.UniqueKey64();
         }
-        public override void Set(MemberRubric card)
+        public override void Set(MemberRubric value)
         {
-            this.value = card;
-            _key = card.UniqueKey;
+            this.value = value;
+            _key = value.UniqueKey;
         }
         public override void Set(ICard<MemberRubric> card)
         {

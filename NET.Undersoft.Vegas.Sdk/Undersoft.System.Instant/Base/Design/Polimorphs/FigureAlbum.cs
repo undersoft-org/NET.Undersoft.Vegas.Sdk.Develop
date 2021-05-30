@@ -38,7 +38,7 @@ namespace System.Instant
 
         public abstract int FigureSize { get; set; }
 
-        public abstract Ussn SystemSerialCode { get; set; }
+        public abstract Ussn SerialCode { get; set; }
 
         public int Length => Cards.Length;
 
@@ -140,51 +140,51 @@ namespace System.Instant
 
         public byte[] GetBytes()
         {
-            return SystemSerialCode.GetBytes();
+            return SerialCode.GetBytes();
         }
         public byte[] GetUniqueBytes()
         {
-            return SystemSerialCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
 
         public new long UniqueKey
         {
-            get => SystemSerialCode.UniqueKey;
-            set => SystemSerialCode.SetUniqueKey(value);
+            get => SerialCode.UniqueKey;
+            set => SerialCode.SetUniqueKey(value);
         }
 
         public uint UniqueSeed
         {
-            get => SystemSerialCode.UniqueSeed;
-            set => SystemSerialCode.SetUniqueSeed(value);
+            get => SerialCode.UniqueSeed;
+            set => SerialCode.SetUniqueSeed(value);
         }
 
         //public void SetUniqueKey(long value)
         //{
-        //    SystemSerialCode.SetUniqueKey(value);
+        //    SerialCode.SetUniqueKey(value);
         //}
         //public long GetUniqueKey()
         //{
-        //    return SystemSerialCode.UniqueKey;
+        //    return SerialCode.UniqueKey;
         //}
 
         //public void SetUniqueSeed(uint seed)
         //{
-        //    SystemSerialCode.SetUniqueSeed(seed);
+        //    SerialCode.SetUniqueSeed(seed);
         //}
         //public uint GetUniqueSeed()
         //{
-        //    return SystemSerialCode.GetUniqueSeed();
+        //    return SerialCode.GetUniqueSeed();
         //}
 
         public bool Equals(IUnique other)
         {
-            return SystemSerialCode.Equals(other);
+            return SerialCode.Equals(other);
         }
 
         public int CompareTo(IUnique other)
         {
-            return SystemSerialCode.CompareTo(other);
+            return SerialCode.CompareTo(other);
         }
 
         public int SerialCount { get; set; }

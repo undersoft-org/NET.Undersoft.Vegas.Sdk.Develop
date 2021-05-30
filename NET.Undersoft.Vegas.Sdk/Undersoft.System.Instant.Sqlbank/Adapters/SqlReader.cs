@@ -30,7 +30,7 @@ namespace System.Instant.Sqlbank
         {
             DataTable schema = dr.GetSchemaTable();
             List<MemberRubric> columns = new List<MemberRubric>(schema.Rows.Cast<DataRow>().AsEnumerable().AsQueryable()
-                                                .Where(n => n["ColumnName"].ToString() != "SystemSerialCode").Select(c =>
+                                                .Where(n => n["ColumnName"].ToString() != "SerialCode").Select(c =>
                                                 new MemberRubric(new FieldRubric(Type.GetType(c["DataType"].ToString()),
                                                                         c["ColumnName"].ToString(),
                                                                         Convert.ToInt32(c["ColumnSize"]),
@@ -93,7 +93,7 @@ namespace System.Instant.Sqlbank
 
                     figure.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
-                    //figure.SystemSerialCode = new Ussn(keyOrder.Select(ko => itemArray[ko]).ToArray());
+                    //figure.SerialCode = new Ussn(keyOrder.Select(ko => itemArray[ko]).ToArray());
 
                     tab.Add(figure);
                 }
@@ -140,7 +140,7 @@ namespace System.Instant.Sqlbank
 
                     row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
-                    //row.SystemSerialCode = new Ussn(keyOrder.Select(ko => itemArray[ko]).ToArray());
+                    //row.SerialCode = new Ussn(keyOrder.Select(ko => itemArray[ko]).ToArray());
 
                     updatedList.Add(row);
                 }
@@ -196,7 +196,7 @@ namespace System.Instant.Sqlbank
 
                     row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
-                    //row.SystemSerialCode = new Ussn(keyIndexes.Select(ko => itemArray[ko]).ToArray());
+                    //row.SerialCode = new Ussn(keyIndexes.Select(ko => itemArray[ko]).ToArray());
 
                     insertedList.Add(row);
                 }
@@ -252,7 +252,7 @@ namespace System.Instant.Sqlbank
 
                     row.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
-                    //row.SystemSerialCode = new Ussn(keyIndexes.Select(ko => itemArray[ko]).ToArray());
+                    //row.SerialCode = new Ussn(keyIndexes.Select(ko => itemArray[ko]).ToArray());
 
                     deletedList.Add(row);
                 }

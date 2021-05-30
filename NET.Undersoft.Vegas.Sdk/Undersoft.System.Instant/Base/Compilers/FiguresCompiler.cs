@@ -32,7 +32,7 @@ namespace System.Instant
 
             TypeBuilder tb = GetTypeBuilder(typeName);
 
-            CreateSerialCodeProperty(tb, typeof(Ussn), "SystemSerialCode");
+            CreateSerialCodeProperty(tb, typeof(Ussn), "SerialCode");
 
             CreateIsPrimeField(tb, typeof(bool), "Prime");
 
@@ -80,7 +80,7 @@ namespace System.Instant
             PropertyBuilder prop = tb.DefineProperty(name, PropertyAttributes.HasDefault,
                                                      type, new Type[] { type });
 
-            PropertyInfo iprop = DeckType.GetProperty("SystemSerialCode");
+            PropertyInfo iprop = DeckType.GetProperty("SerialCode");
 
             MethodInfo accessor = iprop.GetGetMethod();
 

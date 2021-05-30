@@ -15,14 +15,10 @@ namespace System.Labors
     using System.Threading.Tasks;
     using System.Uniques;
 
+
     public class Labor : Task<object>, IDeputy
     {
-        private Ussc SystemCode;
-
         public IUnique Empty => Ussn.Empty;
-
-        public long UniqueKey { get => SystemCode.UniqueKey; set => SystemCode.UniqueKey = value; }
-
 
         public Labor(string name, IDeputy method) : base(() => method.Execute())
         {
@@ -32,8 +28,7 @@ namespace System.Labors
             Box = new NoteBox(Laborer.LaborerName);
             Box.Labor = this;
 
-            SystemCode = new Ussc(method.UniqueKey());
-            SystemSerialCode = new Ussn(SystemCode.UniqueKey, 0, 0, 0, 0, DateTime.Now.ToBinary());
+            SerialCode = new Ussn(method.UniqueKey, 0, 0, 0, 0, DateTime.Now.ToBinary());
         }
         public Labor(Laborer laborer) : base(() => laborer.Work.Execute())
         {
@@ -43,8 +38,7 @@ namespace System.Labors
             Box = new NoteBox(Laborer.LaborerName);
             Box.Labor = this;
 
-            SystemCode = new Ussc(laborer.Work.UniqueKey());
-            SystemSerialCode = new Ussn(SystemCode.UniqueKey, 0, 0, 0, 0, DateTime.Now.ToBinary());
+            SerialCode = new Ussn(laborer.Work.UniqueKey, 0, 0, 0, 0, DateTime.Now.ToBinary());
 
         }
 
@@ -93,16 +87,16 @@ namespace System.Labors
             set => Laborer.Work.Parameters = value;
         }
         public object[] ValueArray { get => ParameterValues; set => ParameterValues = value; }
-        public Ussn SystemSerialCode
+
+        public Ussn SerialCode
         {
-            get => new Ussn(SystemCode.UniqueKey, SystemCode.UniqueSeed);
-            set
-            {
-                SystemCode.UniqueSeed = value.UniqueSeed;
-                SystemCode.UniqueKey = value.UniqueKey;
-            }
+            get;
+            set;
         }
-        public uint UniqueSeed { get => SystemCode.UniqueSeed; set => SystemCode.UniqueSeed = value; }
+
+        public long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
+
+        public uint UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.SetUniqueSeed(value); }
 
         public void Elaborate(params object[] input)
         {
@@ -122,33 +116,33 @@ namespace System.Labors
         }
         public byte[] GetUniqueBytes()
         {
-            return SystemCode.GetUniqueBytes();
+            return SerialCode.GetUniqueBytes();
         }
-        public void SetUniqueKey(long value)
-        {
-            SystemCode.UniqueKey = value;
-        }
-        public long GetUniqueKey()
-        {
-            return SystemCode.UniqueKey();
-        }
+        //public void SetUniqueKey(long value)
+        //{
+        //    SerialCode.UniqueKey = value;
+        //}
+        //public long GetUniqueKey()
+        //{
+        //    return SerialCode.UniqueKey();
+        //}
         public bool Equals(IUnique other)
         {
-            return SystemCode.Equals(other);
+            return SerialCode.Equals(other);
         }
         public int CompareTo(IUnique other)
         {
-            return SystemCode.CompareTo(other);
+            return SerialCode.CompareTo(other);
         }
 
-        public void SetUniqueSeed(uint seed)
-        {
-            SystemCode.SetUniqueSeed(seed);
-        }
+        //public void SetUniqueSeed(uint seed)
+        //{
+        //    SerialCode.SetUniqueSeed(seed);
+        //}
 
-        public uint GetUniqueSeed()
-        {
-            return SystemCode.UniqueSeed;
-        }
+        //public uint GetUniqueSeed()
+        //{
+        //    return SerialCode.UniqueSeed;
+        //}
     }
 }

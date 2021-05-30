@@ -116,7 +116,7 @@ namespace System.Instant
 
                 IFigure f = Figures.NewFigure();
                 f.ValueArray = ValueArray;
-                f.SystemSerialCode = value.SystemSerialCode;
+                f.SerialCode = value.SerialCode;
                 byte[] ba = f.GetBytes();
                 f = null;
                 return ba;
@@ -184,10 +184,10 @@ namespace System.Instant
             }
         }
 
-        public     Ussn SystemSerialCode
+        public     Ussn SerialCode
         {
-            get => value.SystemSerialCode;
-            set => this.value.SystemSerialCode = value;
+            get => value.SerialCode;
+            set => this.value.SerialCode = value;
         }
        
         public IFigures Figures { get; set; }

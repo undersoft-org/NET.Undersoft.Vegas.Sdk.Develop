@@ -1,13 +1,39 @@
-﻿using System.Reflection;
-using System.Linq;
-using System.Uniques;
-using System.Instant.Linking;
-using System.Instant.Treatments;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.MemberRubric.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (30.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant
 {
+    using System.Instant.Linking;
+    using System.Instant.Treatments;
+    using System.Linq;
+    using System.Reflection;
+    using System.Uniques;
+
     public class MemberRubric : MemberInfo, IRubric
-    {                       
+    {
+        #region Fields
+
+        private Ussn serialcode;
+
+        #endregion
+
+        #region Constructors
+
+        public MemberRubric(FieldInfo field) : this((IMemberRubric)new FieldRubric(field))
+        {
+        }
+        public MemberRubric(FieldRubric field) : this((IMemberRubric)field)
+        {
+        }
         public MemberRubric(IMemberRubric member)
         {
             RubricInfo = ((MemberInfo)member);
@@ -16,13 +42,11 @@ namespace System.Instant
             Visible = member.Visible;
             Editable = member.Editable;
             if (RubricInfo.MemberType == MemberTypes.Method)
-                SystemSerialCode = new Ussn((new String(RubricParameterInfo
-                                            .SelectMany(p => p.ParameterType.Name)
-                                                .ToArray()) + "_" + RubricName).UniqueKey64());
+                serialcode.UniqueKey = (RubricName + "_" + new String(RubricParameterInfo
+                                                    .SelectMany(p => p.ParameterType.Name)
+                                                        .ToArray())).UniqueKey64();
             else
-                SystemSerialCode = new Ussn(RubricName.UniqueKey64());
-
-
+                serialcode.UniqueKey = RubricName.UniqueKey64();
         }
         public MemberRubric(MemberRubric member) : this(member.RubricInfo != null ? (IMemberRubric)member.RubricInfo : (IMemberRubric)member)
         {
@@ -37,128 +61,156 @@ namespace System.Instant
             Required = member.Required;
             DisplayName = member.DisplayName;
         }
-        public MemberRubric(MethodRubric method) : this((IMemberRubric)method)
-        {
-        }
-        public MemberRubric(FieldRubric field) : this((IMemberRubric)field)
-        {
-        }
-        public MemberRubric(PropertyRubric property) : this((IMemberRubric)property)
-        {
-        }
         public MemberRubric(MethodInfo method) : this((IMemberRubric)new MethodRubric(method))
+        {
+        }
+        public MemberRubric(MethodRubric method) : this((IMemberRubric)method)
         {
         }
         public MemberRubric(PropertyInfo property) : this((IMemberRubric)new PropertyRubric(property))
         {
         }
-        public MemberRubric(FieldInfo field) : this((IMemberRubric)new FieldRubric(field))
+        public MemberRubric(PropertyRubric property) : this((IMemberRubric)property)
         {
         }
 
-        public MemberRubrics Rubrics { get; set; }
+        #endregion
 
-        public Type FigureType { get; set; }
-        public FieldInfo FigureField { get; set; }
-        public int FigureFieldId { get; set; }
-        public MemberInfo RubricInfo { get; set; }
-        public IMemberRubric VirtualInfo => (IMemberRubric)RubricInfo;
+        #region Properties
 
-        public Type RubricReturnType { get => MemberType == MemberTypes.Method ? ((MethodRubric)RubricInfo).RubricReturnType : null; }
-        public ParameterInfo[] RubricParameterInfo { get => MemberType == MemberTypes.Method ? ((MethodRubric)RubricInfo).RubricParameterInfo : null; }
-        public Module RubricModule { get => MemberType == MemberTypes.Method ? ((MethodRubric)RubricInfo).RubricModule : null; }
-        public string RubricName { get; set; }
-        public string DisplayName { get; set; }
-        public Type RubricType { get { return VirtualInfo.RubricType; } set { VirtualInfo.RubricType = value; } }
+        public int[] AggregateIndex { get; set; }
 
-        public int RubricId { get; set; }
-        public int RubricSize { get { return VirtualInfo.RubricSize; } set { VirtualInfo.RubricSize = value; } }
-        public int RubricOffset { get; set; }
-        public short IdentityOrder { get; set; }
+        public Links AggregateLinks { get; set; }
 
-        public bool Visible { get; set; }
-        public bool Editable { get; set; }
-        public bool Required { get; set; }
-        public bool IsKey { get; set; }
-        public bool IsIdentity { get; set; }
-        public bool IsAutoincrement { get; set; }
-        public bool IsDBNull { get; set; }
-        public bool IsColossus { get; set; }
-
-        public IRubric          AggregatePattern { get; set; }
         public AggregateOperand AggregateOperand { get; set; }
-        public int[]            AggregateIndex   { get; set; }
-        public int[]            AggregateOrdinal { get; set; }
 
-        public Links     AggregateLinks { get; set; }
+        public int[] AggregateOrdinal { get; set; }
 
-        public int              SummaryOrdinal { get; set; }
-        public IRubric          SummaryPattern { get; set; }
-        public AggregateOperand SummaryOperand { get; set; }        
-
-        public object[] RubricAttributes
-        { get { return VirtualInfo.RubricAttributes; } set { VirtualInfo.RubricAttributes = value; } }
+        public IRubric AggregatePattern { get; set; }
 
         public override Type DeclaringType => FigureType != null ? FigureType : RubricInfo.DeclaringType;
-        public override MemberTypes MemberType => RubricInfo.MemberType;
-        public override string Name => RubricInfo.Name;
-        public override Type ReflectedType => RubricInfo.ReflectedType;
+
+        public string DisplayName { get; set; }
+
+        public bool Editable { get; set; }
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey { get => systemSerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
+        public FieldInfo FigureField { get; set; }
 
-        public override object[] GetCustomAttributes(bool inherit)
+        public int FigureFieldId { get; set; }
+
+        public Type FigureType { get; set; }
+
+        public short IdentityOrder { get; set; }
+
+        public bool IsAutoincrement { get; set; }
+
+        public bool IsColossus { get; set; }
+
+        public bool IsDBNull { get; set; }
+
+        public bool IsIdentity { get; set; }
+
+        public bool IsKey { get; set; }
+
+        public override MemberTypes MemberType => RubricInfo.MemberType;
+
+        public override string Name => RubricInfo.Name;
+
+        public override Type ReflectedType => RubricInfo.ReflectedType;
+
+        public bool Required { get; set; }
+
+        public object[] RubricAttributes
         {
-            return RubricInfo.GetCustomAttributes(inherit);
-        }
-        public override object[] GetCustomAttributes(Type attributeType, bool inherit)
-        {
-            return RubricInfo.GetCustomAttributes(attributeType, inherit);
-        }
-        public override bool     IsDefined(Type attributeType, bool inherit)
-        {
-            return RubricInfo.IsDefined(attributeType, inherit);
+            get { return VirtualInfo.RubricAttributes; }
+            set { VirtualInfo.RubricAttributes = value; }
         }
 
-        public byte[] GetBytes()
+        public int RubricId { get; set; }
+
+        public MemberInfo RubricInfo { get; set; }
+
+        public Module RubricModule { get => MemberType == MemberTypes.Method ? ((MethodRubric)RubricInfo).RubricModule : null; }
+
+        public string RubricName { get; set; }
+
+        public int RubricOffset { get; set; }
+
+        public ParameterInfo[] RubricParameterInfo { get => MemberType == MemberTypes.Method ? ((MethodRubric)RubricInfo).RubricParameterInfo : null; }
+
+        public Type RubricReturnType { get => MemberType == MemberTypes.Method ? ((MethodRubric)RubricInfo).RubricReturnType : null; }
+
+        public MemberRubrics Rubrics { get; set; }
+
+        public int RubricSize
         {
-            return systemSerialCode.GetBytes();
-        }
-        public byte[] GetUniqueBytes()
-        {
-            return systemSerialCode.GetUniqueBytes();
-        }
-        public void   SetUniqueKey(long value)
-        {
-            systemSerialCode.UniqueKey = value;
-        }
-        public long   GetUniqueKey()
-        {
-            return systemSerialCode.UniqueKey;
+            get { return VirtualInfo.RubricSize; }
+            set { VirtualInfo.RubricSize = value; }
         }
 
-        public bool Equals(IUnique other)
+        public Type RubricType
         {
-           return UniqueKey == other.UniqueKey;
+            get { return VirtualInfo.RubricType; }
+            set { VirtualInfo.RubricType = value; }
         }
+
+        public Ussn SerialCode { get => serialcode; set => serialcode = value; }
+
+        public AggregateOperand SummaryOperand { get; set; }
+
+        public int SummaryOrdinal { get; set; }
+
+        public IRubric SummaryPattern { get; set; }
+
+        public long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
+
+        public uint UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
+
+        public IMemberRubric VirtualInfo => (IMemberRubric)RubricInfo;
+
+        public bool Visible { get; set; }
+
+        #endregion
+
+        #region Methods
+
         public int CompareTo(IUnique other)
         {
             return (int)(UniqueKey - other.UniqueKey);
         }
 
-        public void SetUniqueSeed(uint seed)
+        public bool Equals(IUnique other)
         {
-            systemSerialCode.SetUniqueSeed(seed);
+            return UniqueKey == other.UniqueKey;
         }
 
-        public uint GetUniqueSeed()
+        public byte[] GetBytes()
         {
-            return systemSerialCode.GetUniqueSeed();
+            return serialcode.GetBytes();
         }
 
-        private Ussn systemSerialCode;
-        public Ussn SystemSerialCode { get => systemSerialCode; set => systemSerialCode = value; }
-        public uint UniqueSeed { get => systemSerialCode.UniqueSeed; set => systemSerialCode.UniqueSeed = value; }
+        public override object[] GetCustomAttributes(bool inherit)
+        {
+            return RubricInfo.GetCustomAttributes(inherit);
+        }
+
+        public override object[] GetCustomAttributes(Type attributeType, bool inherit)
+        {
+            return RubricInfo.GetCustomAttributes(attributeType, inherit);
+        }
+
+        public byte[] GetUniqueBytes()
+        {
+            return serialcode.GetUniqueBytes();
+        }
+
+        public override bool IsDefined(Type attributeType, bool inherit)
+        {
+            return RubricInfo.IsDefined(attributeType, inherit);
+        }
+
+        #endregion
     }
 }
