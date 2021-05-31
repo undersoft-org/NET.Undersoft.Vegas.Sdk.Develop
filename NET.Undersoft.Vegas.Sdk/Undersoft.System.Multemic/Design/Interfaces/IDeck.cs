@@ -27,7 +27,7 @@ namespace System.Multemic
 
         new int Count { get; }
 
-        bool ContainsKey(long key);
+        bool ContainsKey(ulong key);
         bool ContainsKey(object key);
         bool ContainsKey(IUnique key);
 
@@ -35,23 +35,23 @@ namespace System.Multemic
         bool Contains(IUnique<V> item);
 
         V Get(object key);
-        V Get(long key);
+        V Get(ulong key);
         V Get(IUnique key);
         V Get(IUnique<V> key);
 
         bool TryGet(object key, out ICard<V> output);
         bool TryGet(object key, out V output);
-        bool TryGet(long key, out V output);
+        bool TryGet(ulong key, out V output);
 
         ICard<V> GetCard(object key);
-        ICard<V> GetCard(long key);
+        ICard<V> GetCard(ulong key);
 
         ICard<V> AddNew();
-        ICard<V> AddNew(long key);
+        ICard<V> AddNew(ulong key);
         ICard<V> AddNew(object key);
 
         bool Add(object key, V value);
-        bool Add(long key, V value);
+        bool Add(ulong key, V value);
         void Add(ICard<V> card);
         void Add(IList<ICard<V>> cardList);
         void Add(IEnumerable<ICard<V>> cards);
@@ -71,7 +71,7 @@ namespace System.Multemic
         new bool TryTake(out V item);
 
         ICard<V> Put(object key, V value);
-        ICard<V> Put(long key, V value);
+        ICard<V> Put(ulong key, V value);
         ICard<V> Put(ICard<V> card);
            void Put(IList<ICard<V>> cardList);
            void Put(IEnumerable<ICard<V>> cards);
@@ -107,7 +107,7 @@ namespace System.Multemic
 
         ICard<V> NewCard(V value);
         ICard<V> NewCard(object key, V value);
-        ICard<V> NewCard(long key, V value);
+        ICard<V> NewCard(ulong key, V value);
         ICard<V> NewCard(ICard<V> card);
 
         void CopyTo(ICard<V>[] array, int destIndex);

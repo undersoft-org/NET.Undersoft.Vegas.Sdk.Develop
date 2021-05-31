@@ -18,19 +18,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Hashing\Algorithm\Base\**" />
-    <Compile Remove="Hashing\Algorithm\Interfaces\**" />
-    <Compile Remove="Hashing\Algorithm\Utilities\**" />
-    <EmbeddedResource Remove="Hashing\Algorithm\Base\**" />
-    <EmbeddedResource Remove="Hashing\Algorithm\Interfaces\**" />
-    <EmbeddedResource Remove="Hashing\Algorithm\Utilities\**" />
-    <None Remove="Hashing\Algorithm\Base\**" />
-    <None Remove="Hashing\Algorithm\Interfaces\**" />
-    <None Remove="Hashing\Algorithm\Utilities\**" />
+    <Compile Remove="Hasher\Algorithm\Base\**" />
+    <Compile Remove="Hasher\Algorithm\Interfaces\**" />
+    <Compile Remove="Hasher\Algorithm\Utilities\**" />
+    <EmbeddedResource Remove="Hasher\Algorithm\Base\**" />
+    <EmbeddedResource Remove="Hasher\Algorithm\Interfaces\**" />
+    <EmbeddedResource Remove="Hasher\Algorithm\Utilities\**" />
+    <None Remove="Hasher\Algorithm\Base\**" />
+    <None Remove="Hasher\Algorithm\Interfaces\**" />
+    <None Remove="Hasher\Algorithm\Utilities\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Hashing\Algorithm\UnsafeBuffer.cs" />
+    <Compile Remove="Hasher\Algorithm\UnsafeBuffer.cs" />
   </ItemGroup>
 
   <ItemGroup>

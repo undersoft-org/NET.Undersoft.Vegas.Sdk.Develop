@@ -44,7 +44,7 @@ namespace System.Instant
 
         Treatment Treatment { get; set; }
 
-        Links Links { get; set; }
+        Linker Linker { get; set; }
 
         IDeck<IComputation> Computations { get; set; }
     }

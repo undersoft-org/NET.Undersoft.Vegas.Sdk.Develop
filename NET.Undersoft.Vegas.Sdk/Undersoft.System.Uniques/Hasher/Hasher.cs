@@ -7,9 +7,9 @@ namespace System.Uniques
 {
     using System.Runtime.CompilerServices;
 
-    public static class UniqueCode64
+    public static class Hasher64
     {
-        public static unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
+        public static unsafe Byte[] ComputeBytes(byte[] bytes, ulong seed = 0)
         {
             byte[] b = new byte[8];
             fixed (byte* pb = b, pa = bytes)
@@ -19,7 +19,7 @@ namespace System.Uniques
             return b;
         }
 
-        public static unsafe Byte[] ComputeUniqueBytes(byte* bytes, int length, uint seed = 0)
+        public static unsafe Byte[] ComputeBytes(byte* bytes, int length, ulong seed = 0)
         {
             byte[] b = new byte[8];
             fixed (byte* pb = b)
@@ -29,7 +29,7 @@ namespace System.Uniques
             return b;
         }
 
-        public static unsafe ulong  ComputeUniqueKey(byte[] bytes, uint seed = 0)
+        public static unsafe ulong  ComputeKey(byte[] bytes, ulong seed = 0)
         {
             fixed (byte* pa = bytes)
             {
@@ -37,45 +37,45 @@ namespace System.Uniques
             }
         }
 
-        public static unsafe ulong  ComputeUniqueKey(byte* ptr, int length, ulong seed = 0)
+        public static unsafe ulong  ComputeKey(byte* ptr, int length, ulong seed = 0)
         {
             return xxHash64.UnsafeComputeHash(ptr, length, seed);
         }
     }
 
-    public static class UniqueCode32
+    public static class Hasher32
     {
-        public static unsafe Byte[] ComputeUniqueBytes(byte[] bytes, uint seed = 0)
+        public static unsafe Byte[] ComputeBytes(byte[] bytes, ulong seed = 0)
         {
             byte[] b = new byte[4];
             fixed (byte* pb = b, pa = bytes)
             {
-                *((uint*)pb) = xxHash32.UnsafeComputeHash(pa, bytes.Length, seed);
+                *((uint*)pb) = xxHash32.UnsafeComputeHash(pa, bytes.Length, (uint)seed);
             }
             return b;
         }
 
-        public static unsafe Byte[] ComputeUniqueBytes(byte* ptr, int length, uint seed = 0)
+        public static unsafe Byte[] ComputeBytes(byte* ptr, int length, ulong seed = 0)
         {
             byte[] b = new byte[4];
             fixed (byte* pb = b)
             {
-                *((uint*)pb) = xxHash32.UnsafeComputeHash(ptr, length, seed);
+                *((uint*)pb) = xxHash32.UnsafeComputeHash(ptr, length, (uint)seed);
             }
             return b;
         }
 
-        public static unsafe uint ComputeUniqueKey(byte[] bytes, uint seed = 0)
+        public static unsafe uint ComputeKey(byte[] bytes, ulong seed = 0)
         {
             fixed (byte* pa = bytes)
             {
-                return xxHash32.UnsafeComputeHash(pa, bytes.Length, seed);
+                return xxHash32.UnsafeComputeHash(pa, bytes.Length, (uint)seed);
             }
         }
 
-        public static unsafe uint ComputeUniqueKey(byte* ptr, int length, uint seed = 0)
+        public static unsafe uint ComputeKey(byte* ptr, int length, ulong seed = 0)
         {
-            return xxHash32.UnsafeComputeHash(ptr, length, seed);
+            return xxHash32.UnsafeComputeHash(ptr, length, (uint)seed);
         }
     }
 }

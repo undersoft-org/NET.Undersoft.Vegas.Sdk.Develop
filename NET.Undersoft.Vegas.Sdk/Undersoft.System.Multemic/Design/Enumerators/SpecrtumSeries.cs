@@ -61,14 +61,14 @@ namespace System.Multemic
             {
                 lastReturned = map.IndexMin;
                 iterated++;
-                Entry.Key = lastReturned;
+                Entry.Key = (uint)lastReturned;
                 Entry.Value = map.Get(lastReturned);
             }
             else
             {
                 lastReturned = map.Next(lastReturned); ;
                 iterated++;
-                Entry.Key = lastReturned;
+                Entry.Key = (uint)lastReturned;
                 Entry.Value = map.Get(lastReturned);
             }
             return true;

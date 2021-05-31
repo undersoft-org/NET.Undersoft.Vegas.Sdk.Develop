@@ -1,6 +1,4 @@
-﻿using System;
-using System.Extract;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.IO;
 
 namespace System.Extract.Stock

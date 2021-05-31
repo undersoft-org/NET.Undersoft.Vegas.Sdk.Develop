@@ -7,15 +7,15 @@ namespace System.Uniques
 {
     public unsafe static class UniqueKeyExtension64
     {
-        public static Byte[] UniqueBytes64(this IntPtr bytes, int length, uint seed = 0)
+        public static Byte[] UniqueBytes64(this IntPtr bytes, int length, ulong seed = 0)
         {
-            return UniqueCode64.ComputeUniqueBytes((byte*)bytes.ToPointer(), length, seed);
+            return Hasher64.ComputeBytes((byte*)bytes.ToPointer(), length, seed);
         }
-        public static Byte[] UniqueBytes64(this Byte[] bytes, uint seed = 0)
+        public static Byte[] UniqueBytes64(this Byte[] bytes, ulong seed = 0)
         {
-            return UniqueCode64.ComputeUniqueBytes(bytes, seed);
+            return Hasher64.ComputeBytes(bytes, seed);
         }
-        public static Byte[] UniqueBytes64(this Object obj, uint seed = 0)
+        public static Byte[] UniqueBytes64(this Object obj, ulong seed = 0)
         {
             if (obj is IUnique)
                 return ((IUnique)obj).GetUniqueBytes();
@@ -25,13 +25,13 @@ namespace System.Uniques
                 return (((string)obj)).UniqueBytes64(seed);
             if (obj is IList)
                 return UniqueBytes64((IList)obj);
-            return UniqueCode64.ComputeUniqueBytes(obj.GetBytes(true), seed);
+            return Hasher64.ComputeBytes(obj.GetBytes(true), seed);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Byte[] UniqueBytes64(this IList obj, uint seed = 0)
+        public static Byte[] UniqueBytes64(this IList obj, ulong seed = 0)
         {
             if (obj is Byte[])
-                return UniqueCode64.ComputeUniqueBytes((Byte[])obj, seed);
+                return Hasher64.ComputeBytes((Byte[])obj, seed);
 
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -62,7 +62,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
+                            *((ulong*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {
@@ -89,12 +89,12 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return UniqueCode64.ComputeUniqueBytes(buffer, offset, seed);
+            return Hasher64.ComputeBytes(buffer, offset, seed);
         }
-        public static Byte[] UniqueBytes64(this String obj, uint seed = 0)
+        public static Byte[] UniqueBytes64(this String obj, ulong seed = 0)
         {
             fixed (char* c = obj)
-                return UniqueCode64.ComputeUniqueBytes((byte*)c, obj.Length * sizeof(char), seed);
+                return Hasher64.ComputeBytes((byte*)c, obj.Length * sizeof(char), seed);
         }
         public static Byte[] UniqueBytes64(this IUnique obj)
         {
@@ -102,15 +102,15 @@ namespace System.Uniques
         }
 
         public static unsafe 
-                       Int64 UniqueKey64(this IntPtr ptr, int length, uint seed = 0)
+                       UInt64 UniqueKey64(this IntPtr ptr, int length, ulong seed = 0)
         {
-            return (long)UniqueCode64.ComputeUniqueKey((byte*)ptr.ToPointer(), length, seed);
+            return Hasher64.ComputeKey((byte*)ptr.ToPointer(), length, seed);
         }
-        public static  Int64 UniqueKey64(this Byte[] bytes, uint seed = 0)
+        public static  UInt64 UniqueKey64(this Byte[] bytes, ulong seed = 0)
         {
-            return (long)UniqueCode64.ComputeUniqueKey(bytes, seed);
+            return Hasher64.ComputeKey(bytes, seed);
         }
-        public static  Int64 UniqueKey64(this Object obj, uint seed = 0)
+        public static  UInt64 UniqueKey64(this Object obj, ulong seed = 0)
         {
             if (obj is IUnique)
                 return ((IUnique)obj).UniqueKey;
@@ -120,14 +120,14 @@ namespace System.Uniques
                 return (((string)obj)).UniqueKey64(seed);        
             if (obj is ValueType)
                 return getValueTypeUniqueKey64(obj, seed);                    
-            return (long)UniqueCode64.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return Hasher64.ComputeKey(obj.GetBytes(true), seed);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe 
-                       Int64 UniqueKey64(this IList obj, uint seed = 0)
+                       UInt64 UniqueKey64(this IList obj, ulong seed = 0)
         {
             if (obj is Byte[])
-                return (long)UniqueCode64.ComputeUniqueKey((Byte[])obj, seed);
+                return Hasher64.ComputeKey((Byte[])obj, seed);
           
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -158,7 +158,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
+                            *((ulong*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {
@@ -185,90 +185,90 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return (long)UniqueCode64.ComputeUniqueKey(buffer, offset, seed);
+            return Hasher64.ComputeKey(buffer, offset, seed);
         }      
-        public static  Int64 UniqueKey64(this String obj, uint seed = 0)
+        public static  UInt64 UniqueKey64(this String obj, ulong seed = 0)
         {
             fixed (char* c = obj)
             {
-                return (long)UniqueCode64.ComputeUniqueKey((byte*)c, obj.Length * sizeof(char), seed);
+                return Hasher64.ComputeKey((byte*)c, obj.Length * sizeof(char), seed);
             }
         }
-        public static  Int64 UniqueKey64<V>(this IUnique<V> obj, uint seed)
+        public static  UInt64 UniqueKey64<V>(this IUnique<V> obj, ulong seed)
         {
             return UniqueKey64(obj.UniqueValues(), seed);
         }
-        public static Int64  UniqueKey64(this IUnique obj, uint seed)
+        public static UInt64  UniqueKey64(this IUnique obj, ulong seed)
         {
-            return (long)UniqueCode64.ComputeUniqueKey(obj.GetUniqueBytes(), seed);
+            return Hasher64.ComputeKey(obj.GetUniqueBytes(), seed);
         }
-        public static  Int64 UniqueKey64(this IUnique obj)
+        public static  UInt64 UniqueKey64(this IUnique obj)
         {
             return obj.UniqueKey;
         }
 
-        public static Int32 GetHashCode(this IntPtr ptr, int length, uint seed = 0)
+        public static UInt32 GetHashCode(this IntPtr ptr, int length, ulong seed = 0)
         {
             return ptr.UniqueKey32(length, seed);
         }
-        public static Int32 GetHashCode<T>(this IEquatable<T> obj, uint seed = 0)
+        public static UInt32 GetHashCode<T>(this IEquatable<T> obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this Byte[] obj, uint seed = 0)
+        public static UInt32 GetHashCode(this Byte[] obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this Object obj, uint seed = 0)
+        public static UInt32 GetHashCode(this Object obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this IList obj, uint seed = 0)
+        public static UInt32 GetHashCode(this IList obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this string obj, uint seed = 0)
+        public static UInt32 GetHashCode(this string obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this IUnique obj)
+        public static UInt32 GetHashCode(this IUnique obj)
         {
-            return obj.UniqueBytes32().ToInt32();
+            return obj.UniqueBytes32().ToUInt32();
         }
 
-        public static Int64 UniqueKey(this IntPtr ptr, int length, uint seed = 0)
+        public static UInt64 UniqueKey(this IntPtr ptr, int length, ulong seed = 0)
         {
             return UniqueKey64(ptr, length, seed);
         }
-        public static Int64 UniqueKey<T>(this IEquatable<T> obj, uint seed = 0)
+        public static UInt64 UniqueKey<T>(this IEquatable<T> obj, ulong seed = 0)
         {
             return UniqueKey64(obj, seed);
         }
-        public static Int64 UniqueKey(this Byte[] bytes, uint seed = 0)
+        public static UInt64 UniqueKey(this Byte[] bytes, ulong seed = 0)
         {
             return UniqueKey64(bytes, seed);
         }
-        public static Int64 UniqueKey(this Object obj, uint seed = 0)
+        public static UInt64 UniqueKey(this Object obj, ulong seed = 0)
         {
             return UniqueKey64(obj, seed);
         }
-        public static Int64 UniqueKey(this IList obj, uint seed = 0)
+        public static UInt64 UniqueKey(this IList obj, ulong seed = 0)
         {
             return UniqueKey64(obj, seed);
         }
-        public static Int64 UniqueKey(this String obj, uint seed = 0)
+        public static UInt64 UniqueKey(this String obj, ulong seed = 0)
         {
             return UniqueKey64(obj, seed);
         }
-        public static Int64 UniqueKey<V>(this IUnique<V> obj, uint seed)
+        public static UInt64 UniqueKey<V>(this IUnique<V> obj, ulong seed)
         {
             return UniqueKey64(obj.UniqueValues(), seed);
         }
-        public static Int64 UniqueKey(this IUnique obj, uint seed)
+        public static UInt64 UniqueKey(this IUnique obj, ulong seed)
         {
             return UniqueKey64(obj.GetUniqueBytes(), seed);
         }
-        public static Int64 UniqueKey(this IUnique obj)
+        public static UInt64 UniqueKey(this IUnique obj)
         {
             return obj.UniqueKey;
         }
@@ -280,7 +280,7 @@ namespace System.Uniques
             return (obj == null && value == null);
         }
 
-        public static Int64  ComparableInt64(this Object obj, Type type = null)
+        public static UInt64  ComparableUInt64(this Object obj, Type type = null)
         {
             if (type == null)
                 type = obj.GetType();
@@ -292,8 +292,8 @@ namespace System.Uniques
                     if (type == typeof(IUnique))
                         return new Usid((string)obj).UniqueKey();
                     if (type == typeof(DateTime))
-                        return ((DateTime)Convert.ChangeType(obj, type)).ToBinary();
-                    return Convert.ToInt64(Convert.ChangeType(obj, type));
+                        return (ulong)((DateTime)Convert.ChangeType(obj, type)).ToBinary();
+                    return Convert.ToUInt64(Convert.ChangeType(obj, type));
                 }
                 return ((string)obj).UniqueKey64();
             }
@@ -301,9 +301,9 @@ namespace System.Uniques
             if (type == typeof(IUnique))
                 return ((IUnique)obj).UniqueKey();
             if (type == typeof(DateTime))
-                return ((DateTime)obj).Ticks;
+                return (ulong)((DateTime)obj).Ticks;
             if (obj is ValueType)
-                return Convert.ToInt64(obj);
+                return Convert.ToUInt64(obj);
             return obj.UniqueKey64();
         }
 
@@ -334,7 +334,7 @@ namespace System.Uniques
             return (obj.UniqueKey64());
         }
 
-        private static Int64  getValueTypeUniqueKey64(object obj, uint seed = 0)
+        private static UInt64  getValueTypeUniqueKey64(object obj, ulong seed = 0)
         {
             Type t = obj.GetType();
 
@@ -342,19 +342,19 @@ namespace System.Uniques
             {
                 byte* ps = stackalloc byte[8];               
                 Extraction.ValueStructureToPointer(obj, ps, 0);
-                return *(long*)ps;
+                return *(ulong*)ps;
             }
 
             if (t == typeof(DateTime))
-                return ((DateTime)obj).ToBinary();
+                return (ulong)((DateTime)obj).ToBinary();
 
             if (t == typeof(Enum))
-                return Convert.ToInt32(obj);
+                return Convert.ToUInt32(obj);
 
-            return (long)UniqueCode64.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return Hasher64.ComputeKey(obj.GetBytes(true), seed);
         }
 
-        private static Byte[] GetValueTypeHashBytes64(object obj, uint seed = 0)
+        private static Byte[] GetValueTypeHashBytes64(object obj, ulong seed = 0)
         {
             Type t = obj.GetType();
 
@@ -370,18 +370,18 @@ namespace System.Uniques
                 return ((DateTime)obj).ToBinary().GetBytes();
 
             if (t == typeof(Enum))
-                return Convert.ToInt32(obj).GetBytes();
+                return Convert.ToUInt32(obj).GetBytes();
 
-            return ((long)UniqueCode64.ComputeUniqueKey(obj.GetBytes(true), seed)).GetBytes(true);
+            return (Hasher64.ComputeKey(obj.GetBytes(true), seed)).GetBytes(true);
         }
     }
 
     public unsafe static class UniqueKeyExtension32
     {
-        public static Int32 BitAggregate64to32(byte* bytes)
+        public static UInt32 BitAggregate64to32(byte* bytes)
         {
-            return new int[] { *((int*)&bytes), *((int*)&bytes[4]) }
-                                       .Aggregate(7, (a, b) => (a + b) * 23);
+            return new uint[] { *((uint*)&bytes), *((uint*)&bytes[4]) }
+                                       .Aggregate(7U, (a, b) => (a + b) * 23);
 
         }
         public static Byte[] BitAggregate64to32(this Byte[] bytes)
@@ -390,8 +390,8 @@ namespace System.Uniques
             fixed (byte* h32 = bytes32)
             fixed (byte* h64 = bytes)
             {
-                *((int*)h32) = new int[] { *((int*)&h64), *((int*)&h64[4]) }
-                                           .Aggregate(7, (a, b) => (a + b) * 23);
+                *((uint*)h32) = new uint[] { *((uint*)&h64), *((uint*)&h64[4]) }
+                                           .Aggregate(7U, (a, b) => (a + b) * 23);
                 return bytes32;
             }
         }
@@ -401,8 +401,8 @@ namespace System.Uniques
             fixed (byte* h16 = bytes16)
             fixed (byte* h32 = bytes)
             {
-                *((short*)h16) = new short[] { *((short*)&h32), *((short*)&h32[2]) }
-                                               .Aggregate((short)7, (a, b) => (short)((a + b) * 7));
+                *((ushort*)h16) = new ushort[] { *((ushort*)&h32), *((ushort*)&h32[2]) }
+                                               .Aggregate((ushort)7, (a, b) => (ushort)((a + b) * 7));
                 return bytes16;
             }
         }
@@ -412,23 +412,23 @@ namespace System.Uniques
             fixed (byte* h16 = bytes16)
             fixed (byte* h64 = bytes)
             {
-                *((short*)h16) = new short[] { *((short*)&h64), *((short*)&h64[2]),
-                                               *((short*)&h64[4]), *((short*)&h64[6]) }
-                                               .Aggregate((short)7, (a, b) => (short)((a + b) * 7));
+                *((ushort*)h16) = new ushort[] { *((ushort*)&h64), *((ushort*)&h64[2]),
+                                               *((ushort*)&h64[4]), *((ushort*)&h64[6]) }
+                                               .Aggregate((ushort)7, (a, b) => (ushort)((a + b) * 7));
                 return bytes16;
             }
         }
 
-        public static unsafe Byte[] UniqueBytes32(this IntPtr ptr, int length, uint seed = 0)
+        public static unsafe Byte[] UniqueBytes32(this IntPtr ptr, int length, ulong seed = 0)
         {
-            return UniqueCode32.ComputeUniqueBytes((byte*)ptr.ToPointer(), length, seed);
+            return Hasher32.ComputeBytes((byte*)ptr.ToPointer(), length, seed);
         }
 
-        public static Byte[] UniqueBytes32(this Byte[] bytes, uint seed = 0)
+        public static Byte[] UniqueBytes32(this Byte[] bytes, ulong seed = 0)
         {
-            return UniqueCode32.ComputeUniqueBytes(bytes, seed);
+            return Hasher32.ComputeBytes(bytes, seed);
         }
-        public static Byte[] UniqueBytes32(this Object obj, uint seed = 0)
+        public static Byte[] UniqueBytes32(this Object obj, ulong seed = 0)
         {
             if (obj is IUnique)
                 return ((IUnique)obj).UniqueBytes32();
@@ -438,14 +438,14 @@ namespace System.Uniques
                 return (((string)obj)).UniqueBytes32(seed);
             if (obj is IList)
                 return UniqueBytes32((IList)obj, seed);
-            return UniqueCode32.ComputeUniqueBytes(obj.GetBytes(true), seed);
+            return Hasher32.ComputeBytes(obj.GetBytes(true), seed);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Byte[] UniqueBytes32(this IList obj, uint seed = 0)
+        public static Byte[] UniqueBytes32(this IList obj, ulong seed = 0)
         {
             if (obj is Byte[])
-                return UniqueCode32.ComputeUniqueBytes((Byte[])obj, seed);
+                return Hasher32.ComputeBytes((Byte[])obj, seed);
 
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -476,7 +476,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
+                            *((ulong*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {
@@ -503,46 +503,46 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return UniqueCode32.ComputeUniqueBytes(buffer, offset, seed);
+            return Hasher32.ComputeBytes(buffer, offset, seed);
         }
 
-        public static Byte[] UniqueBytes32(this String obj, uint seed = 0)
+        public static Byte[] UniqueBytes32(this String obj, ulong seed = 0)
         {
             fixed (char* c = obj)
-                return UniqueCode32.ComputeUniqueBytes((byte*)c, obj.Length * sizeof(char), seed);
+                return Hasher32.ComputeBytes((byte*)c, obj.Length * sizeof(char), seed);
         }
         public static Byte[] UniqueBytes32(this IUnique obj)
         {
             return obj.GetUniqueBytes().BitAggregate64to32();
         }
 
-        public static unsafe Int32 UniqueKey32(this IntPtr ptr, int length, uint seed = 0)
+        public static unsafe UInt32 UniqueKey32(this IntPtr ptr, int length, ulong seed = 0)
         {
-            return (int)UniqueCode32.ComputeUniqueKey((byte*)ptr.ToPointer(), length, seed);
+            return Hasher32.ComputeKey((byte*)ptr.ToPointer(), length, seed);
         }
 
-        public static Int32 UniqueKey32(this Byte[] obj, uint seed = 0)
+        public static UInt32 UniqueKey32(this Byte[] obj, ulong seed = 0)
         {
-            return (int)UniqueCode32.ComputeUniqueKey(obj, seed);
+            return Hasher32.ComputeKey(obj, (uint)seed);
         }
-        public static Int32 UniqueKey32(this Object obj, uint seed = 0)
+        public static UInt32 UniqueKey32(this Object obj, ulong seed = 0)
         {
             if (obj is IUnique)
-                return ((IUnique)obj).UniqueBytes32().ToInt32();
+                return ((IUnique)obj).UniqueBytes32().ToUInt32();
             if (obj is ValueType)
                 return getValueTypeUniqueKey32(obj, seed);           
             if (obj is string)
                 return (((string)obj)).UniqueKey32(seed);
             if (obj is IList)
                 return UniqueKey32((IList)obj, seed);
-            return (int)UniqueCode32.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return Hasher32.ComputeKey(obj.GetBytes(true), seed);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Int32 UniqueKey32(this IList obj, uint seed = 0)
+        public static UInt32 UniqueKey32(this IList obj, ulong seed = 0)
         {
             if (obj is Byte[])
-                return (int)UniqueCode32.ComputeUniqueKey((Byte[])obj, seed);
+                return Hasher32.ComputeKey((Byte[])obj, seed);
 
             int length = 256, offset = 0, postoffset = 0, count = obj.Count, charsize = sizeof(char), s = 0;
             byte* buffer = stackalloc byte[length];
@@ -573,7 +573,7 @@ namespace System.Uniques
                         if (postoffset > length)
                             toResize = true;
                         else
-                            *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
+                            *((ulong*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {
@@ -600,59 +600,59 @@ namespace System.Uniques
                     offset = postoffset;
             }
 
-            return (int)UniqueCode32.ComputeUniqueKey(buffer, offset, seed);
+            return Hasher32.ComputeKey(buffer, offset, seed);
         }
 
-        public static Int32 UniqueKey32(this string obj, uint seed = 0)
+        public static UInt32 UniqueKey32(this string obj, ulong seed = 0)
         {
             fixed (char* c = obj)
-                return (int)UniqueCode32.ComputeUniqueKey((byte*)c, obj.Length * sizeof(char), seed);
+                return Hasher32.ComputeKey((byte*)c, obj.Length * sizeof(char), seed);
         }
-        public static Int32 UniqueKey32<V>(this IUnique<V> obj, uint seed)
+        public static UInt32 UniqueKey32<V>(this IUnique<V> obj, ulong seed)
         {
             return UniqueKey32(obj.UniqueValues(), seed);
         }
-        public static Int32 UniqueKey32(this IUnique obj, uint seed)
+        public static UInt32 UniqueKey32(this IUnique obj, ulong seed)
         {
-            return (int)UniqueCode32.ComputeUniqueKey(obj.GetUniqueBytes(), seed);
+            return Hasher32.ComputeKey(obj.GetUniqueBytes(), seed);
         }
-        public static Int32 UniqueKey32(this IUnique obj)
+        public static UInt32 UniqueKey32(this IUnique obj)
         {
-            return obj.UniqueBytes32().ToInt32();
+            return obj.UniqueBytes32().ToUInt32();
         }
 
         public static unsafe 
-                      Int32 GetHashCode(this IntPtr ptr, int length, uint seed = 0)
+                      UInt32 GetHashCode(this IntPtr ptr, int length, ulong seed = 0)
         {
             return ptr.UniqueKey32(length, seed);
         }
 
-        public static Int32 GetHashCode<T>(this IEquatable<T> obj, uint seed = 0)
+        public static UInt32 GetHashCode<T>(this IEquatable<T> obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this Byte[] obj, uint seed = 0)
+        public static UInt32 GetHashCode(this Byte[] obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this Object obj, uint seed = 0)
+        public static UInt32 GetHashCode(this Object obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this IList obj, uint seed = 0)
+        public static UInt32 GetHashCode(this IList obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this string obj, uint seed = 0)
+        public static UInt32 GetHashCode(this string obj, ulong seed = 0)
         {
             return obj.UniqueKey32(seed);
         }
-        public static Int32 GetHashCode(this IUnique obj, uint seed = 0)
+        public static UInt32 GetHashCode(this IUnique obj, ulong seed = 0)
         {
-            return obj.UniqueBytes32(seed).ToInt32();
+            return obj.UniqueBytes32(seed).ToUInt32();
         }
 
-        private static Int32 getValueTypeUniqueKey32(object obj, uint seed = 0)
+        private static UInt32 getValueTypeUniqueKey32(object obj, ulong seed = 0)
         {
             Type t = obj.GetType();
 
@@ -664,15 +664,15 @@ namespace System.Uniques
             }
           
             if (t == typeof(DateTime))
-                return ((DateTime)obj).ToBinary().GetBytes().BitAggregate64to32().ToInt32();
+                return ((DateTime)obj).ToBinary().GetBytes().BitAggregate64to32().ToUInt32();
 
             if (t == typeof(Enum))
-                return Convert.ToInt32(obj);
+                return Convert.ToUInt32(obj);
 
-            return (int)UniqueCode32.ComputeUniqueKey(obj.GetBytes(true), seed);
+            return Hasher32.ComputeKey(obj.GetBytes(true), seed);
         }
 
-        private static Byte[] getValueTypeUniqueBytes32(object obj, uint seed = 0)
+        private static Byte[] getValueTypeUniqueBytes32(object obj, ulong seed = 0)
         {
             Type t = obj.GetType();
 
@@ -690,9 +690,9 @@ namespace System.Uniques
                 return ((DateTime)obj).ToBinary().GetBytes().BitAggregate64to32();
 
             if (t == typeof(Enum))
-                return Convert.ToInt32(obj).GetBytes();
+                return Convert.ToUInt32(obj).GetBytes();
 
-            return ((int)UniqueCode32.ComputeUniqueKey(obj.GetBytes(true)), seed).GetBytes(true);
+            return (Hasher32.ComputeKey(obj.GetBytes(true)), seed).GetBytes(true);
         }
     }
 

@@ -79,18 +79,18 @@ namespace System.Deal
         public int Serialize(Stream tostream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.SetRaw(tostream);
+                return this.SetBinary(tostream);
             else if (serialFormat == SerialFormat.Json)
                 return this.SetJson(tostream);
             else
                 return -1;
         }
-        public int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
+        public int Serialize(ISerialBuffer buffer, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.SetRaw(buffor);
+                return this.SetBinary(buffer);
             else if (serialFormat == SerialFormat.Json)
-                return this.SetJson(buffor);
+                return this.SetJson(buffer);
             else
                 return -1;
         }
@@ -98,20 +98,20 @@ namespace System.Deal
         public object Deserialize(Stream fromstream, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.GetRaw(fromstream);
+                return this.GetBinary(fromstream);
             else if (serialFormat == SerialFormat.Json)
                 return this.GetJson(fromstream);
             else
-                return -1;
+                return null;
         }
-        public object Deserialize(ref object fromarray, SerialFormat serialFormat = SerialFormat.Binary)
+        public object Deserialize(ISerialBuffer buffer, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.GetRaw(ref fromarray);
+                return this.GetBinary(buffer);
             else if (serialFormat == SerialFormat.Json)
-                return this.GetJson(ref fromarray);
+                return this.GetJson(buffer);
             else
-                return -1;
+                return null;
         }
 
         public object[] GetMessage()
@@ -133,24 +133,24 @@ namespace System.Deal
 
     public static class BinaryHeader
     {
-        public static int SetRaw(this DealHeader bank, Stream tostream)
+        public static int SetBinary(this DealHeader bank, Stream tostream)
         {
             if (tostream == null) tostream = new MemoryStream();
             BinaryFormatter binform = new BinaryFormatter();
             binform.Serialize(tostream, bank);
             return (int)tostream.Length;
         }
-        public static int SetRaw(this DealHeader bank, ISerialBlock tostream)
+        public static int SetBinary(this DealHeader bank, ISerialBuffer buffer)
         {
             MemoryStream ms = new MemoryStream();
-            ms.Write(new byte[tostream.BlockOffset], 0, tostream.BlockOffset);
+            ms.Write(new byte[buffer.BlockOffset], 0, buffer.BlockOffset);
             BinaryFormatter binform = new BinaryFormatter();
             binform.Serialize(ms, bank);
-            tostream.SerialBlock = ms.ToArray();
+            buffer.SerialBlock = ms.ToArray();
             ms.Dispose();
-            return tostream.SerialBlock.Length;
+            return buffer.SerialBlock.Length;
         }
-        public static DealHeader GetRaw(this DealHeader bank, Stream fromstream)
+        public static DealHeader GetBinary(this DealHeader bank, Stream fromstream)
         {
             try
             {
@@ -162,11 +162,11 @@ namespace System.Deal
                 return null;
             }
         }
-        public static DealHeader GetRaw(this DealHeader bank, ref object fromarray)
+        public static DealHeader GetBinary(this DealHeader bank, ISerialBuffer buffer)
         {
             try
             {
-                MemoryStream ms = new MemoryStream((byte[])fromarray);
+                MemoryStream ms = new MemoryStream(buffer.DeserialBlock);
                 BinaryFormatter binform = new BinaryFormatter();
                 DealHeader _bank = (DealHeader)binform.Deserialize(ms);
                 ms.Dispose();
@@ -192,20 +192,20 @@ namespace System.Deal
             binwriter.Write(thdr.SetJsonString());
             return (int)tostream.Length;
         }
-        public static int SetJson(this DealHeader thdr, ISerialBlock buffor, int offset = 0)
+        public static int SetJson(this DealHeader thdr, ISerialBuffer buffer, int offset = 0)
         {
             if (offset > 0)
             {
                 byte[] jsonBytes = Encoding.UTF8.GetBytes(thdr.SetJsonString());
                 byte[] serialBytes = new byte[jsonBytes.Length + offset];
                 jsonBytes.CopyTo(serialBytes, offset);
-                buffor.SerialBlock = serialBytes;
+                buffer.SerialBlock = serialBytes;
                 jsonBytes = null;
             }
             else
-                buffor.SerialBlock = Encoding.UTF8.GetBytes(thdr.SetJsonString());
+                buffer.SerialBlock = Encoding.UTF8.GetBytes(thdr.SetJsonString());
 
-            return buffor.SerialBlock.Length;
+            return buffer.SerialBlock.Length;
         }
 
         public static string SetJsonString(this DealHeader thdr)
@@ -308,27 +308,20 @@ namespace System.Deal
                 return null;
             }
         }
-        public static DealHeader GetJson(this DealHeader thdr, ref object fromarray)
+        public static DealHeader GetJson(this DealHeader thdr, ISerialBuffer buffer)
         {
             try
             {
                 DealHeader trs = null;
-                if (fromarray is String)
-                {
-                    trs = thdr.GetJsonObject((String)fromarray)["DealHeader"];
-                }
-                else
-                {
-                    byte[] _fromarray = (byte[])fromarray;
+  
+                    byte[] _fromarray = buffer.DeserialBlock;
                     StringBuilder sb = new StringBuilder();
 
                     sb.Append(_fromarray.ToChars(CharEncoding.UTF8));
                     trs = thdr.GetJsonObject(sb.ToString())["DealHeader"];
 
-                    fromarray = null;
                     _fromarray = null;
                     sb = null;
-                }
                 return trs;
             }
             catch (Exception ex)

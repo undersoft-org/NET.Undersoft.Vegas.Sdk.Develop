@@ -1,14 +1,26 @@
-﻿using System.IO;
-using System.Runtime.InteropServices;
-using System.Multemic;
-using System.Collections;
-using System.Collections.Generic;
-using System.Uniques;
-using System.Instant.Linking;
-using System.Instant.Treatments;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.FigureSleeves.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (31.05.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Instant.Linking;
+    using System.Instant.Treatments;
+    using System.IO;
+    using System.Multemic;
+    using System.Runtime.InteropServices;
+    using System.Uniques;
+
     [StructLayout(LayoutKind.Sequential)]
     public abstract class FigureSleeves : ISleeves
     {
@@ -36,7 +48,7 @@ namespace System.Instant
         {
             throw new NotImplementedException();
         }
-        public int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
+        public int Serialize(ISerialBuffer buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
@@ -45,7 +57,7 @@ namespace System.Instant
         {
             throw new NotImplementedException();
         }
-        public object Deserialize(ref object fromarray, SerialFormat serialFormat = SerialFormat.Binary)
+        public object Deserialize(ISerialBuffer buffer, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
@@ -63,7 +75,7 @@ namespace System.Instant
         {
             Sleeves.Clear();
         }
-       
+
         public IFigure NewFigure()
         {
             return Figures.NewFigure();
@@ -127,11 +139,11 @@ namespace System.Instant
             ICard<IFigure> item = Figures.AddNew();
             if (item != null)
             {
-               Sleeves.Add(item);
+                Sleeves.Add(item);
             }
             return item;
         }
-        public ICard<IFigure> AddNew(long key)
+        public ICard<IFigure> AddNew(ulong key)
         {
             ICard<IFigure> item = Figures.AddNew(key);
             if (item != null)
@@ -150,7 +162,7 @@ namespace System.Instant
             return item;
         }
 
-        public bool Add(long key, IFigure item)
+        public bool Add(ulong key, IFigure item)
         {
             IFigure _item;
             if (Figures.TryGet(key, out _item))
@@ -160,16 +172,16 @@ namespace System.Instant
                     _item.ValueArray = item.ValueArray;
                     _item.UniqueKey = item.UniqueKey;
                 }
-               return Sleeves.Add(key, _item);
+                return Sleeves.Add(key, _item);
             }
             else
             {
-               return Sleeves.TryAdd(Figures.Put(item).Value);
+                return Sleeves.TryAdd(Figures.Put(item).Value);
             }
         }
         public void Add(IFigure item)
         {
-            long key = item.UniqueKey;
+            ulong key = item.UniqueKey;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
             {
@@ -181,15 +193,15 @@ namespace System.Instant
                 Sleeves.Add(key, _item);
             }
             else
-            {                
+            {
                 Sleeves.Add(Figures.Put(item).Value);
             }
-            
+
         }
         public bool Add(object key, IFigure item)
         {
             IFigure _item;
-            long _key = key.UniqueKey64();
+            ulong _key = key.UniqueKey64();
             if (Figures.TryGet(_key, out _item))
             {
                 if (!ReferenceEquals(_item, item))
@@ -200,11 +212,11 @@ namespace System.Instant
                 return Sleeves.Add(_key, _item);
             }
             else
-               return Sleeves.TryAdd(Figures.Put(item).Value);
+                return Sleeves.TryAdd(Figures.Put(item).Value);
         }
         public void Add(ICard<IFigure> item)
         {
-            long key = item.Key;
+            ulong key = item.Key;
             ICard<IFigure> _item;
             if (Figures.TryGet(key, out _item))
             {
@@ -261,12 +273,12 @@ namespace System.Instant
         }
         public void Add(IEnumerable<IUnique<IFigure>> items)
         {
-            foreach(IUnique<IFigure> item in items)
-                    Add(item);
+            foreach (IUnique<IFigure> item in items)
+                Add(item);
         }
         public bool TryAdd(IFigure item)
         {
-            long key = item.UniqueKey;
+            ulong key = item.UniqueKey;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
             {
@@ -312,7 +324,7 @@ namespace System.Instant
             return Sleeves.TryTake(out item);
         }
 
-        public ICard<IFigure> Put(long key, IFigure item)
+        public ICard<IFigure> Put(ulong key, IFigure item)
         {
             IFigure _item;
             if (Figures.TryGet(key, out _item))
@@ -330,7 +342,7 @@ namespace System.Instant
 
         public ICard<IFigure> Put(object key, IFigure item)
         {
-            long _key = key.UniqueKey();
+            ulong _key = key.UniqueKey();
             IFigure _item;
             if (Figures.TryGet(_key, out _item))
             {
@@ -383,7 +395,7 @@ namespace System.Instant
         }
         public ICard<IFigure> Put(IFigure item)
         {
-            long key = item.UniqueKey;
+            ulong key = item.UniqueKey;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
             {
@@ -399,7 +411,7 @@ namespace System.Instant
         }
         public ICard<IFigure> Put(IUnique<IFigure> value)
         {
-            long key = value.UniqueKey;
+            ulong key = value.UniqueKey;
             IFigure item = value.Value;
             IFigure _item;
             if (Figures.TryGet(key, out _item))
@@ -429,17 +441,17 @@ namespace System.Instant
         {
             return Sleeves.Remove(key);
         }
-        public bool    Remove(IFigure item)
+        public bool Remove(IFigure item)
         {
             if (Sleeves.Remove(item) != null)
                 return true;
             return false;
         }
-        public bool    Remove(ICard<IFigure> item)
+        public bool Remove(ICard<IFigure> item)
         {
-            return Sleeves.Remove(item);                
+            return Sleeves.Remove(item);
         }
-        public bool    Remove(IUnique<IFigure> item)
+        public bool Remove(IUnique<IFigure> item)
         {
             return Sleeves.Remove(item);
         }
@@ -447,7 +459,7 @@ namespace System.Instant
         {
             return Sleeves.TryRemove(key);
         }
-        public void    RemoveAt(int index)
+        public void RemoveAt(int index)
         {
             Sleeves.RemoveAt(index);
         }
@@ -499,12 +511,12 @@ namespace System.Instant
         {
             return Sleeves.NewCard(key, value);
         }
-        public ICard<IFigure> NewCard(long key, IFigure value)
+        public ICard<IFigure> NewCard(ulong  key, IFigure value)
         {
             return Sleeves.NewCard(key, value);
         }
 
-        public  int IndexOf(IFigure item)
+        public int IndexOf(IFigure item)
         {
             return Sleeves.IndexOf(item);
         }
@@ -580,26 +592,26 @@ namespace System.Instant
             return Sleeves.AsIdentifiers();
         }
 
-        public bool ContainsKey(long key)
+        public bool ContainsKey(ulong key)
         {
             return Sleeves.ContainsKey(key);
         }
 
-        public IFigure Get(long key)
+        public IFigure Get(ulong key)
         {
             return Sleeves.Get(key);
         }
 
-        public bool TryGet(long key, out IFigure output)
+        public bool TryGet(ulong key, out IFigure output)
         {
             return Sleeves.TryGet(key, out output);
         }
 
-        public ICard<IFigure> GetCard(long key)
+        public ICard<IFigure> GetCard(ulong key)
         {
             return Sleeves.GetCard(key);
         }
-     
+
         public int SerialCount { get; set; }
         public int DeserialCount { get; set; }
         public int ProgressCount { get; set; }
@@ -639,13 +651,13 @@ namespace System.Instant
 
         public IUnique Empty => Sleeves.Empty;
 
-        public long UniqueKey { get => Sleeves.UniqueKey; set => Sleeves.UniqueKey = value; }
+        public ulong UniqueKey { get => Sleeves.UniqueKey; set => Sleeves.UniqueKey = value; }
 
         public Type Type { get => Figures.Type; set => Figures.Type = value; }
 
-        public Links Links { get; set; } = new Links();
+        public Linker Linker { get => Sleeves.Linker; set => Sleeves.Linker = value; }
 
-        public  Treatment Treatment
+        public Treatment Treatment
         {
             get => Sleeves.Treatment;
             set => Sleeves.Treatment = value;
@@ -658,13 +670,12 @@ namespace System.Instant
         }
 
         public IDeck<IComputation> Computations { get => Figures.Computations; set => Figures.Computations = value; }
-        public uint UniqueSeed { get => Sleeves.UniqueSeed; set => Sleeves.UniqueSeed = value; }
+        public ulong UniqueSeed { get => Sleeves.UniqueSeed; set => Sleeves.UniqueSeed = value; }
 
         object IFigure.this[int fieldId] { get => Sleeves[fieldId]; set => Sleeves[fieldId] = (IFigure)value; }
         public object this[string propertyName] { get => Sleeves[propertyName]; set => Sleeves[propertyName] = value; }
         public IFigure this[object key] { get => Sleeves[key]; set => Sleeves[key] = value; }
 
-        #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -685,6 +696,5 @@ namespace System.Instant
             Dispose(true);
         }
 
-        #endregion
-    }   
+    }
 }

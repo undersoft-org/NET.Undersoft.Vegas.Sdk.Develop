@@ -27,7 +27,7 @@ namespace System.Multemic.Basedeck
             OddNegativePrimesId = 0;
         }
 
-        public unsafe int this[int id]
+        public unsafe int this[uint id]
         {
             get
             {
@@ -41,28 +41,28 @@ namespace System.Multemic.Basedeck
             }
         }
 
-        public unsafe int NextSize(int id)
+        public unsafe int NextSize(uint id)
         {
             fixed (TetraSize* a = &this)
                 return (*&((int*)a)[id]) = PRIMES_ARRAY.Get((*&((int*)a)[id+4])++);
         }
-        public unsafe int PreviousSize(int id)
+        public unsafe int PreviousSize(uint id)
         {
             fixed (TetraSize* a = &this)
                 return (*&((int*)a)[id]) = PRIMES_ARRAY.Get(--(*&((int*)a)[id + 4]));
         }
 
-        public unsafe int GetPrimesId(int id)
+        public unsafe int GetPrimesId(uint id)
         {
             return this[id + 4];
         }
 
-        public unsafe void SetPrimesId(int id, int value)
+        public unsafe void SetPrimesId(uint id, int value)
         {
             this[id + 4] = value;
         }
 
-        public unsafe void Reset(int id)
+        public unsafe void Reset(uint id)
         {
             fixed (TetraSize* a = &this)
             {

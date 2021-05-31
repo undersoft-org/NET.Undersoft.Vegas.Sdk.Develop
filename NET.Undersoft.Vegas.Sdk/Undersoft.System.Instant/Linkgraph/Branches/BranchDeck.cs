@@ -74,11 +74,11 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Usid.Empty;
 
-        public new long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
+        public new ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public LinkMember Member { get; set; }
 
-        public uint UniqueSeed { get => Member.UniqueSeed; set => Member.UniqueSeed = value; }
+        public ulong UniqueSeed { get => Member.UniqueSeed; set => Member.UniqueSeed = value; }
 
         public Usid SerialCode { get => serialcode; set => serialcode = value; }
 
@@ -88,7 +88,7 @@ namespace System.Instant.Linking
 
         public int CompareTo(IUnique other)
         {
-            return SerialCode.CompareTo(other);
+            return serialcode.CompareTo(other);
         }
 
         public override ICard<ICard<IFigure>> EmptyCard()
@@ -103,17 +103,17 @@ namespace System.Instant.Linking
 
         public bool Equals(IUnique other)
         {
-            return SerialCode.Equals(other);
+            return serialcode.Equals(other);
         }
 
         public byte[] GetBytes()
         {
-            return SerialCode.GetBytes();
+            return serialcode.GetBytes();
         }
 
         public byte[] GetUniqueBytes()
         {
-            return SerialCode.GetUniqueBytes();
+            return serialcode.GetUniqueBytes();
         }
 
         public override ICard<ICard<IFigure>> NewCard(ICard<ICard<IFigure>> value)
@@ -126,7 +126,7 @@ namespace System.Instant.Linking
             return new BranchCard(value, Member);
         }
 
-        public override ICard<ICard<IFigure>> NewCard(long key, ICard<IFigure> value)
+        public override ICard<ICard<IFigure>> NewCard(ulong  key, ICard<IFigure> value)
         {
             return new BranchCard(key, value, Member);
         }
@@ -146,7 +146,10 @@ namespace System.Instant.Linking
 
         protected override ICard<ICard<IFigure>> InnerPut(ICard<IFigure> value)
         {
-            return InnerPut(NewCard(value));
+            var card = NewCard(value);
+            if (UniqueKey == 0)
+                UniqueKey = card.UniquesAsKey();
+            return InnerPut(card);
         }
 
         #endregion

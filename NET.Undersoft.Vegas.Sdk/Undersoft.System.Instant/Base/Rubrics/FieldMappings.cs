@@ -43,7 +43,7 @@ namespace System.Instant
             return new Card64<FieldMapping>(key, value);
         }
 
-        public override ICard<FieldMapping> NewCard(long key, FieldMapping value)
+        public override ICard<FieldMapping> NewCard(ulong  key, FieldMapping value)
         {
             return new Card64<FieldMapping>(key, value);
         }

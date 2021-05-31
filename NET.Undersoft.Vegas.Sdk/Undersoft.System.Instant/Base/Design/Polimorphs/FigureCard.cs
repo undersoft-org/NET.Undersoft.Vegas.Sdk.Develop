@@ -34,7 +34,7 @@ namespace System.Instant
         {
             Figures = figures;
         }
-        public FigureCard(long key, IFigure value, IFigures figures) : base(key, value)
+        public FigureCard(ulong key, IFigure value, IFigures figures) : base(key, value)
         {
             Figures = figures;
         }
@@ -74,7 +74,7 @@ namespace System.Instant
             this.value = card.Value;        
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -96,7 +96,7 @@ namespace System.Instant
         {
             return (int)(Key - other.UniqueKey64());
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -143,9 +143,9 @@ namespace System.Instant
             return null;
         }
 
-        public override long UniquesAsKey()
+        public override ulong UniquesAsKey()
         {
-            long key = value.UniqueKey;
+            ulong key = value.UniqueKey;
             if (key == 0)
             {
                 key = Figures.KeyRubrics.Ordinals.Select(x => value[x]).ToArray().UniqueKey();
@@ -154,13 +154,13 @@ namespace System.Instant
             return key;
         }
 
-        public override long Key
+        public override ulong Key
         {
             get => value.UniqueKey;                                                   
             set => this.value.UniqueKey = value;            
         }
 
-        public override long UniqueKey
+        public override ulong UniqueKey
         {
             get => value.UniqueKey;
             set => this.value.UniqueKey = value;

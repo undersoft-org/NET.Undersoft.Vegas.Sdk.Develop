@@ -360,7 +360,7 @@ namespace System.Instant
         {
 
             PropertyBuilder prop = tb.DefineProperty("UniqueKey", PropertyAttributes.HasDefault,
-                                                     typeof(long), new Type[] { typeof(long) });
+                                                     typeof(ulong), new Type[] { typeof(ulong) });
 
             PropertyInfo iprop = typeof(IUnique).GetProperty("UniqueKey");
 
@@ -406,7 +406,7 @@ namespace System.Instant
         {
 
             PropertyBuilder prop = tb.DefineProperty("UniqueSeed", PropertyAttributes.HasDefault,
-                                                     typeof(long), new Type[] { typeof(long) });
+                                                     typeof(ulong), new Type[] { typeof(ulong) });
 
             PropertyInfo iprop = typeof(IUnique).GetProperty("UniqueSeed");
 

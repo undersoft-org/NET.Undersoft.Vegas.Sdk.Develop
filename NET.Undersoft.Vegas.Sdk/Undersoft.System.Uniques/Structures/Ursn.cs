@@ -12,58 +12,58 @@ namespace System.Uniques
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]  
         private byte[] bytes;
 
-        public long UniqueKey
+        public ulong UniqueKey
         {
             get
             {                                   
                 if (IsNull) return 0;
                 fixed (byte* pbyte = bytes)
-                    return *((long*)pbyte);
+                    return *((ulong*)pbyte);
 
             }
             set
             {
                 fixed (byte* b = SureBytes)
-                    *((long*)b) = value;
+                    *((ulong*)b) = value;
             }
         }       
 
-        public long KeyBlockX
+        public ulong KeyBlockX
         {
             get
             {
                 if (IsNull) return 0;
                 fixed (byte* pbyte = &bytes[8])
-                    return *((long*)pbyte);
+                    return *((ulong*)pbyte);
             }
             set
             {
                 fixed (byte* b = &SureBytes[8])
-                    *((long*)b) = value;
+                    *((ulong*)b) = value;
             }
         }
 
-        public long KeyBlockY
+        public ulong KeyBlockY
         {
             get
             {
                 if (IsNull) return 0;
                 fixed (byte* pbyte = &bytes[16])
-                    return *((long*)pbyte);
+                    return *((ulong*)pbyte);
             }
             set
             {
                 fixed (byte* b = &SureBytes[16])
-                    *((long*)b) = value;
+                    *((ulong*)b) = value;
             }
         }
 
-        public Ursn(long l)
+        public Ursn(ulong l)
         {
             bytes = new byte[24];
             fixed (byte* b = bytes)
             {
-                *((long*)b) = l;
+                *((ulong*)b) = l;
             }
         }
         public Ursn(string s)
@@ -84,15 +84,15 @@ namespace System.Uniques
           
         }
          
-        public Ursn(long x, long y, long z)
+        public Ursn(ulong x, ulong y, ulong z)
         {
             bytes = new byte[24];
 
             fixed (byte* n = bytes)
             {
-                *((long*)n) = x;
-                *((long*)&n[8]) = y;
-                *((long*)&n[16]) = z;
+                *((ulong*)n) = x;
+                *((ulong*)&n[8]) = y;
+                *((ulong*)&n[16]) = z;
             }
         }
         public Ursn(byte[] x, byte[] y, byte[] z)
@@ -101,11 +101,11 @@ namespace System.Uniques
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = x)                
-                    *((long*)n) = *((long*)s);
+                    *((ulong*)n) = *((ulong*)s);
                 fixed (byte* s = y)
-                    *((long*)(n + 8)) = *((long*)s);
+                    *((ulong*)(n + 8)) = *((ulong*)s);
                 fixed (byte* s = z)
-                    *((long*)(n + 16)) = *((long*)s);       
+                    *((ulong*)(n + 16)) = *((ulong*)s);       
             }
         }
         public Ursn(object x, object[] y, object[] z)
@@ -115,11 +115,11 @@ namespace System.Uniques
             fixed (byte* n = bytes)
             {
                 fixed(byte* s = x.UniqueBytes64())
-                    *((long*)n) = *((long*)s);
+                    *((ulong*)n) = *((ulong*)s);
                 fixed (byte* s = y.UniqueBytes64())
-                    *((long*)(n + 12)) = *((long*)s);
+                    *((ulong*)(n + 12)) = *((ulong*)s);
                 fixed (byte* s = z.UniqueBytes64())
-                    *((long*)(n + 16)) = *((long*)s);             
+                    *((ulong*)(n + 16)) = *((ulong*)s);             
             }
         }
 
@@ -214,7 +214,7 @@ namespace System.Uniques
             byte[] kbytes = new byte[8];
             fixed (byte* b = SureBytes)
             fixed (byte* k = kbytes)
-                *((long*)k) = *((long*)b);
+                *((ulong*)k) = *((ulong*)b);
             return kbytes;
         }
 
@@ -258,12 +258,12 @@ namespace System.Uniques
                 return *((int*)pbyte);
         }
 
-        public void SetUniqueKey(long value)
+        public void SetUniqueKey(ulong value)
         {
             UniqueKey = value;
         }
 
-        public long GetUniqueKey()
+        public ulong GetUniqueKey()
         {
             return UniqueKey;
         }
@@ -288,7 +288,7 @@ namespace System.Uniques
             return (int)(UniqueKey - g.UniqueKey);
         }
 
-        public bool Equals(long g)
+        public bool Equals(ulong g)
         {
             return (UniqueKey == g);
         }
@@ -373,12 +373,12 @@ namespace System.Uniques
             }
         }
 
-        public uint UniqueSeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ulong UniqueSeed { get => KeyBlockX; set => KeyBlockX = value; }
 
         public char[] ToHexTetraChars()
         {
             char[] pchchar = new char[32];
-            long pchblock;  
+            ulong pchblock;  
             int pchlength = 32;
             byte pchbyte;
             int idx = 0;
@@ -387,7 +387,7 @@ namespace System.Uniques
             {
                 fixed (byte* pbyte = &bytes[j * 6])
                 {
-                    pchblock = *((long*)pbyte);
+                    pchblock = *((ulong*)pbyte);
                 }
                 pchblock = pchblock & 0x0000ffffffffffffL;  //each block has 6 bytes
                 for (int i = 0; i < 8; i++)
@@ -411,10 +411,10 @@ namespace System.Uniques
             int pchlength = pchchar.Length;
             int idx = 0;
             byte pchbyte;
-            long pchblock = 0;
+            ulong pchblock = 0;
             int blocklength = 8;
-            int pchblock_int;
-            short pchblock_short;
+            uint pchblock_int;
+            ushort pchblock_short;
 
             for (int j = 0; j < 4; j++)
             {
@@ -426,20 +426,20 @@ namespace System.Uniques
                 {
                     pchbyte = (pchchar[idx]).ToHexTetraByte();
                     pchblock = pchblock << 6;
-                    pchblock = pchblock | (pchbyte & 0x3fL);
+                    pchblock = pchblock | (pchbyte & 0x3fUL);
                     idx--;
                 }
                 fixed (byte* pbyte = bytes)
                 {
                     if (j == 3) //ostatnie nalozenie - block3 przekracza o 2 bajty rozmiar bytes!!!! tych 2 bajty sa 0, ale uniknac ewentualne wejscia w pamiec poza bytes
                     {
-                        pchblock_short = (short)(pchblock & 0x00ffffL);
-                        pchblock_int = (int)(pchblock >> 16);
-                        *((long*)&pbyte[18]) = pchblock_short;
-                        *((long*)&pbyte[20]) = pchblock_int;
+                        pchblock_short = (ushort)(pchblock & 0x00ffffUL);
+                        pchblock_int = (uint)(pchblock >> 16);
+                        *((ulong*)&pbyte[18]) = pchblock_short;
+                        *((ulong*)&pbyte[20]) = pchblock_int;
                         break;
                     }
-                    *((long*)&pbyte[j * 6]) = pchblock;
+                    *((ulong*)&pbyte[j * 6]) = pchblock;
 
                 }
             }                                    
@@ -453,21 +453,21 @@ namespace System.Uniques
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    if (*((long*)&pbyte[i * 8]) != *((long*)&pbyte[i * 8]))
+                    if (*((ulong*)&pbyte[i * 8]) != *((ulong*)&pbyte[i * 8]))
                         return false;
                 }
             }
             return true;           
         }
 
-        public void SetUniqueSeed(uint seed)
+        public void SetUniqueSeed(ulong seed)
         {
-            throw new NotImplementedException();
+            KeyBlockX = seed;
         }
 
-        public uint GetUniqueSeed()
+        public ulong GetUniqueSeed()
         {
-            throw new NotImplementedException();
+            return KeyBlockX;
         }
     }
 }

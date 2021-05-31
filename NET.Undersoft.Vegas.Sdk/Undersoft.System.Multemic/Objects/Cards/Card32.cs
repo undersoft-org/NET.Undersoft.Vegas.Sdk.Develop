@@ -21,14 +21,14 @@ namespace System.Multemic
     [StructLayout(LayoutKind.Sequential)]
     public class Card32<V> : Card<V>
     {
-        private int _key;
+        private uint _key;
 
         public Card32()
         { }
         public Card32(object key, V value) : base(key, value)
         {
         }
-        public Card32(long key, V value) : base(key, value)
+        public Card32(ulong key, V value) : base(key, value)
         {
         }
         public Card32(V value) : base(value)
@@ -51,10 +51,10 @@ namespace System.Multemic
         public override void Set(ICard<V> card)
         {
             this.value = card.Value;
-            _key = (int)card.Key;
+            _key = (uint)card.Key;
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -65,14 +65,14 @@ namespace System.Multemic
 
         public override int GetHashCode()
         {
-            return _key;
+            return (int)_key;
         }
 
         public override int CompareTo(object other)
         {
-            return (_key - other.UniqueKey32());
+            return (int)(_key - other.UniqueKey32());
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -90,11 +90,11 @@ namespace System.Multemic
         {
             byte[] b = new byte[4];
             fixed (byte* s = b)
-                *(int*)s = _key;
+                *(uint*)s = _key;
             return b;
         }
 
-        public override long Key
+        public override ulong Key
         {
             get
             {
@@ -102,7 +102,7 @@ namespace System.Multemic
             }
             set
             {
-                _key = (int)value;
+                _key = (uint)value;
             }
         }
     }

@@ -8,7 +8,7 @@ using System.Multemic;
 
 namespace System.Deal
 {
-    public interface ITransferContext : ISerialBlock
+    public interface ITransferContext : ISerialBuffer
     {
         DealProtocol Protocol { get; set; }
         ProtocolMethod Method { get; set; }

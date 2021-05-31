@@ -91,8 +91,8 @@ namespace System.Instant.Treatments
                             fc.OrganizeRubric.RubricType == typeof(IUnique) ||
                             fc.OrganizeRubric.RubricType == typeof(string) ||
                             fc.OrganizeRubric.RubricType == typeof(DateTime) ?
-                            r[fc.OrganizeRubric.FigureFieldId].ComparableInt64(fc.OrganizeRubric.RubricType)                                    
-                                .Equals(Value.ComparableInt64(fc.OrganizeRubric.RubricType)) :
+                            r[fc.OrganizeRubric.FigureFieldId].ComparableUInt64(fc.OrganizeRubric.RubricType)                                    
+                                .Equals(Value.ComparableUInt64(fc.OrganizeRubric.RubricType)) :
                             r[fc.OrganizeRubric.FigureFieldId].ComparableDouble(fc.OrganizeRubric.RubricType)
                                  .Equals(Value.ComparableDouble(fc.OrganizeRubric.RubricType)) : 
                               false);
@@ -100,25 +100,25 @@ namespace System.Instant.Treatments
                         case OperandType.EqualOrMore:
                             ex = (r => r[fc.OrganizeRubric.FigureFieldId] != null ?
                              fc.OrganizeRubric.RubricType == typeof(IUnique) || fc.OrganizeRubric.RubricType == typeof(string) || fc.OrganizeRubric.RubricType == typeof(DateTime) ?
-                              r[fc.OrganizeRubric.FigureFieldId].ComparableInt64(fc.OrganizeRubric.RubricType) >= (Value.ComparableInt64(fc.OrganizeRubric.RubricType)) :
+                              r[fc.OrganizeRubric.FigureFieldId].ComparableUInt64(fc.OrganizeRubric.RubricType) >= (Value.ComparableUInt64(fc.OrganizeRubric.RubricType)) :
                             r[fc.OrganizeRubric.FigureFieldId].ComparableDouble(fc.OrganizeRubric.RubricType) >= (Value.ComparableDouble(fc.OrganizeRubric.RubricType)) : false);
                             break;
                         case OperandType.More:
                             ex = (r => r[fc.OrganizeRubric.FigureFieldId] != null ?
                              fc.OrganizeRubric.RubricType == typeof(IUnique) || fc.OrganizeRubric.RubricType == typeof(string) || fc.OrganizeRubric.RubricType == typeof(DateTime) ?
-                              r[fc.OrganizeRubric.FigureFieldId].ComparableInt64(fc.OrganizeRubric.RubricType) > (Value.ComparableInt64(fc.OrganizeRubric.RubricType)) :
+                              r[fc.OrganizeRubric.FigureFieldId].ComparableUInt64(fc.OrganizeRubric.RubricType) > (Value.ComparableUInt64(fc.OrganizeRubric.RubricType)) :
                             r[fc.OrganizeRubric.FigureFieldId].ComparableDouble(fc.OrganizeRubric.RubricType) > (Value.ComparableDouble(fc.OrganizeRubric.RubricType)) : false);
                             break;
                         case OperandType.EqualOrLess:
                             ex = (r => r[fc.OrganizeRubric.FigureFieldId] != null ?
                              fc.OrganizeRubric.RubricType == typeof(IUnique) || fc.OrganizeRubric.RubricType == typeof(string) || fc.OrganizeRubric.RubricType == typeof(DateTime) ?
-                              r[fc.OrganizeRubric.FigureFieldId].ComparableInt64(fc.OrganizeRubric.RubricType) <= (Value.ComparableInt64(fc.OrganizeRubric.RubricType)) :
+                              r[fc.OrganizeRubric.FigureFieldId].ComparableUInt64(fc.OrganizeRubric.RubricType) <= (Value.ComparableUInt64(fc.OrganizeRubric.RubricType)) :
                             r[fc.OrganizeRubric.FigureFieldId].ComparableDouble(fc.OrganizeRubric.RubricType) <= (Value.ComparableDouble(fc.OrganizeRubric.RubricType)) : false);
                             break;
                         case OperandType.Less:
                             ex = (r => r[fc.OrganizeRubric.FigureFieldId] != null ?
                              fc.OrganizeRubric.RubricType == typeof(IUnique) || fc.OrganizeRubric.RubricType == typeof(string) || fc.OrganizeRubric.RubricType == typeof(DateTime) ?
-                              r[fc.OrganizeRubric.FigureFieldId].ComparableInt64(fc.OrganizeRubric.RubricType) < (Value.ComparableInt64(fc.OrganizeRubric.RubricType)) :
+                              r[fc.OrganizeRubric.FigureFieldId].ComparableUInt64(fc.OrganizeRubric.RubricType) < (Value.ComparableUInt64(fc.OrganizeRubric.RubricType)) :
                             r[fc.OrganizeRubric.FigureFieldId].ComparableDouble(fc.OrganizeRubric.RubricType) < (Value.ComparableDouble(fc.OrganizeRubric.RubricType)) : false);
                             break;
                         default:

@@ -22,7 +22,7 @@ namespace System
 
         #region Methods
 
-        long UniquesAsKey();
+        ulong UniquesAsKey();
 
         int[] UniqueOrdinals();
 
@@ -36,9 +36,9 @@ namespace System
 
         IUnique Empty { get; }
 
-        long UniqueKey { get; set; }
+        ulong UniqueKey { get; set; }
 
-        uint UniqueSeed { get; set; }
+        ulong UniqueSeed { get; set; }
 
         #endregion
 

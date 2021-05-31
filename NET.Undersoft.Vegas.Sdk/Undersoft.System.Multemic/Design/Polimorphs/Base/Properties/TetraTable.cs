@@ -22,7 +22,7 @@ namespace System.Multemic.Basedeck
 
         }
 
-        public unsafe ICard<V>[] this[int id]
+        public unsafe ICard<V>[] this[uint id]
         {
             get
             {
@@ -34,7 +34,7 @@ namespace System.Multemic.Basedeck
             }
         }
 
-        public unsafe ICard<V> this[int id, int pos]
+        public unsafe ICard<V> this[uint id, uint pos]
         {
             get
             {
@@ -46,45 +46,41 @@ namespace System.Multemic.Basedeck
             }
         }
 
-        public unsafe ICard<V>[] this[long key]
+        public unsafe ICard<V>[] this[ulong key]
         {
             get
             {
-                ulong ukey = (ulong)key;
-                return this[(int)((ukey & 1) | ((ukey >> 62) & 2))];
+                return this[(uint)((key & 1) | ((key >> 62) & 2))];
             }
             set
             {
-                ulong ukey = (ulong)key;
-                this[(int)((ukey & 1) | ((ukey >> 62) & 2))] = value;
+                this[(uint)((key & 1) | ((key >> 62) & 2))] = value;
             }
         }
 
-        public unsafe ICard<V> this[long key, long size]
+        public unsafe ICard<V> this[ulong key, long size]
         {
             get
             {
-                ulong ukey = (ulong)key;
-                return this[(int)((ukey & 1) | ((ukey >> 62) & 2))]
-                                 [(int)(ukey % (uint)size)];
+                return this[(uint)((key & 1) | ((key >> 62) & 2))]
+                                 [(int)(key % (uint)size)];
             }
             set
             {
-                ulong ukey = (ulong)key;
-                this[(int)((ukey & 1) | ((ukey >> 62) & 2))]
-                                 [(int)(ukey % (uint)size)] = value;
+                this[(uint)((key & 1) | ((key >> 62) & 2))]
+                                 [(int)(key % (uint)size)] = value;
             }
         }
 
-        public static int GetId(long key)
+        public static int GetId(ulong key)
         {
             ulong ukey = (ulong)key;
             return (int)((ukey & 1) | ((ukey >> 62) & 2));
         }
 
-        public static int GetPosition(long key, long size)
+        public static int GetPosition(ulong key, long size)
         {
-            return (int)((ulong)key % (ulong)size);
+            return (int)(key % (ulong)size);
         }
        
         private ICard<V>[] EvenPositiveSize;

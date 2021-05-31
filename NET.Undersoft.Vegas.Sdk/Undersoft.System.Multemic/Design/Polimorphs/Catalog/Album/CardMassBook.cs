@@ -22,7 +22,7 @@ namespace System.Multemic
 
         protected ICard<V>[] list;
 
-        protected ICard<V> addNew(long key, V value)
+        protected ICard<V> createNew(ulong key, V value)
         {
             int id = count + removed;
             var newcard = NewCard(key, value);
@@ -30,7 +30,7 @@ namespace System.Multemic
             list[id] = newcard;
             return newcard;
         }
-        protected ICard<V> addNew(ICard<V> card)
+        protected ICard<V> createNew(ICard<V> card)
         {
             int id = count + removed;
             card.Index = id;
@@ -96,14 +96,14 @@ namespace System.Multemic
             throw new IndexOutOfRangeException("Index out of range");
         }
 
-        protected override   ICard<V> InnerPut(long key, V value)
+        protected override   ICard<V> InnerPut(ulong key, V value)
         {
             ulong pos = getPosition(key);    
             ICard<V> card = table[pos]; /// local for last removed item finded   
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(key, value);
+                card = createNew(key, value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -129,7 +129,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(key, value);
+                    var newcard = createNew(key, value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -140,13 +140,13 @@ namespace System.Multemic
         }
         protected override   ICard<V> InnerPut(V value)
         {
-            long key = __base_.UniqueKey(value, value.UniqueSeed);
+            ulong key = unique.Key(value, value.UniqueSeed);
             ulong pos = getPosition(key);
             ICard<V> card = table[pos]; /// local for last removed item finded   
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(key, value);
+                card = createNew(key, value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -172,7 +172,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(key, value);
+                    var newcard = createNew(key, value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -183,7 +183,7 @@ namespace System.Multemic
         }
         protected override   ICard<V> InnerPut(ICard<V> value)
         {
-            long key = value.Key;
+            ulong key = value.Key;
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
 
@@ -191,7 +191,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                card = addNew(value);
+                card = createNew(value);
                 table[pos] = card;
                 countIncrement();
                 return card;
@@ -216,7 +216,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    var newcard = addNew(value);
+                    var newcard = createNew(value);
                     card.Extent = newcard;
                     conflictIncrement();
                     return newcard;
@@ -225,7 +225,7 @@ namespace System.Multemic
             }
         }
 
-        protected override      bool InnerAdd(long key, V value)
+        protected override      bool InnerAdd(ulong key, V value)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key by size                           
             ulong pos = getPosition(key);
@@ -234,7 +234,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(key, value); 
+                table[pos] = createNew(key, value); 
                 countIncrement();
                 return true;
             }
@@ -260,7 +260,7 @@ namespace System.Multemic
                 if (card.Extent == null)
                 {
                     /// assign new card as extent reference and increase conflicts
-                    card.Extent = addNew(key, value);
+                    card.Extent = createNew(key, value);
                     conflictIncrement();
                     return true;
                 }
@@ -270,7 +270,7 @@ namespace System.Multemic
         }
         protected override      bool InnerAdd(V value)
         {
-            long key = __base_.UniqueKey(value, value.UniqueSeed);
+            ulong key = unique.Key(value, value.UniqueSeed);
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key by size                           
             ulong pos = getPosition(key);
 
@@ -278,7 +278,7 @@ namespace System.Multemic
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(key, value);
+                table[pos] = createNew(key, value);
                 countIncrement();
                 return true;
             }
@@ -304,7 +304,7 @@ namespace System.Multemic
                 if (card.Extent == null)
                 {
                     /// assign new card as extent reference and increase conflicts
-                    card.Extent = addNew(key, value);
+                    card.Extent = createNew(key, value);
                     conflictIncrement();
                     return true;
                 }
@@ -315,14 +315,14 @@ namespace System.Multemic
         protected override      bool InnerAdd(ICard<V> value)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size  
-            long key = value.Key;
+            ulong key = value.Key;
             ulong pos = getPosition(key);
 
             ICard<V> card = table[pos]; /// local for last removed item finded   
             // add in case when item doesn't exist and there is no conflict                                                      
             if (card == null)
             {
-                table[pos] = addNew(value);
+                table[pos] = createNew(value);
                 countIncrement();
                 return true;
             }
@@ -347,7 +347,7 @@ namespace System.Multemic
                 /// check that all conflicts was examinated and local card is the last one  
                 if (card.Extent == null)
                 {
-                    card.Extent = addNew(value);
+                    card.Extent = createNew(value);
                     conflictIncrement();
                     return true;
                 }
@@ -438,7 +438,7 @@ namespace System.Multemic
             if (capacity != size || count > 0)
             {
                 size = capacity;
-                maxId = capacity - 1;
+                maxId = (uint)(capacity - 1);
                 conflicts = 0;
                 removed = 0;
                 count = 0;
@@ -477,7 +477,7 @@ namespace System.Multemic
         {
             int finish = count;
             int _newsize = newsize; //+ (int)(newsize * REMOVED_PERCENT_LIMIT) + 10;
-            int newMaxId = _newsize - 1;
+            uint newMaxId = (uint)(_newsize - 1);
             ICard<V>[] newCardTable = EmptyCardTable(_newsize);
             if (removed != 0)
             {
@@ -497,12 +497,12 @@ namespace System.Multemic
             size = newsize;
         }
 
-        private void rehashAndReindex(ICard<V>[] newCardTable, ICard<V>[] newCardList, int newMaxId)
+        private void rehashAndReindex(ICard<V>[] newCardTable, ICard<V>[] newCardList, uint newMaxId)
         {
             int _conflicts = 0;
             int _counter = 0;
             int total = count + removed;
-            int _newMaxId = newMaxId;
+            uint _newMaxId = newMaxId;
             ICard<V>[] _newCardTable = newCardTable;
             ICard<V>[] _newCardList = newCardList;
             ICard<V> card = null;
@@ -547,11 +547,11 @@ namespace System.Multemic
             removed = 0;
         }
 
-        private void rehash(ICard<V>[] newCardTable, int newMaxId)
+        private void rehash(ICard<V>[] newCardTable, uint newMaxId)
         {
             int _conflicts = 0;
             int total = count + removed;
-            int _newMaxId = newMaxId;
+            uint _newMaxId = newMaxId;
             ICard<V>[] _newCardTable = newCardTable;
             ICard<V> card = null;
             ICard<V> mem = null;

@@ -94,9 +94,9 @@ namespace System.Labors
             set;
         }
 
-        public long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
+        public ulong UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
 
-        public uint UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.SetUniqueSeed(value); }
+        public ulong UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.SetUniqueSeed(value); }
 
         public void Elaborate(params object[] input)
         {
@@ -118,14 +118,7 @@ namespace System.Labors
         {
             return SerialCode.GetUniqueBytes();
         }
-        //public void SetUniqueKey(long value)
-        //{
-        //    SerialCode.UniqueKey = value;
-        //}
-        //public long GetUniqueKey()
-        //{
-        //    return SerialCode.UniqueKey();
-        //}
+
         public bool Equals(IUnique other)
         {
             return SerialCode.Equals(other);
@@ -133,16 +126,6 @@ namespace System.Labors
         public int CompareTo(IUnique other)
         {
             return SerialCode.CompareTo(other);
-        }
-
-        //public void SetUniqueSeed(uint seed)
-        //{
-        //    SerialCode.SetUniqueSeed(seed);
-        //}
-
-        //public uint GetUniqueSeed()
-        //{
-        //    return SerialCode.UniqueSeed;
-        //}
+        }       
     }
 }

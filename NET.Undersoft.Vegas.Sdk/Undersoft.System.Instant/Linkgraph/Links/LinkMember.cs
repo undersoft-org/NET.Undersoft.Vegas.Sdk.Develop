@@ -36,9 +36,8 @@ namespace System.Instant.Linking
         {                      
             Site = site;                    
             Link = link;
-            byte[] keybytes = new long[] { Unique.NewKey, link.UniqueKey }.GetBytes();
-            UniqueKey = keybytes.UniqueKey64();
-            UniqueSeed = (uint)keybytes.UniqueKey32();
+            UniqueKey = Unique.NewKey.GetBytes().UniqueKey(link.UniqueKey);
+            UniqueSeed = link.UniqueKey;
         }
         public LinkMember(IFigures figures, Link link, LinkSite site) : this()
         {
@@ -47,9 +46,8 @@ namespace System.Instant.Linking
             Site = site;
             Rubrics = figures.Rubrics;                        
             Link = link;
-            byte[] keybytes = new long[] { figures.UniqueKey, link.UniqueKey }.GetBytes();
-            UniqueKey = keybytes.UniqueKey64();
-            UniqueSeed = (uint)keybytes.UniqueKey32();
+            UniqueKey = figures.GetUniqueBytes().UniqueKey(link.UniqueKey);
+            UniqueSeed = link.UniqueKey;
         }
 
         #endregion
@@ -60,7 +58,7 @@ namespace System.Instant.Linking
 
         public IFigures Figures { get; set; }
 
-        public long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
+        public ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public IRubrics KeyRubrics { get; set; }
 
@@ -70,7 +68,7 @@ namespace System.Instant.Linking
 
         public IRubrics Rubrics { get; set; }
 
-        public uint UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
+        public ulong UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
 
         public LinkSite Site { get; set; }
 

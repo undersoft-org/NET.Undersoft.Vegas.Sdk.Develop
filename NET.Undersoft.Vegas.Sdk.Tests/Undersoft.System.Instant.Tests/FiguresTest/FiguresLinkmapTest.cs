@@ -80,9 +80,7 @@ namespace System.Instant
      
             FiguresLinkmap_AddFigures_B_Helper_Test(figuresB);
 
-            Link fl = new Link(figuresA, figuresB);
-            fl.OriginKeys.Put(figuresA.Rubrics.KeyRubrics.AsValues());
-            fl.TargetKeys.Put(figuresB.Rubrics.KeyRubrics.AsValues());
+            Link fl = new Link(figuresA, figuresB, figuresA.Rubrics.KeyRubrics);
 
             // LinkBranches targetsA = figuresA.Linkmap.CreateTargetLinks();
 

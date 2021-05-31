@@ -18,7 +18,7 @@ namespace System.Multemic
     {
         #region Globals       
 
-        protected      ICard<V> createNew(long key, V value)
+        protected      ICard<V> createNew(ulong key, V value)
         {
             var newcard = NewCard(key, value);
             last.Next = newcard;
@@ -84,7 +84,7 @@ namespace System.Multemic
             return null;
         }
 
-        protected override ICard<V> InnerPut(long key, V value)
+        protected override ICard<V> InnerPut(ulong key, V value)
         {
             // get position index in table using own native alghoritm - submix                             
             ulong pos = getPosition(key);
@@ -128,7 +128,7 @@ namespace System.Multemic
         }
         protected override ICard<V> InnerPut(V value)
         {
-            long key = __base_.UniqueKey(value, value.UniqueSeed);
+            ulong key = unique.Key(value, value.UniqueSeed);
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
 
@@ -171,7 +171,7 @@ namespace System.Multemic
         }
         protected override ICard<V> InnerPut(ICard<V> value)
         {
-            long key = value.Key;
+            ulong key = value.Key;
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
 
@@ -213,7 +213,7 @@ namespace System.Multemic
             }
         }
 
-        protected override    bool InnerAdd(long key, V value)
+        protected override    bool InnerAdd(ulong key, V value)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
@@ -256,7 +256,7 @@ namespace System.Multemic
         }
         protected override    bool InnerAdd(V value)
         {
-            long key = __base_.UniqueKey(value, value.UniqueSeed);
+            ulong key = unique.Key(value, value.UniqueSeed);
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
 
@@ -299,7 +299,7 @@ namespace System.Multemic
         protected override    bool InnerAdd(ICard<V> value)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size  
-            long key = value.Key;
+            ulong key = value.Key;
             ulong pos = getPosition(key);
 
             ICard<V> card = table[pos]; /// local for last removed item finded   

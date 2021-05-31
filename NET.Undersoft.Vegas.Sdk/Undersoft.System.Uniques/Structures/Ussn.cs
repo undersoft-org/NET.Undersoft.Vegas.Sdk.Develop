@@ -12,32 +12,32 @@ namespace System.Uniques
     {
         private fixed byte bytes[24];              
 
-        public long    UniqueKey
+        public ulong    UniqueKey
         {
             get
             {
                 fixed (byte* pbyte = bytes)
-                    return *((long*)pbyte);
+                    return *((ulong*)pbyte);
 
             }
             set
             {
                 fixed (byte* b = bytes)
-                    *((long*)b) = value;
+                    *((ulong*)b) = value;
             }
         }
 
-        public uint    UniqueSeed
+        public ulong   UniqueSeed
         {
             get
             {
                 fixed (byte* pbyte = bytes)
-                    return *((uint*)(pbyte + 8));
+                    return *((uint*)(pbyte + 16));
             }
             set
             {
                 fixed (byte* b = bytes)
-                    *((uint*)(b + 8)) = value;
+                    *((ulong*)(b + 16)) = value;
             }
         }
 
@@ -109,11 +109,11 @@ namespace System.Uniques
             }
         }
 
-        public Ussn(long l)
+        public Ussn(ulong l)
         {
             fixed (byte* b = bytes)
             {
-                *((long*)b) = l;
+                *((ulong*)b) = l;
                 *((long*)(b + 16)) = DateTime.Now.ToBinary();
             }
         }
@@ -136,39 +136,39 @@ namespace System.Uniques
             }
         }
 
-        public Ussn(long key, uint seed)
+        public Ussn(ulong key, ulong seed)
         {
             fixed (byte* n = bytes)
             {
-                *((long*)n) = key;
-                *((uint*)n + 8) = seed;
+                *((ulong*)n) = key;
+                *((ulong*)n + 16) = seed;
             }
         }
-        public Ussn(byte[] key, uint seed)
+        public Ussn(byte[] key, ulong seed)
         {
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = key)
-                    *((long*)n) = *((long*)s);
-                *((uint*)(n + 8)) = seed;
+                    *((ulong*)n) = *((ulong*)s);
+                *((ulong*)(n + 16)) = seed;
             }
         }
-        public Ussn(object key, uint seed)
+        public Ussn(object key, ulong seed)
         {
             byte[] shah = key.UniqueBytes64();
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = shah)
-                    *((long*)n) = *((long*)s);
-                *((uint*)(n + 8)) = seed;
+                    *((ulong*)n) = *((ulong*)s);
+                *((ulong*)(n + 16)) = seed;
             }
         }
 
-        public Ussn(long key, short z, short y, short x, short flags, long time)
+        public Ussn(ulong key, short z, short y, short x, short flags, long time)
         {
             fixed (byte* n = bytes)
             {
-                *((long*)n) = key;
+                *((ulong*)n) = key;
                 *((short*)&n[8]) = z;
                 *((short*)&n[10]) = y;
                 *((short*)&n[12]) = x;
@@ -181,7 +181,7 @@ namespace System.Uniques
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = key)
-                    *((long*)n) = *((long*)s);
+                    *((ulong*)n) = *((ulong*)s);
                 *((short*)(n + 8)) = z;            
                 *((short*)(n + 10)) = y;
                 *((short*)(n + 12)) = x;
@@ -195,7 +195,7 @@ namespace System.Uniques
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = shah)
-                    *((long*)n) = *((long*)s);
+                    *((ulong*)n) = *((ulong*)s);
                 *((short*)(n + 8)) = z;
                 *((short*)(n + 10)) = y;
                 *((short*)(n + 12)) = x;
@@ -207,8 +207,8 @@ namespace System.Uniques
         {
             fixed (byte* n = bytes)
             {
-                *((long*)n) = key.UniqueKey64();
-               // *((long*)(n + 16)) = DateTime.Now.ToBinary();    //TODO: f.Tick - rok 2018.01.01 w tikach
+                *((ulong*)n) = key.UniqueKey64();
+               // *((ulong*)(n + 16)) = DateTime.Now.ToBinary();    //TODO: f.Tick - rok 2018.01.01 w tikach
             }
         }
 
@@ -317,64 +317,64 @@ namespace System.Uniques
             byte[] kbytes = new byte[8];
             fixed (byte* b = bytes)
             fixed (byte* k = kbytes)
-                *((long*)k) = *((long*)b);
+                *((ulong*)k) = *((ulong*)b);
             return kbytes;
         }
 
-        public void SetUniqueKey(long value)
+        public void SetUniqueKey(ulong value)
         {
             UniqueKey = value;
         }
 
-        public long GetUniqueKey()
+        public ulong GetUniqueKey()
         {
             return UniqueKey;
         }
 
-        public void SetUniqueSeed(uint seed)
+        public void SetUniqueSeed(ulong seed)
         {
             UniqueSeed = seed;
         }
 
-        public uint GetUniqueSeed()
+        public ulong GetUniqueSeed()
         {
             return UniqueSeed;
         }       
 
-        public long    ValueFromXYZ(int vectorZ, int vectorY)
+        public ulong    ValueFromXYZ(uint vectorZ, uint vectorY)
         {
             return (BlockZ * vectorZ * vectorY) + (BlockY * vectorY) + BlockX;
         }
-        public ushort[] ValueToXYZ(long vectorZ, long vectorY, long value)
+        public ushort[] ValueToXYZ(ulong vectorZ, ulong vectorY, ulong value)
         {
             if (value > 0)
             {
-                long vectorYZ = (vectorY * vectorZ);
-                long blockZdiv = (value / vectorYZ);
-                long blockYsub = value - (blockZdiv * vectorYZ);
-                long blockYdiv = blockYsub / vectorY;
-                long blockZ = (blockZdiv > 0 && (value % vectorYZ) > 0) ? blockZdiv + 1 : blockZdiv;
-                long blockY = (blockYdiv > 0 && (value % vectorY) > 0) ? blockYdiv + 1 : blockYdiv;
-                long blockX = value % vectorY;
+                ulong vectorYZ = (vectorY * vectorZ);
+                ulong blockZdiv = (value / vectorYZ);
+                ulong blockYsub = value - (blockZdiv * vectorYZ);
+                ulong blockYdiv = blockYsub / vectorY;
+                ulong blockZ = (blockZdiv > 0 && (value % vectorYZ) > 0) ? blockZdiv + 1 : blockZdiv;
+                ulong blockY = (blockYdiv > 0 && (value % vectorY) > 0) ? blockYdiv + 1 : blockYdiv;
+                ulong blockX = value % vectorY;
                 return new ushort[] { (ushort)blockZ, (ushort)blockY, (ushort)blockX };
             }
             return null;
         }
 
-        public short    GetFlags()
+        public ushort    GetFlags()
         {
             fixed (byte* pbyte = bytes)
-                return *((short*)(pbyte + 14));
+                return *((ushort*)(pbyte + 14));
         }
         public BitVector32 GetFlagsBits()
         {
             fixed (byte* pbyte = bytes)
-                return new BitVector32(*((short*)(pbyte + 14)));
+                return new BitVector32(*((ushort*)(pbyte + 14)));
         }
         public void SetFlagsBits(BitVector32 bits)
         {
             fixed (byte* pbyte = bytes)
-                *((short*)(pbyte + 14)) = *((short*)&bits);
+                *((ushort*)(pbyte + 14)) = *((ushort*)&bits);
         }
 
         public long     GetDateLong()
@@ -424,7 +424,7 @@ namespace System.Uniques
             return (int)(UniqueKey - g.UniqueKey());
         }
 
-        public bool Equals(long g)
+        public bool Equals(ulong g)
         {
             return (UniqueKey == g);
         }
@@ -507,7 +507,7 @@ namespace System.Uniques
         public char[] ToHexTetraChars()
         {
             char[] pchchar = new char[32];
-            long pchblock;  
+            ulong pchblock;  
             int pchlength = 32;
             byte pchbyte;
             int idx = 0;
@@ -516,7 +516,7 @@ namespace System.Uniques
             {
                 fixed (byte* pbyte = bytes)
                 {
-                    pchblock = *((long*)(pbyte + (j * 6)));
+                    pchblock = *((ulong*)(pbyte + (j * 6)));
                 }
                 pchblock = pchblock & 0x0000ffffffffffffL;  //each block has 6 bytes
                 for (int i = 0; i < 8; i++)
@@ -540,10 +540,10 @@ namespace System.Uniques
             int pchlength = pchchar.Length;
             int idx = 0;
             byte pchbyte;
-            long pchblock = 0;
+            ulong pchblock = 0;
             int blocklength = 8;
-            int pchblock_int;
-            short pchblock_short;
+            uint pchblock_int;
+            ushort pchblock_short;
 
             for (int j = 0; j < 4; j++)
             {
@@ -555,20 +555,20 @@ namespace System.Uniques
                 {
                     pchbyte = (pchchar[idx]).ToHexTetraByte();
                     pchblock = pchblock << 6;
-                    pchblock = pchblock | (pchbyte & 0x3fL);
+                    pchblock = pchblock | (pchbyte & 0x3fUL);
                     idx--;
                 }
                 fixed (byte* pbyte = bytes)
                 {
                     if (j == 3) //ostatnie nalozenie - block3 przekracza o 2 bajty rozmiar bytes!!!! tych 2 bajty sa 0, ale uniknac ewentualne wejscia w pamiec poza bytes
                     {
-                        pchblock_short = (short)(pchblock & 0x00ffffL);
-                        pchblock_int = (int)(pchblock >> 16);
-                        *((long*)&pbyte[18]) = pchblock_short;
-                        *((long*)&pbyte[20]) = pchblock_int;
+                        pchblock_short = (ushort)(pchblock & 0x00ffffUL);
+                        pchblock_int = (uint)(pchblock >> 16);
+                        *((ulong*)&pbyte[18]) = pchblock_short;
+                        *((ulong*)&pbyte[20]) = pchblock_int;
                         break;
                     }
-                    *((long*)&pbyte[j * 6]) = pchblock;
+                    *((ulong*)&pbyte[j * 6]) = pchblock;
 
                 }
             }                                    
@@ -576,20 +576,20 @@ namespace System.Uniques
 
         public bool EqualsContent(Ussn g)
         {
-            long pchblockA, pchblockB, pchblockC;
+            ulong pchblockA, pchblockB, pchblockC;
             bool result;
 
             if (g == null) return false;
             fixed (byte* pbyte = bytes)
             {
-                pchblockA = *((long*)&pbyte[0]);
-                pchblockB = *((long*)&pbyte[8]);
-                pchblockC = *((long*)&pbyte[16]);
+                pchblockA = *((ulong*)&pbyte[0]);
+                pchblockB = *((ulong*)&pbyte[8]);
+                pchblockC = *((ulong*)&pbyte[16]);
             }
 
-                result = (pchblockA  == * ((long*)&g.bytes[0]))
-                && (pchblockB == *((long*)&g.bytes[8]))
-                && (pchblockC == *((long*)&g.bytes[16]));
+                result = (pchblockA  == * ((ulong*)&g.bytes[0]))
+                && (pchblockB == *((ulong*)&g.bytes[8]))
+                && (pchblockC == *((ulong*)&g.bytes[16]));
             
             
             return result;

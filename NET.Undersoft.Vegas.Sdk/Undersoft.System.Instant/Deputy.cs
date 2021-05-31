@@ -53,7 +53,7 @@ namespace System.Instant
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
+        public ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public ParameterInfo[] Parameters { get; set; }
         public object[] ParameterValues { get; set; }
@@ -144,41 +144,25 @@ namespace System.Instant
 
         public byte[] GetBytes()
         {
-            return SerialCode.GetBytes();
+            return serialcode.GetBytes();
         }
         public byte[] GetUniqueBytes()
         {
-            return SerialCode.GetUniqueBytes();
-        }
-        public void SetUniqueKey(long value)
-        {
-            SerialCode.SetUniqueKey(value);
-        }
-        public long GetUniqueKey()
-        {
-            return SerialCode.UniqueKey;
+            return serialcode.GetUniqueBytes();
         }
         public bool Equals(IUnique other)
         {
-            return SerialCode.Equals(other);
+            return serialcode.Equals(other);
         }
         public int CompareTo(IUnique other)
         {
-            return SerialCode.CompareTo(other);
+            return serialcode.CompareTo(other);
         }
 
-        public uint UniqueSeed
+        public ulong UniqueSeed
         {
             get => serialcode.UniqueSeed;
             set => serialcode.UniqueSeed = value;
-        }
-        public void SetUniqueSeed(uint seed)
-        {
-            SerialCode.SetUniqueSeed(seed);
-        }
-        public uint GetUniqueSeed()
-        {
-            return SerialCode.GetUniqueSeed();
         }
 
         public object Execute(params object[] FunctionParameters)

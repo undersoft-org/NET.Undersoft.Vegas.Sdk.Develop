@@ -534,7 +534,7 @@ namespace System.Deal
             }
         }
 
-        #region Http Raw Stream Processing - TODO - After testing create HttpContext and HttpProcessor class, then move below there  
+        #region Http Binary Stream Processing - TODO - After testing create HttpContext and HttpProcessor class, then move below there  
 
         public StringBuilder RequestBuilder { get { return requestBuilder; } set { requestBuilder = value; } }
         public StringBuilder ResponseBuilder { get { return responseBuilder; } set { responseBuilder = value; } }

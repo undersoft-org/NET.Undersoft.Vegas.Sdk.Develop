@@ -48,7 +48,7 @@ namespace System.Instant
             else
                 serialcode.UniqueKey = RubricName.UniqueKey64();
         }
-        public MemberRubric(MemberRubric member) : this(member.RubricInfo != null ? (IMemberRubric)member.RubricInfo : (IMemberRubric)member)
+        public MemberRubric(MemberRubric member) : this(member.RubricInfo != null ? (IMemberRubric)member.RubricInfo : member)
         {
             FigureType = member.FigureType;
             FigureField = member.FigureField;
@@ -164,9 +164,9 @@ namespace System.Instant
 
         public IRubric SummaryPattern { get; set; }
 
-        public long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
+        public ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.SetUniqueKey(value); }
 
-        public uint UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
+        public ulong UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.SetUniqueSeed(value); }
 
         public IMemberRubric VirtualInfo => (IMemberRubric)RubricInfo;
 

@@ -16,19 +16,17 @@ namespace System.Instant.Linking
     using System.Multemic;
     using System.Uniques;
 
-    public interface ILinkmap
+    public interface ILinker
     {
         #region Properties
 
         Links Links { get; }
 
-        NodeCatalog Map { get; }
-
         #endregion
 
         #region Methods
 
-        void Truncate();
+        void Clear();
 
         IDeck<Link> GetLinks(IList<LinkMember> members);
 
@@ -46,32 +44,32 @@ namespace System.Instant.Linking
     }
 
     [Serializable]
-    public class Linkmap
+    public class Linker : ILinker
     {
         #region Fields
 
+        private static NodeCatalog map = new NodeCatalog(new Links(), PRIMES_ARRAY.Get(9));
+        
         private Links links;
-        private NodeCatalog map;
 
         #endregion
 
-        public Linkmap()
+        public Linker()
         {
             links = new Links();
-            map = new NodeCatalog(links, PRIMES_ARRAY.Get(9));
         }
 
         #region Properties
 
-        public Links Links { get => links; }
+        public static NodeCatalog Map { get => map; }
 
-        public NodeCatalog Map { get => map; }
+        public Links Links { get => links; } 
 
         #endregion
 
         #region Methods
 
-        public void Truncate()
+        public void Clear()
         {
             Map.Flush();
         }

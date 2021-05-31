@@ -40,7 +40,7 @@ namespace System.Instant
             return new Card64<IFigure>();
         }
 
-        public override ICard<IFigure> NewCard(long key, IFigure value)
+        public override ICard<IFigure> NewCard(ulong  key, IFigure value)
         {
             return new Card64<IFigure>(key, value);
         }

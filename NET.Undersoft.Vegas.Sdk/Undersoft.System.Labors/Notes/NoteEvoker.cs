@@ -98,9 +98,9 @@ namespace System.Labors
 
         public string SenderName { get; set; }
 
-        public new long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.UniqueKey = value; }
+        public new ulong UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
 
-        public uint UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.UniqueSeed = value; }
+        public ulong UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.SetUniqueSeed(value); }
 
         #endregion
 
@@ -141,7 +141,7 @@ namespace System.Labors
         //    SerialCode.SetUniqueSeed(seed);
         //}
 
-        //public long UniqueKey()
+        //public ulong UniqueKey()
         //{
         //    return SerialCode.UniqueKey();
         //}

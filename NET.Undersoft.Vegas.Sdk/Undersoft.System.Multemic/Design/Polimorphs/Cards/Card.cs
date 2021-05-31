@@ -30,8 +30,8 @@ using System.Runtime.CompilerServices;
 namespace System.Multemic
 {
     [StructLayout(LayoutKind.Sequential)]
-    public abstract class Card<V> : IEquatable<ICard<V>>, IEquatable<object>, IEquatable<long>, IComparable<object>, 
-                                    IComparable<long>, IComparable<ICard<V>>, ICard<V>
+    public abstract class Card<V> : IEquatable<ICard<V>>, IEquatable<object>, IEquatable<ulong>, IComparable<object>, 
+                                    IComparable<ulong>, IComparable<ICard<V>>, ICard<V>
     {       
         protected      int index = -1;
         protected     bool removed;
@@ -41,7 +41,7 @@ namespace System.Multemic
 
         public Card()
         { }
-        public Card(long key, V value)
+        public Card(ulong key, V value)
         {
             Set(key, value);
         }
@@ -61,12 +61,12 @@ namespace System.Multemic
         public int    Index { get => index; set => index = value; }
         public bool Removed { get => removed; set => removed = value; }
         
-        public abstract long Key { get; set; }
+        public abstract ulong Key { get; set; }
         
         public             V Value { get => value; set => this.value = value; }
 
         public abstract void Set(V value);     
-        public virtual  void Set(long key, V value)
+        public virtual  void Set(ulong key, V value)
         {
             this.value = value;
             Key = key;
@@ -82,7 +82,7 @@ namespace System.Multemic
         {
             return this.Equals(y.Key);
         }
-        public virtual bool Equals(long key)
+        public virtual bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -96,7 +96,7 @@ namespace System.Multemic
             return (int)(Key - other.UniqueKey);
         }
         public abstract int CompareTo(object other);
-        public virtual  int CompareTo(long key)
+        public virtual  int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -113,9 +113,9 @@ namespace System.Multemic
 
         public virtual IUnique Empty => throw new NotImplementedException();
 
-        public virtual long UniqueKey { get => Key; set => Key = value; }
+        public virtual ulong UniqueKey { get => Key; set => Key = value; }
 
-        public virtual uint UniqueSeed { get => 0; set => throw new NotImplementedException(); }
+        public virtual ulong UniqueSeed { get => 0; set => throw new NotImplementedException(); }
 
         public virtual Type GetUniqueType() { return this.GetType(); }
 
@@ -129,7 +129,7 @@ namespace System.Multemic
             return new object[] { Key };
         }
 
-        public virtual long UniquesAsKey()
+        public virtual ulong UniquesAsKey()
         {
             return Key;
         }

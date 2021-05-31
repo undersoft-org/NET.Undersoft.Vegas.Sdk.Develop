@@ -17,7 +17,7 @@ namespace System.Instant.Mathline
     [StructLayout(LayoutKind.Sequential)]
     public class MathRubricCard : Card<MathRubric>
     {
-        private long _key;
+        private ulong _key;
 
         public MathRubricCard()
         { }
@@ -50,7 +50,7 @@ namespace System.Instant.Mathline
             _key = card.Key;     
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return _key == key;
         }
@@ -68,7 +68,7 @@ namespace System.Instant.Mathline
         {
             return (int)(_key - other.UniqueKey64());
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(_key - key);
         }
@@ -86,11 +86,11 @@ namespace System.Instant.Mathline
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)
-                *(long*)s = _key;
+                *(ulong*)s = _key;
             return b;
         }
 
-        public override long Key
+        public override ulong Key
         {
             get
             {

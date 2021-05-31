@@ -22,7 +22,7 @@ namespace System.Instant
     [StructLayout(LayoutKind.Sequential)]
     public class NodeCard : Card<BranchDeck>, IEquatable<BranchDeck>, IComparable<BranchDeck>
     {
-        private long _key;
+        private ulong _key;
 
         public NodeCard()
         {
@@ -30,7 +30,7 @@ namespace System.Instant
         public NodeCard(object key, BranchDeck value) : base(key, value)
         {
         }
-        public NodeCard(long key, BranchDeck value) : base(key, value)
+        public NodeCard(ulong key, BranchDeck value) : base(key, value)
         {
         }
         public NodeCard(BranchDeck value) : base(value)
@@ -52,7 +52,7 @@ namespace System.Instant
             set => this.value[propertyName] = (ICard<IFigure>)value;
         }
 
-        public override void Set(long key, BranchDeck value)
+        public override void Set(ulong key, BranchDeck value)
         {
             this.value = value;
             Member = value.Member;
@@ -76,7 +76,7 @@ namespace System.Instant
             this.Key = card.Key;
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -98,7 +98,7 @@ namespace System.Instant
         {
             return (int)(Key - other.UniqueKey64());
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -131,20 +131,20 @@ namespace System.Instant
                 return this.value[0].UniqueValues();
             return null;
         }
-        public override long UniquesAsKey()
+        public override ulong UniquesAsKey()
         {
             if (this.value.Count > 0)
                 return this.value[0].UniquesAsKey();
             return 0;
         }
 
-        public override long Key
+        public override ulong Key
         {
             get => _key;
             set => _key = value;
         }
 
-        public override long UniqueKey
+        public override ulong UniqueKey
         {
             get => value.UniqueKey;
             set => this.value.UniqueKey = value;
@@ -156,7 +156,7 @@ namespace System.Instant
 
         public override IUnique Empty => this.value.Empty;
 
-        public override uint UniqueSeed
+        public override ulong UniqueSeed
         { get => Member.UniqueSeed; set => Member.UniqueSeed = value; }
 
         public override int CompareTo(IUnique other)

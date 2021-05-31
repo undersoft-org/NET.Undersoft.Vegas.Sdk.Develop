@@ -21,14 +21,14 @@ namespace System.Multemic
     [StructLayout(LayoutKind.Sequential)]
     public class MassCard<V> : Card<V> where V : IUnique
     {
-        private long _key;
+        private ulong _key;
 
         public MassCard()
         { }
         public MassCard(object key, V value) : base(key, value)
         {
         }
-        public MassCard(long key, V value) : base(key, value)
+        public MassCard(ulong key, V value) : base(key, value)
         {
         }
         public MassCard(V value) : base(value)
@@ -54,7 +54,7 @@ namespace System.Multemic
             _key = card.Key;
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -65,14 +65,14 @@ namespace System.Multemic
 
         public override int GetHashCode()
         {
-            return Key.UniqueKey32();
+            return (int)Key.UniqueKey32();
         }
 
         public override int CompareTo(object other)
         {
             return (int)(Key - other.UniqueKey64(UniqueSeed));
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -90,11 +90,11 @@ namespace System.Multemic
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)
-                *(long*)s = _key;
+                *(ulong*)s = _key;
             return b;
         }
 
-        public override long Key
+        public override ulong Key
         {
             get
             {
@@ -106,7 +106,7 @@ namespace System.Multemic
             }
         }
 
-        public override uint UniqueSeed
+        public override ulong UniqueSeed
         {
             get => this.value.UniqueSeed;
             set => this.value.UniqueSeed = value;

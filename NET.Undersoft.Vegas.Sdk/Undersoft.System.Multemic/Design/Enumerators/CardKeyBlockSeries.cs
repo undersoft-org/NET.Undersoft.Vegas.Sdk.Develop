@@ -16,7 +16,7 @@ using System.Multemic.Basedeck;
 namespace System.Multemic
 {      
 
-    public class CardUniqueKeySeries<V> : IEnumerator<long>, IEnumerator
+    public class CardUniqueKeySeries<V> : IEnumerator<ulong>, IEnumerator
     {
         private IDeck<V> map;
 
@@ -28,12 +28,12 @@ namespace System.Multemic
 
         public ICard<V> Entry;
 
-        public long Key { get { return Entry.Key; } }
+        public ulong Key { get { return Entry.Key; } }
         public V Value { get { return Entry.Value; } }
 
         public object Current => Entry.Key;
        
-        long IEnumerator<long>.Current  => Entry.Key; 
+        ulong IEnumerator<ulong>.Current  => Entry.Key; 
 
         public bool MoveNext()
         {

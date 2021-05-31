@@ -48,7 +48,7 @@ namespace System.Multemic
             return new Card32<V>();
         }
 
-        public override ICard<V> NewCard(long key, V value)
+        public override ICard<V> NewCard(ulong key, V value)
         {
             return new Card32<V>(key, value);
         }

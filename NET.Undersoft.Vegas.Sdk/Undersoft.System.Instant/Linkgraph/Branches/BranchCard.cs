@@ -29,7 +29,7 @@ namespace System.Instant
         {
             Member = member;
         }
-        public BranchCard(long key, ICard<IFigure> value, LinkMember member) : base(key, value)
+        public BranchCard(ulong key, ICard<IFigure> value, LinkMember member) : base(key, value)
         {
             Member = member;
         }
@@ -67,7 +67,7 @@ namespace System.Instant
             this.value = card.Value;
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -89,7 +89,7 @@ namespace System.Instant
         {
             return (int)(Key - other.UniqueKey64());
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -120,18 +120,18 @@ namespace System.Instant
         {
             return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray();
         }
-        public override     long UniquesAsKey()
+        public override     ulong UniquesAsKey()
         {
             return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray().UniqueKey();
         }
 
-        public override long Key
+        public override ulong Key
         {
             get => value.UniqueKey;
             set => this.value.UniqueKey = value;
         }
 
-        public override long UniqueKey
+        public override ulong UniqueKey
         {
             get => value.UniqueKey;
             set => this.value.UniqueKey = value;

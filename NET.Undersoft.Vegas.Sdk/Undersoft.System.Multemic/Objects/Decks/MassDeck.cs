@@ -28,7 +28,7 @@ namespace System.Multemic
             return new MassCard<V>();
         }
 
-        public override ICard<V> NewCard(long key, V value)
+        public override ICard<V> NewCard(ulong key, V value)
         {
             return new MassCard<V>(key, value);
         }

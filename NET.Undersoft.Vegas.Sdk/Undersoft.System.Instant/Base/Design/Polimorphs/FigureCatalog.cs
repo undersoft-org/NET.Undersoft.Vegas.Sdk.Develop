@@ -36,7 +36,7 @@ namespace System.Instant
             return new FigureCard(this);
         }
 
-        public override ICard<IFigure> NewCard(long key, IFigure value)
+        public override ICard<IFigure> NewCard(ulong  key, IFigure value)
         {
             return new FigureCard(key, value, this);
         }
@@ -84,7 +84,7 @@ namespace System.Instant
                 return newCard;
             return null;
         }
-        public override ICard<IFigure> AddNew(long key)
+        public override ICard<IFigure> AddNew(ulong key)
         {
             ICard<IFigure> newCard = NewCard(key, NewFigure());
             if (InnerAdd(newCard))
@@ -93,7 +93,7 @@ namespace System.Instant
         }
         public override ICard<IFigure> AddNew(object key)
         {
-            ICard<IFigure> newCard = NewCard(__base_.UniqueKey(key), NewFigure());
+            ICard<IFigure> newCard = NewCard(unique.Key(key), NewFigure());
             if (InnerAdd(newCard))
                 return newCard;
             return null;
@@ -113,7 +113,7 @@ namespace System.Instant
 
         public Func<IFigure, bool> Organizer { get; set; }
 
-        public Links Links { get; set; } = new Links();
+        public Linker Linker { get; set; } = new Linker();
 
         private Treatment treatment;
         public  Treatment Treatment
@@ -141,32 +141,13 @@ namespace System.Instant
             return SerialCode.GetUniqueBytes();
         }
 
-        public new long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
+        public new ulong UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
 
-        public uint UniqueSeed
+        public ulong UniqueSeed
         {
             get => SerialCode.UniqueSeed;
             set => SerialCode.SetUniqueSeed(value);
         }
-
-        //public void SetUniqueKey(long value)
-        //{
-        //    SerialCode.SetUniqueKey(value);
-        //}
-
-        //public long GetUniqueKey()
-        //{
-        //    return SerialCode.UniqueKey;
-        //}
-
-        //public void SetUniqueSeed(uint seed)
-        //{
-        //    SerialCode.SetUniqueSeed(seed);
-        //}
-        //public uint GetUniqueSeed()
-        //{
-        //    return SerialCode.GetUniqueSeed();
-        //}
 
         public bool Equals(IUnique other)
         {
@@ -190,7 +171,7 @@ namespace System.Instant
         {
             throw new NotImplementedException();
         }
-        public int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
+        public int Serialize(ISerialBuffer buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
@@ -199,7 +180,7 @@ namespace System.Instant
         {
             throw new NotImplementedException();
         }
-        public object Deserialize(ref object block, SerialFormat serialFormat = SerialFormat.Binary)
+        public object Deserialize(ISerialBuffer buffer, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }

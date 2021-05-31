@@ -96,7 +96,7 @@ namespace System.Instant.Mathline
         {
             return new MathRubricCard(key, value);
         }
-        public override  ICard<MathRubric> NewCard(long key, MathRubric value)
+        public override  ICard<MathRubric> NewCard(ulong key, MathRubric value)
         {
             return new MathRubricCard(key, value);
         }

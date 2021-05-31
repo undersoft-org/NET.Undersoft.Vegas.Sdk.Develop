@@ -58,16 +58,16 @@ namespace System.Deal
         public int Serialize(Stream tostream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.SetRaw(tostream);
+                return this.SetBinary(tostream);
             else if (serialFormat == SerialFormat.Json)
                 return this.SetJson(tostream);
             else
                 return -1;
         }
-        public int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
+        public int Serialize(ISerialBuffer buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.SetRaw(buffor);
+                return this.SetBinary(buffor);
             else if (serialFormat == SerialFormat.Json)
                 return this.SetJson(buffor);
             else
@@ -77,18 +77,18 @@ namespace System.Deal
         public object Deserialize(Stream fromstream, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.GetRaw(fromstream);
+                return this.GetBinary(fromstream);
             else if (serialFormat == SerialFormat.Json)
                 return this.GetJson(fromstream);
             else
                 return -1;
         }
-        public object Deserialize(ref object fromarray, SerialFormat serialFormat = SerialFormat.Binary)
+        public object Deserialize(ISerialBuffer buffer, SerialFormat serialFormat = SerialFormat.Binary)
         {
             if (serialFormat == SerialFormat.Binary)
-                return this.GetRaw(ref fromarray);
+                return this.GetBinary(buffer);
             else if (serialFormat == SerialFormat.Json)
-                return this.GetJson(ref fromarray);
+                return this.GetJson(buffer);
             else
                 return -1;
         }
@@ -116,27 +116,27 @@ namespace System.Deal
         #endregion
     }
 
-    public static class RawMessage
+    public static class BinaryMessage
     {
-        public static int SetRaw(this DealMessage bank, Stream tostream)
+        public static int SetBinary(this DealMessage bank, Stream tostream)
         {
             if (tostream == null) tostream = new MemoryStream();
             BinaryFormatter binform = new BinaryFormatter();
             binform.Serialize(tostream, bank);
             return (int)tostream.Length;
         }
-        public static int SetRaw(this DealMessage bank, ISerialBlock tostream)
+        public static int SetBinary(this DealMessage bank, ISerialBuffer buffer)
         {
-            int offset = tostream.BlockOffset;
+            int offset = buffer.BlockOffset;
             MemoryStream ms = new MemoryStream();
             ms.Write(new byte[offset], 0, offset);
             BinaryFormatter binform = new BinaryFormatter();
             binform.Serialize(ms, bank);
-            tostream.SerialBlock = ms.ToArray();
+            buffer.SerialBlock = ms.ToArray();
             ms.Dispose();
-            return tostream.SerialBlock.Length;
+            return buffer.SerialBlock.Length;
         }
-        public static DealMessage GetRaw(this DealMessage bank, Stream fromstream)
+        public static DealMessage GetBinary(this DealMessage bank, Stream fromstream)
         {
             try
             {
@@ -148,11 +148,11 @@ namespace System.Deal
                 return null;
             }
         }
-        public static DealMessage GetRaw(this DealMessage bank, ref object fromarray)
+        public static DealMessage GetBinary(this DealMessage bank, ISerialBuffer buffer)
         {
             try
             {
-                MemoryStream ms = new MemoryStream((byte[])fromarray);
+                MemoryStream ms = new MemoryStream(buffer.DeserialBlock);
                 BinaryFormatter binform = new BinaryFormatter();
                 DealMessage _bank = (DealMessage)binform.Deserialize(ms);
                 ms.Dispose();
@@ -178,10 +178,10 @@ namespace System.Deal
             binwriter.Write(tmsg.SetJsonString());
             return (int)tostream.Length;
         }
-        public static int SetJson(this DealMessage tmsg, ISerialBlock buffor)
+        public static int SetJson(this DealMessage tmsg, ISerialBuffer buffer)
         {
-            buffor.SerialBlock = Encoding.UTF8.GetBytes(tmsg.SetJsonString());
-            return buffor.SerialBlock.Length;
+            buffer.SerialBlock = Encoding.UTF8.GetBytes(tmsg.SetJsonString());
+            return buffer.SerialBlock.Length;
         }
 
         public static string SetJsonString(this DealMessage tmsg)
@@ -284,33 +284,26 @@ namespace System.Deal
                 return null;
             }
         }
-        public static DealMessage GetJson(this DealMessage tmsg, ref object fromarray)
+        public static DealMessage GetJson(this DealMessage tmsg, ISerialBuffer buffer)
         {
             try
             {
                 DealMessage trs = null;
-                if (fromarray is String)
-                {
-                    trs = tmsg.GetJsonObject((String)fromarray)["DealMessage"];
-                }
-                else
-                {
-                    byte[] _fromarray = (byte[])fromarray;
-                    StringBuilder sb = new StringBuilder();
 
-                    sb.Append(_fromarray.ToChars(CharEncoding.UTF8));
-                    trs = tmsg.GetJsonObject(sb.ToString())["DealMessage"];
+                byte[] _fromarray = buffer.DeserialBlock;
+                StringBuilder sb = new StringBuilder();
 
-                    fromarray = null;
-                    _fromarray = null;
-                    sb = null;
-                }
+                sb.Append(_fromarray.ToChars(CharEncoding.UTF8));
+                trs = tmsg.GetJsonObject(sb.ToString())["DealMessage"];
+
+                _fromarray = null;
+                sb = null;
                 return trs;
             }
             catch (Exception ex)
             {
                 return null;
-            }           
+            }
         }
     }
 }

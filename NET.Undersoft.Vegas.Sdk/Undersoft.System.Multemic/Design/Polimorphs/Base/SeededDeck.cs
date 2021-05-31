@@ -17,7 +17,7 @@ using System.Extract;
  *********************************************************************************/
 namespace System.Multemic.Basedeck
 {
-    public abstract class SeededDeck<V> : Uniqueness, ICollection<V>, IList<V>, IMultiDeck<V>, ICollection<ICard<V>>, IList<ICard<V>>,
+    public abstract class SeededDeck<V> : Uniqueness, ICollection<V>, IList<V>, IMassDeck<V>, ICollection<ICard<V>>, IList<ICard<V>>,
                                                       ICollection<IUnique<V>>, IProducerConsumerCollection<V>, IDisposable where V : IUnique
     {
         #region Globals       
@@ -28,7 +28,8 @@ namespace System.Multemic.Basedeck
 
         protected ICard<V> first, last;
         protected ICard<V>[] table;
-        protected int count, conflicts, removed, minSize, size, maxId;     
+        protected int count, conflicts, removed, minSize, size;
+        protected uint maxId;     
         
         protected int nextSize()
         {          
@@ -79,7 +80,7 @@ namespace System.Multemic.Basedeck
         {
             size = capacity;
             minSize = capacity;
-            maxId = capacity - 1;
+            maxId = (uint)(size - 1);
             table = EmptyCardTable(capacity);
             first = EmptyCard();
             last = first;
@@ -134,7 +135,7 @@ namespace System.Multemic.Basedeck
             get => GetCard(index).Value;
             set => GetCard(index).Value = value;
         }
-        protected                   V this[long hashkey]
+        protected                   V this[ulong hashkey]
         {
             get { return InnerGet(hashkey); }
             set { InnerPut(hashkey, value); }
@@ -146,7 +147,7 @@ namespace System.Multemic.Basedeck
                 if (key is IUnique)
                 {
                     IUnique ukey = (IUnique)key;
-                    return InnerGet(__base_.UniqueKey(ukey, ukey.UniqueSeed));
+                    return InnerGet(unique.Key(ukey, ukey.UniqueSeed));
                 }
                 else
                     throw new NotSupportedException();
@@ -156,28 +157,28 @@ namespace System.Multemic.Basedeck
                 if (key is IUnique)
                 {
                     IUnique ukey = (IUnique)key;
-                    InnerPut(__base_.UniqueKey(ukey, ukey.UniqueSeed), value);
+                    InnerPut(unique.Key(ukey, ukey.UniqueSeed), value);
                 }
                 else
                     throw new NotSupportedException();
             }
         }
-        public virtual              V this[object key, uint seed]
+        public virtual              V this[object key, ulong seed]
         {
-            get { return InnerGet(__base_.UniqueKey(key, seed)); }
-            set { InnerPut(__base_.UniqueKey(key, seed), value); }
+            get { return InnerGet(unique.Key(key, seed)); }
+            set { InnerPut(unique.Key(key, seed), value); }
         }
-        public virtual              V this[IUnique key, uint seed]
+        public virtual              V this[IUnique key, ulong seed]
         {
-            get { return InnerGet(__base_.UniqueKey(key, seed)); }
-            set { InnerPut(__base_.UniqueKey(key, seed), value); }
+            get { return InnerGet(unique.Key(key, seed)); }
+            set { InnerPut(unique.Key(key, seed), value); }
         }
 
         #endregion
 
         #region Get
 
-        protected virtual         V InnerGet(long key)
+        protected virtual         V InnerGet(ulong key)
         {
             ICard<V> mem = table[getPosition(key)];
 
@@ -194,7 +195,7 @@ namespace System.Multemic.Basedeck
 
             return default(V);
         }
-        public virtual            V Get(long key)
+        public virtual            V Get(ulong key)
         {
             return InnerGet(key);
         }
@@ -203,25 +204,25 @@ namespace System.Multemic.Basedeck
             if (key is IUnique)
             {
                 IUnique ukey = (IUnique)key;
-                return InnerGet(__base_.UniqueKey(ukey, ukey.UniqueSeed));
+                return InnerGet(unique.Key(ukey, ukey.UniqueSeed));
             }
             else
                 throw new NotSupportedException();
         }
-        public virtual            V Get(object key, uint seed)
+        public virtual            V Get(object key, ulong seed)
         {
-            return InnerGet(__base_.UniqueKey(key, seed));
+            return InnerGet(unique.Key(key, seed));
         }
         public virtual            V Get(IUnique key)
         {
-            return InnerGet(__base_.UniqueKey(key, key.UniqueSeed));
+            return InnerGet(unique.Key(key, key.UniqueSeed));
         }
         public virtual            V Get(IUnique<V> key)
         {
-            return InnerGet(__base_.UniqueKey(key, key.UniqueSeed));
+            return InnerGet(unique.Key(key, key.UniqueSeed));
         }
 
-        protected virtual      bool InnerTryGet(long key, out ICard<V> output)
+        protected virtual      bool InnerTryGet(ulong key, out ICard<V> output)
         {
             output = null;
             ICard<V> mem = table[getPosition(key)];
@@ -240,7 +241,7 @@ namespace System.Multemic.Basedeck
             }
             return false;
         }
-        public virtual         bool TryGet(long key, out ICard<V> output)
+        public virtual         bool TryGet(ulong key, out ICard<V> output)
         {
             return InnerTryGet(key, out output);
         }
@@ -249,7 +250,7 @@ namespace System.Multemic.Basedeck
             if (key is IUnique)
             {
                 IUnique ukey = (IUnique)key;
-                return InnerTryGet(__base_.UniqueKey(ukey, ukey.UniqueSeed), out output);
+                return InnerTryGet(unique.Key(ukey, ukey.UniqueSeed), out output);
             }
             else
                 throw new NotSupportedException();           
@@ -261,7 +262,7 @@ namespace System.Multemic.Basedeck
                 output = default(V);
                 ICard<V> card = null;
                 IUnique ukey = (IUnique)key;
-                if(InnerTryGet(__base_.UniqueKey(ukey, ukey.UniqueSeed), out card))
+                if(InnerTryGet(unique.Key(ukey, ukey.UniqueSeed), out card))
                 {
                     output = card.Value;
                     return true;
@@ -271,22 +272,22 @@ namespace System.Multemic.Basedeck
             else
                 throw new NotSupportedException();          
         }
-        public virtual         bool TryGet(object key, uint seed, out ICard<V> output)
+        public virtual         bool TryGet(object key, ulong seed, out ICard<V> output)
         {
-            return InnerTryGet(__base_.UniqueKey(key, seed), out output);
+            return InnerTryGet(unique.Key(key, seed), out output);
         }
-        public virtual         bool TryGet(object key, uint seed, out V output)
+        public virtual         bool TryGet(object key, ulong seed, out V output)
         {
             output = default(V);
             ICard<V> card = null;
-            if (InnerTryGet(__base_.UniqueKey(key, seed), out card))
+            if (InnerTryGet(unique.Key(key, seed), out card))
             {
                 output = card.Value;
                 return true;
             }
             return false;
         }
-        public virtual         bool TryGet(long key, out V output)
+        public virtual         bool TryGet(ulong key, out V output)
         {
             ICard<V> card;
             if(InnerTryGet(key, out card))
@@ -298,7 +299,7 @@ namespace System.Multemic.Basedeck
             return false;
         }
 
-        protected virtual   ICard<V> InnerGetCard(long key)
+        protected virtual   ICard<V> InnerGetCard(ulong key)
         {
             ICard<V> mem = table[getPosition(key)];
 
@@ -315,7 +316,7 @@ namespace System.Multemic.Basedeck
 
             return null;
         }
-        public virtual      ICard<V> GetCard(long key)
+        public virtual      ICard<V> GetCard(ulong key)
         {
             return             InnerGetCard(key);
         }
@@ -324,14 +325,14 @@ namespace System.Multemic.Basedeck
             if (key is IUnique)
             {
                 IUnique ukey = (IUnique)key;
-                return InnerGetCard(__base_.UniqueKey(ukey, ukey.UniqueSeed));
+                return InnerGetCard(unique.Key(ukey, ukey.UniqueSeed));
             }
             else
                 throw new NotSupportedException();
         }
-        public virtual      ICard<V> GetCard(object key, uint seed)
+        public virtual      ICard<V> GetCard(object key, ulong seed)
         {
-            return InnerGetCard(__base_.UniqueKey(key, seed));
+            return InnerGetCard(unique.Key(key, seed));
         }
         public abstract     ICard<V> GetCard(int index);
 
@@ -339,14 +340,14 @@ namespace System.Multemic.Basedeck
 
         #region Put
 
-        protected virtual      ICard<V> InnerPut(long key, uint seed, V value)
+        protected virtual      ICard<V> InnerPut(ulong key, ulong seed, V value)
         {
             value.UniqueSeed = seed;
             value.UniqueKey = key;
             return InnerPut(value);
         }
-        protected abstract     ICard<V> InnerPut(long key, V value);
-        protected virtual      ICard<V> InnerPut(V value, uint seed)
+        protected abstract     ICard<V> InnerPut(ulong key, V value);
+        protected virtual      ICard<V> InnerPut(V value, ulong seed)
         {
             value.UniqueSeed = seed;
             return InnerPut(value);
@@ -354,28 +355,28 @@ namespace System.Multemic.Basedeck
         protected abstract     ICard<V> InnerPut(V value);
         protected abstract     ICard<V> InnerPut(ICard<V> value);
 
-        public virtual              ICard<V> Put(long key, object value)
+        public virtual              ICard<V> Put(ulong key, object value)
         {
             return InnerPut(key, (V)value);
         }
-        public virtual              ICard<V> Put(long key, V value)
+        public virtual              ICard<V> Put(ulong key, V value)
         {
             return InnerPut(key, value);
         }
         public virtual              ICard<V> Put(object key, V value)
         {
-           return InnerPut(__base_.UniqueKey(key, value.UniqueSeed), value);
+           return InnerPut(unique.Key(key, value.UniqueSeed), value);
         }
-        public virtual              ICard<V> Put(object key, uint seed, V value)
+        public virtual              ICard<V> Put(object key, ulong seed, V value)
         {
-            return InnerPut(__base_.UniqueKey(key, seed), seed, value);
+            return InnerPut(unique.Key(key, seed), seed, value);
         }
-        public virtual              ICard<V> Put(object key, uint seed,  object value)
+        public virtual              ICard<V> Put(object key, ulong seed,  object value)
         {
             if (value is V)
             {
                 V o = (V)value;
-                return InnerPut(__base_.UniqueKey(key, seed), seed, (V)value);
+                return InnerPut(unique.Key(key, seed), seed, (V)value);
             }
             return null;
         }
@@ -414,11 +415,11 @@ namespace System.Multemic.Basedeck
                 Put(card);
         }
 
-        public virtual              ICard<V> Put(V value, uint seed)
+        public virtual              ICard<V> Put(V value, ulong seed)
         {
            return InnerPut(value, seed);
         }
-        public virtual                  void Put(object value, uint seed)
+        public virtual                  void Put(object value, ulong seed)
         {
             if (value is IUnique<V>)
             {
@@ -428,7 +429,7 @@ namespace System.Multemic.Basedeck
             else if (value is V)
                 Put((V)value, seed);
         }
-        public virtual                  void Put(IList<V> cards, uint seed)
+        public virtual                  void Put(IList<V> cards, ulong seed)
         {
             int c = cards.Count;
             for (int i = 0; i < c; i++)
@@ -436,14 +437,14 @@ namespace System.Multemic.Basedeck
                 InnerPut(cards[i], seed);
             }
         }
-        public virtual                  void Put(IEnumerable<V> cards, uint seed)
+        public virtual                  void Put(IEnumerable<V> cards, ulong seed)
         {
             foreach (V card in cards)
                 InnerPut(card, seed);
         }
         public virtual              ICard<V> Put(IUnique<V> value)
         {
-           return InnerPut(__base_.UniqueKey(value, value.UniqueSeed), value.Value);
+           return InnerPut(unique.Key(value, value.UniqueSeed), value.Value);
         }
         public virtual                  void Put(IList<IUnique<V>> value)
         {
@@ -463,36 +464,36 @@ namespace System.Multemic.Basedeck
 
         #region Add
 
-        protected virtual  bool InnerAdd(long key, uint seed, V value)
+        protected virtual  bool InnerAdd(ulong key, ulong seed, V value)
         {
             value.UniqueSeed = seed;
             value.UniqueKey = key;            
             return InnerAdd(value);
         }
-        protected abstract bool InnerAdd(long key, V value);
-        protected virtual  bool InnerAdd(V value, uint seed)
+        protected abstract bool InnerAdd(ulong key, V value);
+        protected virtual  bool InnerAdd(V value, ulong seed)
         {
             value.UniqueSeed = seed;
             return InnerAdd(value);
         }
         protected abstract bool InnerAdd(V value);
         protected abstract bool InnerAdd(ICard<V> value);
-        public virtual          bool Add(long key, object value)
+        public virtual          bool Add(ulong key, object value)
         {
             V o = (V)value;
             return InnerAdd(key, o.UniqueSeed, o);
         }
-        public virtual          bool Add(long key, V value)
+        public virtual          bool Add(ulong key, V value)
         {
             return InnerAdd(key, value);
         }
         public virtual          bool Add(object key, V value)
         {            
-           return InnerAdd(__base_.UniqueKey(key, value.UniqueSeed), value);            
+           return InnerAdd(unique.Key(key, value.UniqueSeed), value);            
         }
-        public virtual          bool Add(object key, uint seed, V value)
+        public virtual          bool Add(object key, ulong seed, V value)
         {
-            return InnerAdd(__base_.UniqueKey(key, seed), seed, value);
+            return InnerAdd(unique.Key(key, seed), seed, value);
         }
         public virtual          void Add(ICard<V> card)
         {
@@ -529,11 +530,11 @@ namespace System.Multemic.Basedeck
             foreach (V card in cards)
                 Add(card);
         }
-        public virtual          bool Add(V value, uint seed)
+        public virtual          bool Add(V value, ulong seed)
         {
            return InnerAdd(value, seed);
         }
-        public virtual          void Add(IList<V> cards, uint seed)
+        public virtual          void Add(IList<V> cards, ulong seed)
         {
             int c = cards.Count;
             for (int i = 0; i < c; i++)
@@ -542,14 +543,14 @@ namespace System.Multemic.Basedeck
 
             }
         }
-        public virtual          void Add(IEnumerable<V> cards, uint seed)
+        public virtual          void Add(IEnumerable<V> cards, ulong seed)
         {
             foreach (V card in cards)
                 Add(card, seed);
         }
         public virtual          void Add(IUnique<V> value)
         {
-            InnerAdd(__base_.UniqueKey(value, value.UniqueSeed), value.Value);
+            InnerAdd(unique.Key(value, value.UniqueSeed), value.Value);
         }
         public virtual          void Add(IList<IUnique<V>> value)
         {
@@ -569,7 +570,7 @@ namespace System.Multemic.Basedeck
         {
            return InnerAdd(value);
         }
-        public virtual       bool TryAdd(V value, uint seed)
+        public virtual       bool TryAdd(V value, ulong seed)
         {
             return InnerAdd(value, seed);
         }
@@ -581,7 +582,7 @@ namespace System.Multemic.Basedeck
                 return newCard;
             return null;
         }
-        public virtual ICard<V> AddNew(long key)
+        public virtual ICard<V> AddNew(ulong key)
         {
             ICard<V> newCard = NewCard(key, default(V));
             if (InnerAdd(newCard))
@@ -590,14 +591,14 @@ namespace System.Multemic.Basedeck
         }
         public virtual ICard<V> AddNew(object key)
         {
-            ICard<V> newCard = NewCard(__base_.UniqueKey(key), default(V));
+            ICard<V> newCard = NewCard(unique.Key(key), default(V));
             if (InnerAdd(newCard))
                 return newCard;
             return null;
         }
-        public virtual ICard<V> AddNew(object key, uint seed)
+        public virtual ICard<V> AddNew(object key, ulong seed)
         {
-            ICard<V> newCard = NewCard(__base_.UniqueKey(key, seed), default(V));
+            ICard<V> newCard = NewCard(unique.Key(key, seed), default(V));
             if (InnerAdd(newCard))
                 return newCard;
             return null;
@@ -607,7 +608,7 @@ namespace System.Multemic.Basedeck
         public virtual          void Insert(int index, ICard<V> item)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
-            long key = item.Key;
+            ulong key = item.Key;
             ulong pos = getPosition(key);
 
             ICard<V> card = table[pos]; /// local for last removed item finded   
@@ -667,11 +668,11 @@ namespace System.Multemic.Basedeck
         {
             return Add(key, value);
         }
-        public virtual       bool Enqueue(V value, uint seed)
+        public virtual       bool Enqueue(V value, ulong seed)
         {
             return InnerAdd(value, seed);
         }
-        public virtual       bool Enqueue(object key, uint seed, V value)
+        public virtual       bool Enqueue(object key, ulong seed, V value)
         {
             return Add(key, seed, value);
         }
@@ -723,7 +724,7 @@ namespace System.Multemic.Basedeck
             if (capacity != size || count > 0)
             {
                 size = capacity;
-                maxId = capacity - 1;
+                maxId = (uint)(capacity - 1);
                 conflicts = 0;
                 removed = 0;
                 count = 0;
@@ -761,7 +762,7 @@ namespace System.Multemic.Basedeck
 
         #region Contains
 
-        protected bool      InnerContainsKey(long key)
+        protected bool      InnerContainsKey(ulong key)
         {
             ICard<V> mem = table[getPosition(key)];
 
@@ -779,19 +780,19 @@ namespace System.Multemic.Basedeck
         }
         public virtual      bool ContainsKey(object key)
         {
-            return InnerContainsKey(__base_.UniqueKey(key));
+            return InnerContainsKey(unique.Key(key));
         }
-        public virtual      bool ContainsKey(object key, uint seed)
+        public virtual      bool ContainsKey(object key, ulong seed)
         {
-            return InnerContainsKey(__base_.UniqueKey(key, seed));
+            return InnerContainsKey(unique.Key(key, seed));
         }
-        public virtual      bool ContainsKey(long key)
+        public virtual      bool ContainsKey(ulong key)
         {
             return InnerContainsKey(key);
         }
         public virtual      bool ContainsKey(IUnique key)
         {
-            return InnerContainsKey(__base_.UniqueKey(key));
+            return InnerContainsKey(unique.Key(key));
         }
 
         public virtual       bool Contains(ICard<V> item)
@@ -800,22 +801,22 @@ namespace System.Multemic.Basedeck
         }
         public virtual       bool Contains(IUnique<V> item)
         {
-            return InnerContainsKey(__base_.UniqueKey(item, item.UniqueSeed));
+            return InnerContainsKey(unique.Key(item, item.UniqueSeed));
         }
         public virtual       bool Contains(V item)
         {
-            return InnerContainsKey(__base_.UniqueKey(item));
+            return InnerContainsKey(unique.Key(item));
         }
-        public virtual       bool Contains(V item, uint seed)
+        public virtual       bool Contains(V item, ulong seed)
         {
-            return InnerContainsKey(__base_.UniqueKey(item, seed));
+            return InnerContainsKey(unique.Key(item, seed));
         }
 
         #endregion
 
         #region Remove
 
-        protected virtual V InnerRemove(long key)
+        protected virtual V InnerRemove(ulong key)
         {
             ICard<V> mem = table[getPosition(key)];
 
@@ -838,15 +839,15 @@ namespace System.Multemic.Basedeck
         }
         public virtual      bool Remove(V item)
         {
-            return InnerRemove(__base_.UniqueKey(item)).Equals(default(V)) ? false : true;
+            return InnerRemove(unique.Key(item)).Equals(default(V)) ? false : true;
         }
         public virtual         V Remove(object key)
         {
-            return InnerRemove(__base_.UniqueKey(key));
+            return InnerRemove(unique.Key(key));
         }
-        public virtual         V Remove(object key, uint seed)
+        public virtual         V Remove(object key, ulong seed)
         {
-            return InnerRemove(__base_.UniqueKey(key, seed));
+            return InnerRemove(unique.Key(key, seed));
         }
         public virtual      bool Remove(ICard<V> item)
         {
@@ -854,15 +855,15 @@ namespace System.Multemic.Basedeck
         }
         public virtual      bool Remove(IUnique<V> item)
         {
-            return TryRemove(__base_.UniqueKey(item, item.UniqueSeed));
+            return TryRemove(unique.Key(item, item.UniqueSeed));
         }
         public virtual   bool TryRemove(object key)
         {
-            return InnerRemove(__base_.UniqueKey(key)).Equals(default(V)) ? false : true;
+            return InnerRemove(unique.Key(key)).Equals(default(V)) ? false : true;
         }
-        public virtual   bool TryRemove(object key, uint seed)
+        public virtual   bool TryRemove(object key, ulong seed)
         {
-            return InnerRemove(__base_.UniqueKey(key, seed)).Equals(default(V)) ? false : true;
+            return InnerRemove(unique.Key(key, seed)).Equals(default(V)) ? false : true;
         }
         public virtual    void RemoveAt(int index)
         {
@@ -872,7 +873,7 @@ namespace System.Multemic.Basedeck
         public virtual      void Clear()
         {
             size = minSize;
-            maxId = size - 1;
+            maxId = (uint)(size - 1);
             conflicts = 0;
             removed = 0;
             count = 0;
@@ -976,21 +977,21 @@ namespace System.Multemic.Basedeck
 
         public abstract     ICard<V> EmptyCard();
 
-        public virtual       ICard<V> NewCard(long key, uint seed, V value)
+        public virtual       ICard<V> NewCard(ulong key, ulong seed, V value)
         {
             value.UniqueSeed = seed;
             value.UniqueKey = key;
             return NewCard(value);
         }
-        public abstract      ICard<V> NewCard(long key, V value);
+        public abstract      ICard<V> NewCard(ulong key, V value);
         public abstract      ICard<V> NewCard(object key, V value);
-        public virtual       ICard<V> NewCard(object key, uint seed, V value)
+        public virtual       ICard<V> NewCard(object key, ulong seed, V value)
         {
             value.UniqueSeed = seed;
-            return NewCard(__base_.UniqueKey(key, seed), value);
+            return NewCard(unique.Key(key, seed), value);
         }
         public abstract      ICard<V> NewCard(ICard<V> card);
-        public virtual       ICard<V> NewCard(V card, uint seed)
+        public virtual       ICard<V> NewCard(V card, ulong seed)
         {
             card.UniqueSeed = seed;
             return NewCard(card);
@@ -1034,7 +1035,7 @@ namespace System.Multemic.Basedeck
             return new CardSeries<V>(this);
         }
 
-        public virtual            IEnumerator<long> GetKeyEnumerator()
+        public virtual            IEnumerator<ulong> GetKeyEnumerator()
         {
             return new CardUniqueKeySeries<V>(this);
         }
@@ -1059,11 +1060,11 @@ namespace System.Multemic.Basedeck
 
         #region Hashtable
 
-        protected ulong getPosition(long key)
+        protected ulong        getPosition(ulong key)
         {
             // standard hashmap method to establish position / index in table
 
-            return ((ulong)key % (uint)maxId);
+            return (key % maxId);
 
             // author's algorithm to establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type) 
@@ -1071,11 +1072,11 @@ namespace System.Multemic.Basedeck
 
             // return Submix.Map(key, size - 1, mixMask, msbId);           
         }
-        protected static ulong getPosition(long key, int tableMaxId)
+        protected static ulong getPosition(ulong key, uint tableMaxId)
         {
             // standard hashmap method to establish position / index in table 
 
-             return ((ulong)key % (ulong)tableMaxId);
+             return (key % tableMaxId);
 
             // author's algorithm to establish position / index in table            
             // based on most significant bit - BSR (or equivalent depending on the cpu type)
@@ -1088,7 +1089,7 @@ namespace System.Multemic.Basedeck
         {
             int finish = count;
             int newsize = newSize;
-            int newMaxId = newsize - 1;
+            uint newMaxId = (uint)(newsize - 1);
             ICard<V>[] newCardTable = EmptyCardTable(newsize);
             ICard<V> card = first;
             card = card.Next;
@@ -1106,10 +1107,10 @@ namespace System.Multemic.Basedeck
             size = newsize;
         }
 
-        private         void rehashAndReindex(ICard<V> card, ICard<V>[] newCardTable, int newMaxId)
+        private         void rehashAndReindex(ICard<V> card, ICard<V>[] newCardTable, uint newMaxId)
         {
             int _conflicts = 0;
-            int _newMaxId = newMaxId;
+            uint _newMaxId = newMaxId;
             ICard<V>[] _newCardTable = newCardTable;
             ICard<V> _firstcard = EmptyCard();
             ICard<V> _lastcard = _firstcard;
@@ -1153,10 +1154,10 @@ namespace System.Multemic.Basedeck
             last = _lastcard;
         }
 
-        private         void rehash(ICard<V> card, ICard<V>[] newCardTable, int newMaxId)
+        private         void rehash(ICard<V> card, ICard<V>[] newCardTable, uint newMaxId)
         {
             int _conflicts = 0;
-            int _newMaxId = newMaxId;
+            uint _newMaxId = newMaxId;
             ICard<V>[] _newCardTable = newCardTable;
             do
             {

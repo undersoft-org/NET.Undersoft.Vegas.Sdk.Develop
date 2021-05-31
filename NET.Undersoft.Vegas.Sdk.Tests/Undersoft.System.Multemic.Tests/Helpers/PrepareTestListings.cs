@@ -25,7 +25,7 @@ namespace Undersoft.Tests.System.Multemic
             {
                 keys.Add(new object[] { (i + 1000).ToString() + now, new Usid(DateTime.Now.ToBinary()), DateTime.Now });
             }            
-            List<long> hashes = new List<long>();
+            List<ulong> hashes = new List<ulong>();
             foreach(var s in keys)
             {
                 hashes.Add(s.UniqueKey64());
@@ -47,8 +47,8 @@ namespace Undersoft.Tests.System.Multemic
         {
             List<KeyValuePair<object, string>> list = new List<KeyValuePair<object, string>>();
             string now = DateTime.Now.ToString() + "_prepareStringKeyTestCollection";
-            long max = int.MaxValue + 250000L;
-            for (long i = int.MaxValue; i < max; i++)
+            ulong max = uint.MaxValue + 250000L;
+            for (ulong i = uint.MaxValue; i < max; i++)
             {
                 string str = i.ToString() + "_" + now;
                 list.Add(new KeyValuePair<object, string>(i, str));
@@ -59,8 +59,8 @@ namespace Undersoft.Tests.System.Multemic
         {
             List<KeyValuePair<object, string>> list = new List<KeyValuePair<object, string>>();
             string now = DateTime.Now.ToString() + "_prepareStringKeyTestCollection";
-            long max = int.MaxValue + 250000L;
-            for (long i = int.MaxValue; i < max; i++)
+            ulong max = uint.MaxValue + 250000L;
+            for (ulong i = uint.MaxValue; i < max; i++)
             {
                 string str = i.ToString() + "_" + now;
                 list.Add(new KeyValuePair<object, string>(new Usid(i), str));

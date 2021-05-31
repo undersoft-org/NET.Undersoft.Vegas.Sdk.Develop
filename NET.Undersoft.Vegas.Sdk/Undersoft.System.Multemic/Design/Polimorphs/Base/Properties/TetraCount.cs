@@ -12,7 +12,7 @@ namespace System.Multemic.Basedeck
 {
     public struct TetraCount
     {
-        public unsafe int this[int id]
+        public unsafe int this[uint id]
         {
             get
             {
@@ -26,18 +26,18 @@ namespace System.Multemic.Basedeck
             }
         }
 
-        public unsafe int Increment(int id)
+        public unsafe int Increment(uint id)
         {
             fixed (TetraCount* a = &this)
                 return ++(*&((int*)a)[id]);
         }
-        public unsafe int Decrement(int id)
+        public unsafe int Decrement(uint id)
         {
             fixed (TetraCount* a = &this)
                 return --(*&((int*)a)[id]);
         }
 
-        public unsafe void Reset(int id)
+        public unsafe void Reset(uint id)
         {
             fixed (TetraCount* a = &this)
             {

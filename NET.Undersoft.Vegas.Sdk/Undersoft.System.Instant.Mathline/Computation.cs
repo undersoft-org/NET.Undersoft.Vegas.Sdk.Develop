@@ -11,7 +11,7 @@ namespace System.Instant.Mathline
         public Computation(IFigures data)
         {
             computation = new MathRubrics(data);
-            systemSerialCode.UniqueKey = DateTime.Now.ToBinary();
+            serialcode.UniqueKey = (ulong)DateTime.Now.ToBinary();
             if (data.Computations == null)
                 data.Computations = new Deck<IComputation>();
             data.Computations.Put(this);
@@ -84,49 +84,30 @@ namespace System.Instant.Mathline
             return computation.Data;
         }
 
-        private Ussn systemSerialCode;
-        public Ussn SerialCode { get => systemSerialCode; set => systemSerialCode = value; }
+        private Ussn serialcode;
+        public Ussn SerialCode { get => serialcode; set => serialcode = value; }
         public IUnique Empty => Ussn.Empty;
-        public long UniqueKey
-        { get => SerialCode.UniqueKey; set => systemSerialCode.UniqueKey = value; }
+        public ulong UniqueKey
+        { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
        
 
         public int CompareTo(IUnique other)
         {
-            return systemSerialCode.CompareTo(other);
+            return serialcode.CompareTo(other);
         }
         public bool Equals(IUnique other)
         {
-            return systemSerialCode.Equals(other);
+            return serialcode.Equals(other);
         }
         public byte[] GetBytes()
         {
-            return systemSerialCode.GetBytes();
-        }
-        public long GetUniqueKey()
-        {
-            return systemSerialCode.GetUniqueKey();
+            return serialcode.GetBytes();
         }
         public byte[] GetUniqueBytes()
         {
-            return systemSerialCode.GetUniqueBytes();
+            return serialcode.GetUniqueBytes();
         }
-        public void SetUniqueKey(long value)
-        {
-            systemSerialCode.SetUniqueKey(value);
-        }
-
-        public uint UniqueSeed
-        { get => systemSerialCode.UniqueSeed; set => systemSerialCode.UniqueSeed = value; }
-
-        public void SetUniqueSeed(uint seed)
-        {
-            systemSerialCode.SetUniqueSeed(seed);
-        }
-
-        public uint GetUniqueSeed()
-        {
-            return systemSerialCode.GetUniqueSeed();
-        }
+        public ulong UniqueSeed
+        { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
     }
 }

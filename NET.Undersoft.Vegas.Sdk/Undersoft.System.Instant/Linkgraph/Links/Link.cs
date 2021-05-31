@@ -20,7 +20,6 @@ namespace System.Instant.Linking
     {
         #region Fields
 
-        public Links Links { get; set; }
         private Ussc serialcode;
 
         #endregion
@@ -40,12 +39,12 @@ namespace System.Instant.Linking
             UniqueKey = Name.UniqueKey64();
             Origin = new LinkMember(origin, this, LinkSite.Origin);
             Target = new LinkMember(target, this, LinkSite.Target);            
-            origin.Links.Put(this);
-            target.Links.Put(this);
+            origin.Linker.Links.Put(this);
+            target.Linker.Links.Put(this);
         }
         public Link(IFigures origin, IFigures target, IRubrics keyRubrics) : this(origin, target)
         {
-            foreach(var rubric in keyRubrics)
+            foreach(IUnique rubric in keyRubrics)
             {
                 var originRubric = origin.Rubrics[rubric];
                 var targetRubric = target.Rubrics[rubric];
@@ -80,7 +79,7 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
+        public ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public string Name { get; set; }
 
@@ -103,19 +102,7 @@ namespace System.Instant.Linking
             get { return Origin.Name; }
             set
             {
-                if (Links != null)
-                {
-                    var links = Links[Name];
-                    if (links != null)
-                    {
-                        IFigures figures = links.Origin.Figures;
-                        Origin.Figures = figures;
-                        Origin.Name = figures.Type.Name;
-                        Origin.Rubrics = figures.Rubrics;
-                        Origin.KeyRubrics.Clear();
-                    }
-                    Target.Name = value;
-                }
+                Origin.Name = value;
             }
         }
 
@@ -131,7 +118,7 @@ namespace System.Instant.Linking
             }
         }
 
-        public uint UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
+        public ulong UniqueSeed { get => serialcode.UniqueSeed; set => serialcode.UniqueSeed = value; }
 
         public Ussc SerialCode
         {
@@ -158,18 +145,6 @@ namespace System.Instant.Linking
             get { return Target.Name; }
             set
             {
-                if (Links != null)
-                {
-                    var links = Links[Name];
-                    if (links != null)
-                    {
-                        IFigures figures = links.Target.Figures;
-                        Target.Figures = figures;
-                        Target.Name = figures.Type.Name;
-                        Target.Rubrics = figures.Rubrics;
-                        Target.KeyRubrics.Clear();
-                    }
-                }
                 Target.Name = value;
             }
         }

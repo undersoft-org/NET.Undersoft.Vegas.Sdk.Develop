@@ -57,9 +57,9 @@ namespace System.Instant
 
         public Ussn SerialCode { get => Figures.SerialCode; set => Figures.SerialCode = value; }
 
-        public new long UniqueKey { get => Figures.UniqueKey; set => Figures.UniqueKey = value; }
+        public ulong UniqueKey { get => Figures.UniqueKey; set => Figures.UniqueKey = value; }
 
-        public uint UniqueSeed { get => Figures.UniqueSeed; set => Figures.UniqueSeed = value; }
+        public ulong UniqueSeed { get => Figures.UniqueSeed; set => Figures.UniqueSeed = value; }
 
         public object[] ValueArray { get => Figures.ValueArray; set => Figures.ValueArray = value; }
 
@@ -135,14 +135,14 @@ namespace System.Instant
                 Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
                 destOffset += l;
             }
-            ulong hash = UniqueCode64.ComputeUniqueKey(bufferPtr, destOffset, seed);
+            ulong hash = Hasher64.ComputeKey(bufferPtr, destOffset, seed);
             byte[] b = new byte[8];
             fixed (byte* bp = b)
                 *((ulong*)bp) = hash;
             return b;
         }
 
-        public unsafe long GetUniqueKey(IFigure figure, uint seed = 0)
+        public unsafe ulong GetUniqueKey(IFigure figure, uint seed = 0)
         {
             int size = Figures.FigureSize;
             byte* figurePtr = stackalloc byte[size * 2];
@@ -155,7 +155,7 @@ namespace System.Instant
                 Extractor.CopyBlock(bufferPtr, destOffset, figurePtr, rubric.RubricOffset, l);
                 destOffset += l;
             }
-            return (long)UniqueCode64.ComputeUniqueKey(bufferPtr, destOffset, seed);
+            return Hasher64.ComputeKey(bufferPtr, destOffset, seed);
         }
 
         public override ICard<MemberRubric> NewCard(ICard<MemberRubric> value)
@@ -163,7 +163,7 @@ namespace System.Instant
             return new RubricCard(value);
         }
 
-        public override ICard<MemberRubric> NewCard(long key, MemberRubric value)
+        public override ICard<MemberRubric> NewCard(ulong  key, MemberRubric value)
         {
             return new RubricCard(key, value);
         }

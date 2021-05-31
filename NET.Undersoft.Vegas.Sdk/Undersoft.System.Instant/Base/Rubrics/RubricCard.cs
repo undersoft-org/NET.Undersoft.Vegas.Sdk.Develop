@@ -9,14 +9,14 @@ namespace System.Instant
     [StructLayout(LayoutKind.Sequential)]
     public class RubricCard : Card<MemberRubric>
     {
-        private long _key;
+        private ulong _key;
 
         public RubricCard()
         { }
-        public RubricCard(object key, MemberRubric value) : base(key.UniqueKey64(), value)
+        public RubricCard(object key, MemberRubric value) : base(key, value)
         {           
         }
-        public RubricCard(long key, MemberRubric value) : base(key, value)
+        public RubricCard(ulong key, MemberRubric value) : base(key, value)
         {
         }
         public RubricCard(MemberRubric value) : base(value)
@@ -42,7 +42,7 @@ namespace System.Instant
             _key = card.Key;
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -60,7 +60,7 @@ namespace System.Instant
         {
             return (int)(Key - other.UniqueKey64());
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -78,11 +78,11 @@ namespace System.Instant
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)
-                *(long*)s = _key;
+                *(ulong*)s = _key;
             return b;
         }
 
-        public override long Key
+        public override ulong Key
         {
             get
             {

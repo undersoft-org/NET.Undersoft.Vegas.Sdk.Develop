@@ -65,7 +65,7 @@ namespace System.Labors
         /// <param name="key">The key<see cref="long"/>.</param>
         /// <param name="value">The value<see cref="IDeputy"/>.</param>
         /// <returns>The <see cref="ICard{IDeputy}"/>.</returns>
-        public override ICard<IDeputy> NewCard(long key, IDeputy value)
+        public override ICard<IDeputy> NewCard(ulong key, IDeputy value)
         {
             return new LaborMethod(key, value);
         }

@@ -165,14 +165,13 @@ namespace System.Deal
             }
             else
             {
-                object received = context.DeserialBlock;
                 object readPosition = context.DeserialBlockId;
 
                 if (noiseKind == MarkupType.Block || (noiseKind == MarkupType.End && (int)readPosition < (context.Transfer.HeaderReceived.Context.ObjectsCount - 1)))
                     context.Listener.BeginReceive(context.MessageBuffer, 0, context.BufferSize, SocketFlags.None, MessageReceivedCallBack, context);
 
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Message, DirectionType.Receive);
-                request.Resolve(received, readPosition);
+                request.Resolve(context);
 
                 if (context.ObjectsLeft <= 0 && !context.BatchesReceivedNotice.SafeWaitHandle.IsClosed)
                     context.BatchesReceivedNotice.Set();
@@ -233,7 +232,7 @@ namespace System.Deal
             else
             {
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Header, DirectionType.Receive);
-                request.Resolve(context.DeserialBlock);
+                request.Resolve(context);
 
                 if (!context.ReceiveMessage &&
                     !context.SendMessage)
@@ -275,7 +274,7 @@ namespace System.Deal
             }
             catch (SocketException)
             {
-                // 4U2DO
+                // 4 U 2 DO
             }
         }
 

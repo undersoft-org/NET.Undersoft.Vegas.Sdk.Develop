@@ -22,7 +22,7 @@ namespace System.Multemic
 
         protected ICard<V>[] list;
 
-        protected ICard<V> createNew(long key, V value)
+        protected ICard<V> createNew(ulong key, V value)
         {
             int id = count + removed;
             var newcard = NewCard(key, value);
@@ -96,7 +96,7 @@ namespace System.Multemic
             throw new IndexOutOfRangeException("Index out of range");
         }
 
-        protected override   ICard<V> InnerPut(long key, V value)
+        protected override   ICard<V> InnerPut(ulong key, V value)
         {
             ulong pos = getPosition(key);    
             ICard<V> card = table[pos]; /// local for last removed item finded   
@@ -140,7 +140,7 @@ namespace System.Multemic
         }
         protected override   ICard<V> InnerPut(V value)
         {
-            long key = __base_.UniqueKey(value);
+            ulong key = unique.Key(value);
             ulong pos = getPosition(key);
             ICard<V> card = table[pos]; /// local for last removed item finded   
             // add in case when item doesn't exist and there is no conflict                                                      
@@ -183,7 +183,7 @@ namespace System.Multemic
         }
         protected override   ICard<V> InnerPut(ICard<V> value)
         {
-            long key = value.Key;
+            ulong key = value.Key;
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
             ulong pos = getPosition(key);
 
@@ -225,7 +225,7 @@ namespace System.Multemic
             }
         }
 
-        protected override      bool InnerAdd(long key, V value)
+        protected override      bool InnerAdd(ulong key, V value)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key by size                           
             ulong pos = getPosition(key);
@@ -270,7 +270,7 @@ namespace System.Multemic
         }
         protected override      bool InnerAdd(V value)
         {
-            long key = __base_.UniqueKey(value);
+            ulong key = unique.Key(value);
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key by size                           
             ulong pos = getPosition(key);
 
@@ -315,7 +315,7 @@ namespace System.Multemic
         protected override      bool InnerAdd(ICard<V> value)
         {
             // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size  
-            long key = value.Key;
+            ulong key = value.Key;
             ulong pos = getPosition(key);
 
             ICard<V> card = table[pos]; /// local for last removed item finded   
@@ -438,7 +438,7 @@ namespace System.Multemic
             if (capacity != size || count > 0)
             {
                 size = capacity;
-                maxId = capacity - 1;
+                maxId = (uint)(capacity - 1);
                 conflicts = 0;
                 removed = 0;
                 count = 0;
@@ -477,7 +477,7 @@ namespace System.Multemic
         {
             int finish = count;
             int _newsize = newsize; //+ (int)(newsize * REMOVED_PERCENT_LIMIT) + 10;
-            int newMaxId = _newsize - 1;
+            uint newMaxId = (uint)(_newsize - 1);
             ICard<V>[] newCardTable = EmptyCardTable(_newsize);
             if (removed != 0)
             {
@@ -497,12 +497,12 @@ namespace System.Multemic
             size = newsize;
         }
 
-        private         void rehashAndReindex(ICard<V>[] newCardTable, ICard<V>[] newCardList, int newMaxId)
+        private         void rehashAndReindex(ICard<V>[] newCardTable, ICard<V>[] newCardList, uint newMaxId)
         {
             int _conflicts = 0;
             int _counter = 0;
             int total = count + removed;
-            int _newMaxId = newMaxId;
+            uint _newMaxId = newMaxId;
             ICard<V>[] _newCardTable = newCardTable;
             ICard<V>[] _newCardList = newCardList;
             ICard<V> card = null;
@@ -547,11 +547,11 @@ namespace System.Multemic
             removed = 0;
         }
 
-        private         void rehash(ICard<V>[] newCardTable, int newMaxId)
+        private         void rehash(ICard<V>[] newCardTable, uint newMaxId)
         {
             int _conflicts = 0;
             int total = count + removed;
-            int _newMaxId = newMaxId;
+            uint _newMaxId = newMaxId;
             ICard<V>[] _newCardTable = newCardTable;
             ICard<V> card = null;
             ICard<V> mem = null;

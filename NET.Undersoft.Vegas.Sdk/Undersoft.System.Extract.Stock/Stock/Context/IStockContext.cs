@@ -4,7 +4,7 @@ using System;
 
 namespace System.Extract.Stock
 {
-    public interface IStockContext : ISerialBlock, IDisposable
+    public interface IStockContext : ISerialBuffer, IDisposable
     {
         string Path { get; set; }
         string File { get; set; }

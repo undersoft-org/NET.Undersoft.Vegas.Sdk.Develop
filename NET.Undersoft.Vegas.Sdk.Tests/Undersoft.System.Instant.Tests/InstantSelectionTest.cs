@@ -54,10 +54,10 @@ namespace System.Instant
                 iRtseq.Add(_iRts);
             }
 
-            long[] keyarray = new long[60 * 1000];
+            ulong[] keyarray = new ulong[60 * 1000];
             for (   int i = 0; i < 60000; i++)
             {
-                keyarray[i] = Unique.NewKey;
+                keyarray[i] = Unique.NewKey;               
             }
 
             iRtseq.Add(iRtseq.NewFigure());

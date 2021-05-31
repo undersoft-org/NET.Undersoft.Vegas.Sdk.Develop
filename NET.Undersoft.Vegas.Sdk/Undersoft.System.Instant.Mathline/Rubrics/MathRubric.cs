@@ -200,8 +200,8 @@ namespace System.Instant.Mathline
 
         public IUnique Empty => Ussn.Empty;
 
-        public long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
-        public uint UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.SetUniqueSeed(value); }
+        public ulong UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
+        public ulong UniqueSeed { get => SerialCode.UniqueSeed; set => SerialCode.SetUniqueSeed(value); }
 
         public byte[] GetBytes()
         {

@@ -62,7 +62,7 @@ namespace System.Instant.Linking
             return new NodeCard(card);
         }
 
-        public override ICard<BranchDeck> NewCard(long key, BranchDeck value)
+        public override ICard<BranchDeck> NewCard(ulong  key, BranchDeck value)
         {
             return new NodeCard(key, value);
         }

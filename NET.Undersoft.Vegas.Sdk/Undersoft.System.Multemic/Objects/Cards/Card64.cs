@@ -21,14 +21,14 @@ namespace System.Multemic
     [StructLayout(LayoutKind.Sequential)]
     public class Card64<V> : Card<V>
     {
-        private long _key;
+        private ulong _key;
 
         public Card64()
         { }
         public Card64(object key, V value) : base(key, value)
         {
         }
-        public Card64(long key, V value) : base(key, value)
+        public Card64(ulong key, V value) : base(key, value)
         {
         }
         public Card64(V value) : base(value)
@@ -54,7 +54,7 @@ namespace System.Multemic
             _key = card.Key;
         }
 
-        public override bool Equals(long key)
+        public override bool Equals(ulong key)
         {
             return Key == key;
         }
@@ -72,7 +72,7 @@ namespace System.Multemic
         {
             return (int)(Key - other.UniqueKey64());
         }
-        public override int CompareTo(long key)
+        public override int CompareTo(ulong key)
         {
             return (int)(Key - key);
         }
@@ -90,11 +90,11 @@ namespace System.Multemic
         {
             byte[] b = new byte[8];
             fixed (byte* s = b)
-                *(long*)s = _key;
+                *(ulong*)s = _key;
             return b;
         }
 
-        public override long Key
+        public override ulong Key
         {
             get
             {

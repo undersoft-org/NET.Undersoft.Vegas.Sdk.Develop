@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace System.Instant
+namespace System
 {
     public interface ISerialFormatter
     {
@@ -10,21 +10,12 @@ namespace System.Instant
         int ItemsCount { get; }
 
         int Serialize(Stream stream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary);
-        int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary);
+        int Serialize(ISerialBuffer buffer, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary);
 
         object Deserialize(Stream stream, SerialFormat serialFormat = SerialFormat.Binary);
-        object Deserialize(ref object source, SerialFormat serialFormat = SerialFormat.Binary);
+        object Deserialize(ISerialBuffer buffer, SerialFormat serialFormat = SerialFormat.Binary);
 
         object[] GetMessage();
-        object GetHeader();
+        object   GetHeader();
     }
-
-    public interface IDealSource
-    {
-        object Emulate(object source, string name = null);
-        object Impact(object source, string name = null);
-        object Locate(object path = null);
-    }
-
-   
 }

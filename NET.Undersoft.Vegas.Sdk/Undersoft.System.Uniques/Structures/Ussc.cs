@@ -6,46 +6,46 @@ namespace System.Uniques
 {
     [Serializable]
     [ComVisible(true)]
-    [StructLayout(LayoutKind.Sequential, Size = 12)]  
+    [StructLayout(LayoutKind.Sequential, Size = 16)]  
     public unsafe struct Ussc : IFormattable, IComparable 
         , IComparable<Ussc>, IEquatable<Ussc>, IUnique       
     {
-        private fixed byte bytes[12];              
+        private fixed byte bytes[16];              
 
-        public long    UniqueKey
+        public ulong    UniqueKey
         {
             get
             {
                 fixed (byte* pbyte = bytes)
-                    return *((long*)pbyte);
+                    return *((ulong*)pbyte);
 
             }
             set
             {
                 fixed (byte* b = bytes)
-                    *((long*)b) = value;
+                    *((ulong*)b) = value;
             }
         }
 
-        public uint    UniqueSeed
+        public ulong    UniqueSeed
         {
             get
             {
                 fixed (byte* pbyte = bytes)
-                    return *((uint*)(pbyte + 8));
+                    return *((ulong*)(pbyte + 8));
             }
             set
             {
                 fixed (byte* b = bytes)
-                    *((uint*)(b + 8)) = value;
+                    *((ulong*)(b + 8)) = value;
             }
         }
 
-        public Ussc(long l)
+        public Ussc(ulong l)
         {
             fixed (byte* b = bytes)
             {
-                *((long*)b) = l;
+                *((ulong*)b) = l;
             }
         }
         public Ussc(string s)
@@ -57,8 +57,8 @@ namespace System.Uniques
             if (b != null)
             {
                 int l = b.Length;
-                if (l > 12)
-                    l = 12;
+                if (l > 16)
+                    l = 16;
                 fixed (byte* dbp = bytes)
                 fixed (byte* sbp = b)
                 {
@@ -67,38 +67,38 @@ namespace System.Uniques
             }
         }
 
-        public Ussc(long key, uint seed)
+        public Ussc(ulong key, uint seed)
         {
             fixed (byte* n = bytes)
             {
-                *((long*)n) = key;
+                *((ulong*)n) = key;
                 *((uint*)n + 8) = seed;
             }
         }
-        public Ussc(byte[] key, uint seed)
+        public Ussc(byte[] key, ulong seed)
         {          
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = key)
-                    *((long*)n) = *((long*)s);
-                *((uint*)(n + 8)) = seed;            
+                    *((ulong*)n) = *((ulong*)s);
+                *((ulong*)(n + 8)) = seed;            
             }
         }
-        public Ussc(object key, uint seed)
+        public Ussc(object key, ulong seed)
         {
             byte[] shah = key.UniqueBytes64();
             fixed (byte* n = bytes)
             {
                 fixed (byte* s = shah)
-                    *((long*)n) = *((long*)s);
-                *((uint*)(n + 8)) = seed;
+                    *((ulong*)n) = *((ulong*)s);
+                *((ulong*)(n + 8)) = seed;
             }
         }
         public Ussc(object key)
         {
             fixed (byte* n = bytes)
             {
-                *((long*)n) = key.UniqueKey64();
+                *((ulong*)n) = key.UniqueKey64();
             }
         }
 
@@ -108,7 +108,7 @@ namespace System.Uniques
             {
                 if (offset != 0)                   
                 {
-                    int l = 12 - offset;
+                    int l = 16 - offset;
                     byte[] r = new byte[l];
                     fixed (byte* pbyte = bytes)
                     fixed (byte* rbyte = r)
@@ -122,9 +122,9 @@ namespace System.Uniques
             set
             {
                 int l = value.Length;
-                if (offset > 0 && l < 12)
+                if (offset > 0 && l < 16)
                 {
-                    int count = 12 - offset;
+                    int count = 16 - offset;
                     if (l < count)
                         count = l;
                     fixed (byte* pbyte = bytes)
@@ -138,7 +138,7 @@ namespace System.Uniques
                     fixed (byte* pbyte = bytes)
                     fixed (byte* rbyte = value)
                     {
-                        Extractor.CopyBlock(pbyte, rbyte, 12);
+                        Extractor.CopyBlock(pbyte, rbyte, 16);
                     }
                 }               
             }
@@ -147,10 +147,10 @@ namespace System.Uniques
         {
             get
             {
-                if (offset < 12)
+                if (offset < 16)
                 {
-                    if ((12 - offset) > length)
-                    length = 12 - offset;
+                    if ((16 - offset) > length)
+                    length = 16 - offset;
                
                     byte[] r = new byte[length];
                     fixed (byte* pbyte = bytes)
@@ -165,10 +165,10 @@ namespace System.Uniques
             }
             set
             {
-                if (offset < 12)
+                if (offset < 16)
                 {
-                    if ((12 - offset) > length)
-                        length = 12 - offset;
+                    if ((16 - offset) > length)
+                        length = 16 - offset;
                     if (value.Length < length)
                         length = value.Length;
                    
@@ -193,11 +193,11 @@ namespace System.Uniques
 
         public byte[] GetBytes()
         {
-            byte[] r = new byte[12];
+            byte[] r = new byte[16];
             fixed (byte* rbyte = r)
             fixed (byte* pbyte = bytes)
             {
-                Extractor.CopyBlock(rbyte, pbyte, 12);
+                Extractor.CopyBlock(rbyte, pbyte, 16);
             }
             return r;
         }
@@ -207,26 +207,26 @@ namespace System.Uniques
             byte[] kbytes = new byte[8];
             fixed (byte* b = bytes)
             fixed (byte* k = kbytes)
-                *((long*)k) = *((long*)b);
+                *((ulong*)k) = *((ulong*)b);
             return kbytes;
         }
 
-        public void SetUniqueKey(long value)
+        public void SetUniqueKey(ulong value)
         {
             UniqueKey = value;
         }
 
-        public long GetUniqueKey()
+        public ulong GetUniqueKey()
         {
             return UniqueKey;
         }
 
-        public void SetUniqueSeed(uint seed)
+        public void SetUniqueSeed(ulong seed)
         {
             UniqueSeed = seed;
         }
 
-        public uint GetUniqueSeed()
+        public ulong GetUniqueSeed()
         {
             return UniqueSeed;
         }
@@ -267,7 +267,7 @@ namespace System.Uniques
             return (int)(UniqueKey - g.UniqueKey());
         }
 
-        public bool Equals(long g)
+        public bool Equals(ulong g)
         {
             return (UniqueKey == g);
         }
@@ -350,7 +350,7 @@ namespace System.Uniques
         public char[] ToHexTetraChars()
         {
             char[] pchchar = new char[16];
-            long pchblock;  
+            ulong pchblock;  
             int pchlength = 16;
             byte pchbyte;
             int idx = 0;
@@ -359,7 +359,7 @@ namespace System.Uniques
             {
                 fixed (byte* pbyte = bytes)
                 {
-                    pchblock = *((long*)(pbyte + (j * 6)));
+                    pchblock = *((ulong*)(pbyte + (j * 6)));
                 }
                 pchblock = pchblock & 0x0000ffffffffffffL;  //each block has 6 bytes
                 for (int i = 0; i < 8; i++)
@@ -383,10 +383,10 @@ namespace System.Uniques
             int pchlength = pchchar.Length;
             int idx = 0;
             byte pchbyte;
-            long pchblock = 0;
+            ulong pchblock = 0;
             int blocklength = 8;
-            int pchblock_int;
-            short pchblock_short;
+            uint pchblock_int;
+            ushort pchblock_short;
 
             for (int j = 0; j < 2; j++)
             {
@@ -398,20 +398,20 @@ namespace System.Uniques
                 {
                     pchbyte = (pchchar[idx]).ToHexTetraByte();
                     pchblock = pchblock << 6;
-                    pchblock = pchblock | (pchbyte & 0x3fL);
+                    pchblock = pchblock | (pchbyte & 0x3fUL);
                     idx--;
                 }
                 fixed (byte* pbyte = bytes)
                 {
-                    if (j == 3) //ostatnie nalozenie - block3 przekracza o 2 bajty rozmiar bytes!!!! tych 2 bajty sa 0, ale uniknac ewentualne wejscia w pamiec poza bytes
+                    if (j == 1) //ostatnie nalozenie - block3 przekracza o 2 bajty rozmiar bytes!!!! tych 2 bajty sa 0, ale uniknac ewentualne wejscia w pamiec poza bytes
                     {
-                        pchblock_short = (short)(pchblock & 0x00ffffL);
-                        pchblock_int = (int)(pchblock >> 8);
-                        *((long*)&pbyte[6]) = pchblock_short;
-                        *((long*)&pbyte[8]) = pchblock_int;
+                        pchblock_short = (ushort)(pchblock & 0x00ffffUL);
+                        pchblock_int = (uint)(pchblock >> 8);
+                        *((ulong*)&pbyte[6]) = pchblock_short;
+                        *((ulong*)&pbyte[8]) = pchblock_int;
                         break;
                     }
-                    *((long*)&pbyte[j * 6]) = pchblock;
+                    *((ulong*)&pbyte[j * 6]) = pchblock;
 
                 }
             }                                    
@@ -419,17 +419,17 @@ namespace System.Uniques
 
         public bool EqualsContent(Ussc g)
         {
-            long pchblockA, pchblockB;
+            ulong pchblockA, pchblockB;
             bool result;
 
             if (g == null) return false;
             fixed (byte* pbyte = bytes)
             {
-                pchblockA = *((long*)&pbyte[0]);
+                pchblockA = *((ulong*)&pbyte[0]);
                 pchblockB = *((uint*)&pbyte[8]);
             }
 
-            result = (pchblockA == *((long*)&g.bytes[0]))
+            result = (pchblockA == *((ulong*)&g.bytes[0]))
             && (pchblockB == *((uint*)&g.bytes[8]));
             
             

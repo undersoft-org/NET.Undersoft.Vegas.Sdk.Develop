@@ -104,7 +104,7 @@ namespace System.Multemic
 
         #region Operations
 
-        protected override                V InnerGet(long key)
+        protected override                V InnerGet(ulong key)
         {
             acquireReader();
             var v = base.InnerGet(key);
@@ -112,7 +112,7 @@ namespace System.Multemic
             return v;
         }
 
-        protected override             bool InnerTryGet(long key, out ICard<V> output)
+        protected override             bool InnerTryGet(ulong key, out ICard<V> output)
         {
             acquireReader();
             var test = base.InnerTryGet(key, out output);
@@ -120,7 +120,7 @@ namespace System.Multemic
             return test;
         }
 
-        protected override         ICard<V> InnerGetCard(long key)
+        protected override         ICard<V> InnerGetCard(ulong key)
         {
             acquireReader();
             var card = base.InnerGetCard(key);
@@ -149,7 +149,7 @@ namespace System.Multemic
             throw new IndexOutOfRangeException("Index out of range");                     
         }
 
-        protected override          ICard<V> InnerPut(long key, V value)
+        protected override          ICard<V> InnerPut(ulong key, V value)
         {            
             acquireWriter();
             var temp = base.InnerPut(key, value);
@@ -171,7 +171,7 @@ namespace System.Multemic
             return temp;
         }
 
-        protected override             bool InnerAdd(long key, V value)
+        protected override             bool InnerAdd(ulong key, V value)
         {
             acquireWriter();
             var temp = base.InnerAdd(key, value);
@@ -200,7 +200,7 @@ namespace System.Multemic
             releaseWriter();            
         }
 
-        protected override                V InnerRemove(long key)
+        protected override                V InnerRemove(ulong key)
         {
             acquireWriter();
             var temp = base.InnerRemove(key);

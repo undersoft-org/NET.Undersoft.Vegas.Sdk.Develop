@@ -12,11 +12,11 @@ namespace System.Uniques
     {
         private fixed byte bytes[8];       
 
-        private long _KeyBlock
+        private ulong _KeyBlock
         {
             get
             {
-                long block = UniqueKey;
+                ulong block = UniqueKey;
                 return (block << 32) | ((block >> 16) & 0xffff0000) | (block >> 48);
             }
             set
@@ -25,7 +25,7 @@ namespace System.Uniques
             }
         }
 
-        public Usid(long l)
+        public Usid(ulong l)
         {
             UniqueKey = l;
         }
@@ -59,7 +59,7 @@ namespace System.Uniques
         public Usid(object key)
         {
             fixed (byte* n = bytes)
-                *((long*)n) = key.UniqueKey64();            
+                *((ulong*)n) = key.UniqueKey64();            
         }
 
         public byte[] this[int offset]
@@ -95,7 +95,7 @@ namespace System.Uniques
                 {
                     fixed (byte* v = value)
                     fixed (byte* b = bytes)
-                        *(long*)b = *(long*)v;
+                        *(ulong*)b = *(ulong*)v;
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace System.Uniques
             fixed (byte* rbyte = r)
             fixed (byte* pbyte = bytes)
             {
-                *((long*)rbyte) = *((long*)pbyte);
+                *((ulong*)rbyte) = *((ulong*)pbyte);
             }
             return r;
         }
@@ -116,18 +116,18 @@ namespace System.Uniques
             return GetBytes();
         }
 
-        public long UniqueKey
+        public ulong UniqueKey
         {
             get
             {
                 fixed (byte* pbyte = bytes)
-                    return *((long*)pbyte);
+                    return *((ulong*)pbyte);
             }
             set
             {
 
                 fixed (byte* b = bytes)
-                    *((long*)b) = value;
+                    *((ulong*)b) = value;
             }
         }
 
@@ -188,16 +188,16 @@ namespace System.Uniques
         {
             fixed (byte* pbyte = bytes)
             {
-                return (int)UniqueCode32.ComputeUniqueKey(pbyte, 8);
+                return (int)Hasher32.ComputeKey(pbyte, 8);
             }
         }
 
-        public void SetUniqueKey(long value)
+        public void SetUniqueKey(ulong value)
         {
             UniqueKey = value;
         }
 
-        public long GetUniqueKey()
+        public ulong GetUniqueKey()
         {
             return UniqueKey;
         }
@@ -232,7 +232,7 @@ namespace System.Uniques
             return (UniqueKey == ((Usid)value).UniqueKey);
         }
 
-        public bool Equals(long g)
+        public bool Equals(ulong g)
         {
             return (UniqueKey == g);
         }
@@ -307,18 +307,18 @@ namespace System.Uniques
         public char[] ToHexTetraChars()
         {
             char[] pchchar = new char[10];
-            long pchlong;
+            ulong pchulong;
             byte pchbyte;
             int pchlength = 0;
-            long _longValue = _KeyBlock;
+            ulong _ulongValue = _KeyBlock;
             //56-bit representation: //A [max 2^30] //B [max 2^16] //C [max 2^10]
             //i.e., bits: [A: 55..26][B: 25..10][C: 9..0]
-            pchlong = ((_longValue & 0x3fffffff00000000L) >> 6) | ((_longValue & 0xffff0000L) >> 6) | (_longValue & 0x03ffL);
+            pchulong = ((_ulongValue & 0x3fffffff00000000L) >> 6) | ((_ulongValue & 0xffff0000L) >> 6) | (_ulongValue & 0x03ffL);
             for (int i = 0; i < 5; i++)
             {
-                pchbyte = (byte)(pchlong & 0x003fL);
+                pchbyte = (byte)(pchulong & 0x003fL);
                 pchchar[i] = (pchbyte).ToHexTetraChar();
-                pchlong = pchlong >> 6;
+                pchulong = pchulong >> 6;
             }
 
             pchlength = 5;
@@ -326,10 +326,10 @@ namespace System.Uniques
             //Trim PrimeId
             for (int i = 5; i < 10; i++)
             {
-                pchbyte = (byte)(pchlong & 0x003fL);
+                pchbyte = (byte)(pchulong & 0x003fL);
                 if (pchbyte != 0x00) pchlength = i + 1;
                 pchchar[i] = (pchbyte).ToHexTetraChar();
-                pchlong = pchlong >> 6;
+                pchulong = pchulong >> 6;
             }
 
             char[] pchchartrim = new char[pchlength];
@@ -340,33 +340,33 @@ namespace System.Uniques
 
         public void FromHexTetraChars(char[] pchchar)
         {
-            long pchlong = 0;
+            ulong pchulong = 0;
             byte pchbyte;
             int pchlength = 0;
 
             //bits: [A: 55..26][B: 25..10][C: 9..0]
             pchlength = pchchar.Length;
             pchbyte = (pchchar[pchlength - 1]).ToHexTetraByte();
-            pchlong = pchbyte & 0x3fL;
+            pchulong = pchbyte & 0x3fUL;
             for (int i = pchlength - 2; i >= 0; i--)
             {
                 pchbyte = (pchchar[i]).ToHexTetraByte();
-                pchlong = pchlong << 6;
-                pchlong = pchlong | (pchbyte & 0x3fL);
+                pchulong = pchulong << 6;
+                pchulong = pchulong | (pchbyte & 0x3fUL);
             }
-            _KeyBlock = ((pchlong << 6) & 0x3fffffff00000000L) | ((pchlong << 6) & 0xffff0000L) | (pchlong & 0x03ffL);
+            _KeyBlock = ((pchulong << 6) & 0x3fffffff00000000L) | ((pchulong << 6) & 0xffff0000L) | (pchulong & 0x03ffL);
         }
 
-        public uint UniqueSeed
+        public ulong UniqueSeed
         {
             get => 0;
             set => throw new NotImplementedException();
         }
-        public void SetUniqueSeed(uint seed)
+        public void SetUniqueSeed(ulong seed)
         {
             throw new NotImplementedException();
         }
-        public uint GetUniqueSeed()
+        public ulong GetUniqueSeed()
         {
             return 0;
         }

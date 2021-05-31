@@ -84,9 +84,9 @@ namespace System.Labors
             }
         }
 
-        public long UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.UniqueKey = value; }
+        public ulong UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.UniqueKey = value; }
 
-        public uint UniqueSeed { get => ((IUnique)SerialCode).UniqueSeed; set => ((IUnique)SerialCode).UniqueSeed = value; }
+        public ulong UniqueSeed { get => ((IUnique)SerialCode).UniqueSeed; set => ((IUnique)SerialCode).UniqueSeed = value; }
 
         public IDeputy Work { get; set; }
 
@@ -133,26 +133,6 @@ namespace System.Labors
         {
             return SerialCode.GetUniqueBytes();
         }
-
-        //public uint GetUniqueSeed()
-        //{
-        //    return ((IUnique)SerialCode).UniqueSeed;
-        //}
-
-        //public void SetUniqueKey(long value)
-        //{
-        //    SerialCode.UniqueKey = value;
-        //}
-
-        //public void SetUniqueSeed(uint seed)
-        //{
-        //    ((IUnique)SerialCode).SetUniqueSeed(seed);
-        //}
-
-        //public long UniqueKey()
-        //{
-        //    return SerialCode.UniqueKey();
-        //}
 
         #endregion
     }

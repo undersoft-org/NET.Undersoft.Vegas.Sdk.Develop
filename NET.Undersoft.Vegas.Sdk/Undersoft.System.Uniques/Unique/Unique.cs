@@ -21,16 +21,16 @@ namespace System.Uniques
 
         private static readonly int CAPACITY = 100 * 1000;
         private static readonly int LOW_LIMIT = 50 * 1000;
-        private static readonly int NEXT_KEY_VECTOR = PRIMES_ARRAY.Get(4);
+        private static readonly uint NEXT_KEY_VECTOR = (uint)PRIMES_ARRAY.Get(4);
         private static readonly int WAIT_LOOPS = 500;
         private static bool generating;
         private static Thread generator;
         private static object holder = new object();
-        private static Unique32 key32;
-        private static Unique64 key64;
-        private static long keyNumber = DateTime.Now.Ticks;
-        private static ConcurrentQueue<long> keys = new ConcurrentQueue<long>();
-        private static Random randomSeed = new Random(DateTime.Now.Ticks.UniqueKey32());
+        private static Unique32 bit32;
+        private static Unique64 bit64;
+        private static ulong keyNumber = (ulong)DateTime.Now.Ticks;
+        private static ConcurrentQueue<ulong> keys = new ConcurrentQueue<ulong>();
+        private static Random randomSeed = new Random((int)DateTime.Now.Ticks.UniqueKey32());
 
         #endregion
 
@@ -38,8 +38,8 @@ namespace System.Uniques
 
         static Unique()
         {
-            key32 = new Unique32();
-            key64 = new Unique64();
+            bit32 = new Unique32();
+            bit64 = new Unique64();
             generator = startup();
         }
 
@@ -47,15 +47,15 @@ namespace System.Uniques
 
         #region Properties
 
-        public static Unique32 Key32 { get => key32; }
+        public static Unique32 Bit32 { get => bit32; }
 
-        public static Unique64 Key64 { get => key64; }
+        public static Unique64 Bit64 { get => bit64; }
 
-        public static long NewKey
+        public static ulong NewKey
         {
             get
             {
-                long key = 0;
+                ulong key = 0;
                 int counter = 0;
                 bool loop = false;
                 while (counter < WAIT_LOOPS)
@@ -107,24 +107,24 @@ namespace System.Uniques
 
         private unsafe static void keyGeneration()
         {
-            uint seed = nextSeed();
+            ulong seed = nextSeed();
             int count = CAPACITY - keys.Count;
             for (int i = 0; i < count; i++)
             {
-                long keyNo = nextKeyNumber();
-                keys.Enqueue((long)UniqueCode64.ComputeUniqueKey(((byte*)&keyNo), 8, seed));
+                ulong keyNo = nextKeyNumber();
+                keys.Enqueue(Hasher64.ComputeKey(((byte*)&keyNo), 8, seed));
             }
             Stop();
         }
 
-        private static unsafe long nextKeyNumber()
+        private static unsafe ulong nextKeyNumber()
         {
-            return Interlocked.Add(ref keyNumber, NEXT_KEY_VECTOR);
+            return keyNumber += NEXT_KEY_VECTOR;
         }
 
-        private static uint nextSeed()
+        private static ulong nextSeed()
         {
-            return (uint)randomSeed.Next();
+            return (ulong)randomSeed.Next();
         }
 
         private static Thread startup()

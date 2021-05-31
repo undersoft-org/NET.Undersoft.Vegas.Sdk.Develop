@@ -211,7 +211,7 @@ namespace System.Deal
             else
             {
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Header, DirectionType.Receive);
-                request.Resolve(context.DeserialBlock);
+                request.Resolve(context);
 
                 context.HeaderReceivedNotice.Set();
 
@@ -235,7 +235,7 @@ namespace System.Deal
             else
             {
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Header, DirectionType.Receive);
-                request.Resolve(context.DeserialBlock);
+                request.Resolve(context);
 
                 context.HeaderReceivedNotice.Set();
 
@@ -297,15 +297,14 @@ namespace System.Deal
                 context.Listener.BeginReceive(context.MessageBuffer, 0, buffersize, SocketFlags.None, MessageReceivedCallback, context);
             }
             else
-            {
-                object received = context.DeserialBlock;
+            {                
                 object readPosition = context.DeserialBlockId;
 
                 if (noiseKind == MarkupType.Block || (noiseKind == MarkupType.End && (int)readPosition < (context.Transfer.HeaderReceived.Context.ObjectsCount - 1)))
                     context.Listener.BeginReceive(context.MessageBuffer, 0, context.BufferSize, SocketFlags.None, MessageReceivedCallback, context);
 
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Message, DirectionType.Receive);
-                request.Resolve(received, readPosition);
+                request.Resolve(context);
 
                 if (context.ObjectsLeft <= 0 && !context.BatchesReceivedNotice.SafeWaitHandle.IsClosed)
                     context.BatchesReceivedNotice.Set();
@@ -348,8 +347,6 @@ namespace System.Deal
                 if (context.ReceiveMessage)
                     context.MessageReceivedNotice.WaitOne();
 
-                //int _timeout = 0;
-                // while (IsConnected(context.Id) && timeout < 10) _timeout++;
                 context.Close = true;
 
                 context.MessageSentNotice.Set();

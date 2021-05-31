@@ -32,7 +32,7 @@ namespace System.Instant
 
         byte[] GetBytes(IFigure figure);
 
-        long GetUniqueKey(IFigure figure, uint seed = 0);
+        ulong GetUniqueKey(IFigure figure, uint seed = 0);
 
         byte[] GetUniqueBytes(IFigure figure, uint seed = 0);
 

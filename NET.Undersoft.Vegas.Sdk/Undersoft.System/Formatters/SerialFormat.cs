@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace System.Instant
+namespace System
 {
     public enum SerialFormat
     {

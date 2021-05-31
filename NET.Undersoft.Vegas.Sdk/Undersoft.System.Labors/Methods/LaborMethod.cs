@@ -25,7 +25,7 @@ namespace System.Labors
         /// <summary>
         /// Defines the key.
         /// </summary>
-        private long key;
+        private ulong key;
 
         #endregion
 
@@ -69,7 +69,7 @@ namespace System.Labors
         /// <summary>
         /// Gets or sets the Key.
         /// </summary>
-        public override long Key { get => key; set => key = value; }
+        public override ulong Key { get => key; set => key = value; }
 
         #endregion
 

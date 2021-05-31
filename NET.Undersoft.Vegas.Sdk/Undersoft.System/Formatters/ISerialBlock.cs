@@ -1,7 +1,7 @@
 ﻿
 namespace System
 {
-    public interface ISerialBlock
+    public interface ISerialBuffer : IDisposable
     {
         ServiceSite Site { get; }
 
@@ -15,6 +15,7 @@ namespace System
         byte[] DeserialBlock { get; }
         IntPtr DeserialBlockPtr { get; }      
         int    DeserialBlockId { get; set; }
+
     }
 }
 

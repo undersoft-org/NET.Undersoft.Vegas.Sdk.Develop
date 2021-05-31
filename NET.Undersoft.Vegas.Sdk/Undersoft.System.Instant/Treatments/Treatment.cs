@@ -51,7 +51,7 @@ namespace System.Instant.Treatments
         public MemberRubrics   UpdateAggregatives()
         {
             AggregateOperand parsed = new AggregateOperand();
-            Links targetLinks = figures.Links;
+            Links targetLinks = figures.Linker.Links;
             aggregativeRubrics = new MemberRubrics();
             MemberRubric[] _aggregateRubrics = figures.Rubrics.AsValues()
                                                                .Where(c => (c.RubricName.Split('#').Length > 1) ||

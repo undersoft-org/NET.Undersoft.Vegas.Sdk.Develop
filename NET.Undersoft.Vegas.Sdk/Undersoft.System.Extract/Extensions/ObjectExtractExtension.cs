@@ -135,7 +135,7 @@ namespace System.Extract
                     if (forKeys && o is IUnique)
                     {
                         s = 8;
-                        *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
+                        *((ulong*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {
@@ -179,7 +179,7 @@ namespace System.Extract
                         if (postoffset > length)
                             toResize = true;
                         else
-                            *((long*)(buffer + offset)) = ((IUnique)o).UniqueKey;
+                            *((ulong*)(buffer + offset)) = ((IUnique)o).UniqueKey;
                     }
                     else
                     {

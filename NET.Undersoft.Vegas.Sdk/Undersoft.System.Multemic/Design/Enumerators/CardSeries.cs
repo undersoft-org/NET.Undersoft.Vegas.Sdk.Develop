@@ -27,7 +27,7 @@ namespace System.Multemic
 
         public ICard<V> Entry;
 
-        public long Key { get { return Entry.Key; } }
+        public ulong Key { get { return Entry.Key; } }
         public V Value { get { return Entry.Value; } }
 
         public object Current => Entry.Value;
