@@ -30,12 +30,12 @@ namespace System.Deal
             if (_content != null)
             {              
                 Type[] ifaces = _content.GetType().GetInterfaces();
-                if (ifaces.Contains(typeof(IFigureFormatter)))
+                if (ifaces.Contains(typeof(ISerialFormatter)))
                 {
                     transaction.MyHeader.Context.ContentType = _content.GetType();
 
                     if (direction == DirectionType.Send)
-                        _content = ((IFigureFormatter)value).GetHeader();
+                        _content = ((ISerialFormatter)value).GetHeader();
 
                     object[] messages_ = null;                   
                     if (treatment.Assign(_content, direction, out messages_)                               // Dealer Treatment assign with handle its only place where its called and mutate data. 
@@ -45,8 +45,8 @@ namespace System.Deal
                             context.ObjectsCount = messages_.Length;
                             for (int i = 0; i < context.ObjectsCount; i++)
                             {
-                                IFigureFormatter message = ((IFigureFormatter[])messages_)[i];
-                                IFigureFormatter head = (IFigureFormatter)((IFigureFormatter[])messages_)[i].GetHeader();
+                                ISerialFormatter message = ((ISerialFormatter[])messages_)[i];
+                                ISerialFormatter head = (ISerialFormatter)((ISerialFormatter[])messages_)[i].GetHeader();
                                 message.SerialCount = message.ItemsCount;
                                 head.SerialCount = message.ItemsCount;                            
                             }
@@ -54,7 +54,7 @@ namespace System.Deal
                             if (direction == DirectionType.Send)
                                 transaction.MyMessage.Content = messages_;
                             else
-                                transaction.MyMessage.Content = ((IFigureFormatter)_content).GetHeader();
+                                transaction.MyMessage.Content = ((ISerialFormatter)_content).GetHeader();
                         }
                    }                                                                                               
                 }
@@ -70,16 +70,16 @@ namespace System.Deal
                 if (direction == DirectionType.Receive)
                 {
                     Type[] ifaces = _content.GetType().GetInterfaces();
-                    if (ifaces.Contains(typeof(IFigureFormatter)))
+                    if (ifaces.Contains(typeof(ISerialFormatter)))
                     {                       
-                        object[] messages_ = ((IFigureFormatter)value).GetMessage();
+                        object[] messages_ = ((ISerialFormatter)value).GetMessage();
                         if (messages_ != null)
                         {                            
                             int length = messages_.Length;
                             for (int i = 0; i < length; i++)
                             {
-                                IFigureFormatter message = ((IFigureFormatter[])messages_)[i];
-                                IFigureFormatter head = (IFigureFormatter)((IFigureFormatter[])messages_)[i].GetHeader();
+                                ISerialFormatter message = ((ISerialFormatter[])messages_)[i];
+                                ISerialFormatter head = (ISerialFormatter)((ISerialFormatter[])messages_)[i].GetHeader();
                                 message.SerialCount = head.SerialCount;
                                 message.DeserialCount = head.DeserialCount;
                             }                          

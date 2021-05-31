@@ -10,7 +10,7 @@ namespace System.Deal
         private DealContext dealContext;
         private ServiceSite site;
         private DirectionType direction;
-        private IFigureFormatter content;
+        private ISerialFormatter content;
         private ushort state;        
 
         public DealOperation(object dealContent)
@@ -18,7 +18,7 @@ namespace System.Deal
             site = ServiceSite.Server;
             direction =  DirectionType.None;
             state = ((ISerialNumber)dealContent).FlagsBlock;
-            content = (IFigureFormatter)dealContent;
+            content = (ISerialFormatter)dealContent;
         }
         public DealOperation(object dealContent, DirectionType directionType, DealTransfer transfer) : this(dealContent)
         {

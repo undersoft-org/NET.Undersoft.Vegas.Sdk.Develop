@@ -11,7 +11,7 @@ namespace System.Extract.Stock
     /// Read/Write buffer with support for simple inter-process read/write synchronisation.
     /// </summary>
     [SecurityPermission(SecurityAction.LinkDemand)]
-    public unsafe class StockFile : StockHandle, IStock
+    public unsafe class StockFile : MemoryStock, IStock
     {
         public Type type;
 

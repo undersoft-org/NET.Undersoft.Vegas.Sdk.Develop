@@ -2,18 +2,18 @@
 
 namespace System.Instant
 {
-    public interface IFigureFormatter
+    public interface ISerialFormatter
     {
         int SerialCount { get; set; }
         int DeserialCount { get; set; }
         int ProgressCount { get; set; }
         int ItemsCount { get; }
 
-        int Serialize(Stream stream, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary);
-        int Serialize(IFigurePacket buffor, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary);
+        int Serialize(Stream stream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary);
+        int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary);
 
-        object Deserialize(Stream stream, FigureFormat serialFormat = FigureFormat.Binary);
-        object Deserialize(ref object source, FigureFormat serialFormat = FigureFormat.Binary);
+        object Deserialize(Stream stream, SerialFormat serialFormat = SerialFormat.Binary);
+        object Deserialize(ref object source, SerialFormat serialFormat = SerialFormat.Binary);
 
         object[] GetMessage();
         object GetHeader();

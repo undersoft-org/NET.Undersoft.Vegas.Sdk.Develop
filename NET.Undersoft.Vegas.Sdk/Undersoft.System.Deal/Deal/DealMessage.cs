@@ -10,7 +10,7 @@ using System.Reflection;
 namespace System.Deal
 {
     [Serializable]
-    public class DealMessage : IFigureFormatter, IDisposable
+    public class DealMessage : ISerialFormatter, IDisposable
     {
         [NonSerialized]
         private DealTransfer transaction;
@@ -55,39 +55,39 @@ namespace System.Deal
 
         #region Serialization
 
-        public int Serialize(Stream tostream, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary)
+        public int Serialize(Stream tostream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
-            if (serialFormat == FigureFormat.Binary)
+            if (serialFormat == SerialFormat.Binary)
                 return this.SetRaw(tostream);
-            else if (serialFormat == FigureFormat.Json)
+            else if (serialFormat == SerialFormat.Json)
                 return this.SetJson(tostream);
             else
                 return -1;
         }
-        public int Serialize(IFigurePacket buffor, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary)
+        public int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
-            if (serialFormat == FigureFormat.Binary)
+            if (serialFormat == SerialFormat.Binary)
                 return this.SetRaw(buffor);
-            else if (serialFormat == FigureFormat.Json)
+            else if (serialFormat == SerialFormat.Json)
                 return this.SetJson(buffor);
             else
                 return -1;
         }
 
-        public object Deserialize(Stream fromstream, FigureFormat serialFormat = FigureFormat.Binary)
+        public object Deserialize(Stream fromstream, SerialFormat serialFormat = SerialFormat.Binary)
         {
-            if (serialFormat == FigureFormat.Binary)
+            if (serialFormat == SerialFormat.Binary)
                 return this.GetRaw(fromstream);
-            else if (serialFormat == FigureFormat.Json)
+            else if (serialFormat == SerialFormat.Json)
                 return this.GetJson(fromstream);
             else
                 return -1;
         }
-        public object Deserialize(ref object fromarray, FigureFormat serialFormat = FigureFormat.Binary)
+        public object Deserialize(ref object fromarray, SerialFormat serialFormat = SerialFormat.Binary)
         {
-            if (serialFormat == FigureFormat.Binary)
+            if (serialFormat == SerialFormat.Binary)
                 return this.GetRaw(ref fromarray);
-            else if (serialFormat == FigureFormat.Json)
+            else if (serialFormat == SerialFormat.Json)
                 return this.GetJson(ref fromarray);
             else
                 return -1;
@@ -96,7 +96,7 @@ namespace System.Deal
         public object[] GetMessage()
         {
             if(content != null)
-                return (IFigureFormatter[])content;
+                return (ISerialFormatter[])content;
             return null;
         }
         public object GetHeader()
@@ -110,8 +110,8 @@ namespace System.Deal
         public int SerialCount { get; set; }
         public int DeserialCount { get; set; }
         public int ProgressCount { get; set; }
-        public int ItemsCount { get { return (content != null) ? ((IFigureFormatter[])content).Sum(t => t.ItemsCount): 0; } }
-        public int ObjectsCount { get { return (content != null) ? ((IFigureFormatter[])content).Length : 0;  } }
+        public int ItemsCount { get { return (content != null) ? ((ISerialFormatter[])content).Sum(t => t.ItemsCount): 0; } }
+        public int ObjectsCount { get { return (content != null) ? ((ISerialFormatter[])content).Length : 0;  } }
 
         #endregion
     }
@@ -125,16 +125,16 @@ namespace System.Deal
             binform.Serialize(tostream, bank);
             return (int)tostream.Length;
         }
-        public static int SetRaw(this DealMessage bank, IFigurePacket tostream)
+        public static int SetRaw(this DealMessage bank, ISerialBlock tostream)
         {
-            int offset = tostream.SerialPacketOffset;
+            int offset = tostream.BlockOffset;
             MemoryStream ms = new MemoryStream();
             ms.Write(new byte[offset], 0, offset);
             BinaryFormatter binform = new BinaryFormatter();
             binform.Serialize(ms, bank);
-            tostream.SerialPacket = ms.ToArray();
+            tostream.SerialBlock = ms.ToArray();
             ms.Dispose();
-            return tostream.SerialPacket.Length;
+            return tostream.SerialBlock.Length;
         }
         public static DealMessage GetRaw(this DealMessage bank, Stream fromstream)
         {
@@ -178,10 +178,10 @@ namespace System.Deal
             binwriter.Write(tmsg.SetJsonString());
             return (int)tostream.Length;
         }
-        public static int SetJson(this DealMessage tmsg, IFigurePacket buffor)
+        public static int SetJson(this DealMessage tmsg, ISerialBlock buffor)
         {
-            buffor.SerialPacket = Encoding.UTF8.GetBytes(tmsg.SetJsonString());
-            return buffor.SerialPacket.Length;
+            buffor.SerialBlock = Encoding.UTF8.GetBytes(tmsg.SetJsonString());
+            return buffor.SerialBlock.Length;
         }
 
         public static string SetJsonString(this DealMessage tmsg)

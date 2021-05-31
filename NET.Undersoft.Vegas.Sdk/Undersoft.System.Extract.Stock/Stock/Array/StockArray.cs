@@ -9,7 +9,7 @@ namespace System.Extract.Stock
 {
     [SecurityPermission(SecurityAction.LinkDemand)]
     [SecurityPermission(SecurityAction.InheritanceDemand)]
-    public unsafe class StockArray : StockHandle, IList<object>, IStock
+    public unsafe class StockArray : MemoryStock, IList<object>, IStock
     {
         public int Length
         { get; private set; }

@@ -18,7 +18,7 @@ namespace System.Extract.Stock
         {
         }
 
-        public string Place
+        public string Path
         { get; set; }
         public string File
         { get; set; }
@@ -67,7 +67,9 @@ namespace System.Extract.Stock
             get; set;
         } = 0;
 
-        public byte[] SerialPacket
+        public ServiceSite Site { get; set; }
+
+        public byte[] SerialBlock
         {
             get
             {
@@ -76,9 +78,9 @@ namespace System.Extract.Stock
             set
             {
                 binSend = value;
-                if (binSend != null && SerialPacketOffset > 0) 
+                if (binSend != null && BlockOffset > 0) 
                 {
-                    long size = binSend.Length - SerialPacketOffset;
+                    long size = binSend.Length - BlockOffset;
                     new byte[] { (byte) 'V',
                                  (byte) 'S',
                                  (byte) 'S',
@@ -90,58 +92,51 @@ namespace System.Extract.Stock
                 }
             }
         }
-        public IntPtr SerialPacketPtr
+        public IntPtr SerialBlockPtr
         {
             get { return GCHandle.FromIntPtr(binSendPtr).AddrOfPinnedObject();  }
         }
-        public int SerialPacketId
+        public int    SerialBlockId
         {
             get; set;
         } = 0;
 
-        public long SerialPacketSize
+        public long BlockSize
         { get; set; } = 0;
-        public int  SerialPacketOffset
+        public int  BlockOffset
         {
             get; set;
         } = 16;
 
-        public byte[] DeserialPacket
+        public byte[] DeserialBlock
         {
             get
             {
                 byte[] result = null;
                 lock (binReceive)
                 {
-                    SerialPacketSize = 0;
+                    BlockSize = 0;
                     result = binReceive;
                     binReceive = new byte[0];
                 }
                 return result;
             }
         }
-        public IntPtr DeserialPacketPtr
+        public IntPtr DeserialBlockPtr
         {
-            get { return GCHandle.FromIntPtr(binReceivePtr).AddrOfPinnedObject() + SerialPacketOffset; }
+            get { return GCHandle.FromIntPtr(binReceivePtr).AddrOfPinnedObject() + BlockOffset; }
         }
-        public int DeserialPacketId
+        public int    DeserialBlockId
         {
             get; set;
         } = 0;
-
-        public long DeserialPacketSize
-        { get; set; } = 0;
-        public int  DeserialPacketOffset
-        {
-            get; set;
-        } = 16;
 
         public void ReceiveBytes(IntPtr buffer, long received)
         {
             lock (binReceive)
             {
-                SerialPacketSize = *((int*)(buffer + 4));
-                DeserialPacketId = *((int*)(buffer + 12));
+                BlockSize = *((int*)(buffer + 4));
+                DeserialBlockId = *((int*)(buffer + 12));
             }
         }
         public MarkupType ReceiveBytes(byte[] buffer, long received)
@@ -152,30 +147,30 @@ namespace System.Extract.Stock
             {
                 int offset = 0, length = (int)received;
                 bool inprogress = false;
-                if (SerialPacketSize == 0)
+                if (BlockSize == 0)
                 {
 
-                    SerialPacketSize = BitConverter.ToInt64(buffer, 4);
-                    DeserialPacketId = BitConverter.ToInt32(buffer, 12);
-                    binReceive = new byte[SerialPacketSize];
+                    BlockSize = BitConverter.ToInt64(buffer, 4);
+                    DeserialBlockId = BitConverter.ToInt32(buffer, 12);
+                    binReceive = new byte[BlockSize];
                     GCHandle gc = GCHandle.Alloc(binReceive, GCHandleType.Pinned);
                     binReceivePtr = GCHandle.ToIntPtr(gc);
-                    offset = SerialPacketOffset;
-                    length -= SerialPacketOffset;
+                    offset = BlockOffset;
+                    length -= BlockOffset;
                 }
 
-                if (SerialPacketSize > 0)
+                if (BlockSize > 0)
                     inprogress = true;
 
-                SerialPacketSize -= length;
+                BlockSize -= length;
 
-                if (SerialPacketSize < 1)
+                if (BlockSize < 1)
                 {
                     long endPosition = received;
                     noiseKind = buffer.SeekMarkup(out endPosition, SeekDirection.Backward);
                 }
 
-                int destid = (binReceive.Length - ((int)SerialPacketSize + length));
+                int destid = (binReceive.Length - ((int)BlockSize + length));
                 if (inprogress)
                 {
                     fixed (byte* msgbuff = buffer)
@@ -195,28 +190,28 @@ namespace System.Extract.Stock
                 int offset = 0, length = received;
                 bool inprogress = false;
 
-                if (SerialPacketSize == 0)
+                if (BlockSize == 0)
                 {
-                    SerialPacketSize = BitConverter.ToInt64(buffer, 4);
-                    DeserialPacketId = BitConverter.ToInt32(buffer, 12);
-                    binReceive = new byte[SerialPacketSize];
+                    BlockSize = BitConverter.ToInt64(buffer, 4);
+                    DeserialBlockId = BitConverter.ToInt32(buffer, 12);
+                    binReceive = new byte[BlockSize];
                     GCHandle gc = GCHandle.Alloc(binReceive, GCHandleType.Pinned);
                     binReceivePtr = GCHandle.ToIntPtr(gc);
-                    offset = SerialPacketOffset;
-                    length -= SerialPacketOffset;
+                    offset = BlockOffset;
+                    length -= BlockOffset;
 
                 }
-                if (SerialPacketSize > 0)
+                if (BlockSize > 0)
                     inprogress = true;
 
-                SerialPacketSize -= length;
+                BlockSize -= length;
 
-                if (SerialPacketSize < 1)
+                if (BlockSize < 1)
                 {
                     long endPosition = received;
                     noiseKind = buffer.SeekMarkup(out endPosition, SeekDirection.Backward);
                 }
-                int destid = (binReceive.Length - ((int)SerialPacketSize + length));
+                int destid = (binReceive.Length - ((int)BlockSize + length));
                 if (inprogress)
                 {
                     fixed (void* msgbuff = buffer)
@@ -232,11 +227,11 @@ namespace System.Extract.Stock
         {
             if (drive != null)
             {
-                GCHandle handler = GCHandle.Alloc(SerialPacket, GCHandleType.Pinned);
+                GCHandle handler = GCHandle.Alloc(SerialBlock, GCHandleType.Pinned);
                 IntPtr rawpointer = handler.AddrOfPinnedObject();
-                drive.BufferSize = SerialPacket.Length;
+                drive.BufferSize = SerialBlock.Length;
                 drive.WriteHeader();
-                drive.Write(rawpointer, SerialPacket.Length);
+                drive.Write(rawpointer, SerialBlock.Length);
                 handler.Free();
             }
         }
@@ -244,9 +239,9 @@ namespace System.Extract.Stock
         {
             if (drive != null)
             {
-                drive.BufferSize = SerialPacketSize;
+                drive.BufferSize = BlockSize;
                 drive.WriteHeader();
-                drive.Write(SerialPacketPtr, SerialPacketSize);
+                drive.Write(SerialBlockPtr, BlockSize);
             }
         }
 
@@ -263,7 +258,7 @@ namespace System.Extract.Stock
                 ReceiveBytes(bufferread, BufferSize);
                 handler.Free();
             }
-            return DeserialPacket;
+            return DeserialBlock;
         }
         public IntPtr ReadStockPtr(IStock drive)
         {
@@ -278,7 +273,7 @@ namespace System.Extract.Stock
                 drive.Read(rawpointer, BufferSize, 0);
                 ReceiveBytes(rawpointer, BufferSize);
             }
-            return DeserialPacketPtr;
+            return DeserialBlockPtr;
         }
 
         public void Dispose()

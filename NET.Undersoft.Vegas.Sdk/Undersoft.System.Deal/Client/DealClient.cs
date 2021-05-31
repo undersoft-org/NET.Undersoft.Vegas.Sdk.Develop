@@ -139,13 +139,13 @@ namespace System.Deal
             else if (Context.SendMessage)
             {
                 callback = MessageSentCallback;
-                context.SerialPacketId = 0;
+                context.SerialBlockId = 0;
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Message, DirectionType.Send);
                 request.Resolve();
             }
             else
                 return;
-            context.Listener.BeginSend(context.SerialPacket, 0, context.SerialPacket.Length, SocketFlags.None, callback, context);
+            context.Listener.BeginSend(context.SerialBlock, 0, context.SerialBlock.Length, SocketFlags.None, callback, context);
         }
 
         private void MessageReceivedCallBack(IAsyncResult result)
@@ -158,15 +158,15 @@ namespace System.Deal
             if (receive > 0)
                 noiseKind = context.IncomingMessage(receive);
 
-            if (context.DeserialPacketSize > 0)
+            if (context.BlockSize > 0)
             {
-                int buffersize = (context.DeserialPacketSize < context.BufferSize) ? (int)context.DeserialPacketSize : context.BufferSize;
+                int buffersize = (context.BlockSize < context.BufferSize) ? (int)context.BlockSize : context.BufferSize;
                 context.Listener.BeginReceive(context.MessageBuffer, 0, buffersize, SocketFlags.None, MessageReceivedCallBack, context);
             }
             else
             {
-                object received = context.DeserialPacket;
-                object readPosition = context.DeserialPacketId;
+                object received = context.DeserialBlock;
+                object readPosition = context.DeserialBlockId;
 
                 if (noiseKind == MarkupType.Block || (noiseKind == MarkupType.End && (int)readPosition < (context.Transfer.HeaderReceived.Context.ObjectsCount - 1)))
                     context.Listener.BeginReceive(context.MessageBuffer, 0, context.BufferSize, SocketFlags.None, MessageReceivedCallBack, context);
@@ -201,11 +201,11 @@ namespace System.Deal
             catch (SocketException) { }
             catch (ObjectDisposedException) { }
 
-            if (context.SerialPacketId >= 0)
+            if (context.SerialBlockId >= 0)
             {
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Message, DirectionType.Send);
                 request.Resolve();
-                context.Listener.BeginSend(context.SerialPacket, 0, context.SerialPacket.Length, SocketFlags.None, MessageSentCallback, context);
+                context.Listener.BeginSend(context.SerialBlock, 0, context.SerialBlock.Length, SocketFlags.None, MessageSentCallback, context);
             }
             else
             {
@@ -225,15 +225,15 @@ namespace System.Deal
             if (receive > 0)
                 context.IncomingHeader(receive);
 
-            if (context.DeserialPacketSize > 0)
+            if (context.BlockSize > 0)
             {
-                int buffersize = (context.DeserialPacketSize < context.BufferSize) ? (int)context.DeserialPacketSize : context.BufferSize;
+                int buffersize = (context.BlockSize < context.BufferSize) ? (int)context.BlockSize : context.BufferSize;
                 context.Listener.BeginReceive(context.HeaderBuffer, 0, buffersize, SocketFlags.None, HeaderReceivedCallBack, context);
             }
             else
             {
                 TransferOperation request = new TransferOperation(context.Transfer, MessagePart.Header, DirectionType.Receive);
-                request.Resolve(context.DeserialPacket);
+                request.Resolve(context.DeserialBlock);
 
                 if (!context.ReceiveMessage &&
                     !context.SendMessage)

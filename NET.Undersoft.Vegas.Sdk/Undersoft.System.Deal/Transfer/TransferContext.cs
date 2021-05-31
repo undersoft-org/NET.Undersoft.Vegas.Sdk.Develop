@@ -16,7 +16,7 @@ namespace System.Deal
     {
         #region Private / NonSerialized
         private const int Buffer_Size = 4096;
-        private int Packet_Offset = 16;
+        private int Block_Offset = 16;
 
         [NonSerialized] private bool disposed = false;
 
@@ -85,8 +85,8 @@ namespace System.Deal
             this.Denied = false;
             this.ObjectPosition = 0;
             this.ObjectsLeft = 0;
-            this.DeserialPacketId = 0;
-            this.SerialPacketSize = 0;
+            this.DeserialBlockId = 0;
+            this.BlockSize = 0;
             this.SendMessage = true;
             this.ReceiveMessage = true;
             this.disposed = true;
@@ -145,21 +145,21 @@ namespace System.Deal
             }
         }
 
-        public long SerialPacketSize
+        public long BlockSize
         { get; set; }
-        public int  SerialPacketOffset
+        public int  BlockOffset
         {
             get
             {
-                return Packet_Offset;
+                return Block_Offset;
             }
             set
             {
-                Packet_Offset = value;
+                Block_Offset = value;
             }
         }
 
-        public byte[] SerialPacket
+        public byte[] SerialBlock
         {
             get
             {
@@ -175,11 +175,11 @@ namespace System.Deal
                         binSend = value;
                         if (Protocol != DealProtocol.HTTP)
                         {
-                            long size = binSend.Length - SerialPacketOffset;
+                            long size = binSend.Length - BlockOffset;
                             new byte[] { (byte) 'D',
-                                     (byte) 'V',
-                                     (byte) 'S',
-                                     (byte) 'P' }.CopyTo(binSend, 0);
+                                     (byte) 'E',
+                                     (byte) 'A',
+                                     (byte) 'L' }.CopyTo(binSend, 0);
                             BitConverter.GetBytes(size).CopyTo(binSend, 4);
                             BitConverter.GetBytes(ObjectPosition).CopyTo(binSend, 12);
                         }
@@ -188,16 +188,16 @@ namespace System.Deal
                 }
             }
         }
-        public int SerialPacketId
+        public int SerialBlockId
         {
             get; set;
         }
 
-        public IntPtr SerialPacketPtr => binSendAddress;
+        public IntPtr SerialBlockPtr => binSendAddress;
 
-        public IntPtr DeserialPacketPtr => binReceiveAddress;
+        public IntPtr DeserialBlockPtr => binReceiveAddress;
 
-        public byte[] DeserialPacket
+        public byte[] DeserialBlock
         {
             get
             {
@@ -205,29 +205,15 @@ namespace System.Deal
                 lock (binReceive)
                 {
                     disposed = false;
-                    SerialPacketSize = 0;
+                    BlockSize = 0;
                     result = binReceive;
                     binReceive = new byte[0];
                 }
                 return result;
             }
         }
-        public int DeserialPacketId
+        public int DeserialBlockId
         { get; set; }
-
-        public long DeserialPacketSize
-        { get; set; }
-        public int DeserialPacketOffset
-        {
-            get
-            {
-                return Packet_Offset;
-            }
-            set
-            {
-                Packet_Offset = value;
-            }
-        }
 
         public MarkupType IncomingHeader(int received)
         {
@@ -249,32 +235,32 @@ namespace System.Deal
             {
                 int offset = 0, length = received;
                 bool inprogress = false;
-                if (SerialPacketSize == 0)
+                if (BlockSize == 0)
                 {
-                    SerialPacketSize = *((int*)(headerBufferAddress + 4).ToPointer());
-                    DeserialPacketId = *((int*)(headerBufferAddress + 12).ToPointer());
+                    BlockSize = *((int*)(headerBufferAddress + 4).ToPointer());
+                    DeserialBlockId = *((int*)(headerBufferAddress + 12).ToPointer());
 
-                    binReceive = new byte[SerialPacketSize];
+                    binReceive = new byte[BlockSize];
                     GCHandle gc = GCHandle.Alloc(binReceive, GCHandleType.Pinned);
                     binReceiveHandler = GCHandle.ToIntPtr(gc);
                     binReceiveAddress = gc.AddrOfPinnedObject();
 
-                    offset = SerialPacketOffset;
-                    length -= SerialPacketOffset;
+                    offset = BlockOffset;
+                    length -= BlockOffset;
                 }
 
-                if (SerialPacketSize > 0)
+                if (BlockSize > 0)
                     inprogress = true;
 
-                SerialPacketSize -= length;
+                BlockSize -= length;
 
-                if (SerialPacketSize < 1)
+                if (BlockSize < 1)
                 {
                     long endPosition = length;
                     noiseKind = HeaderBuffer.SeekMarkup(out endPosition, SeekDirection.Backward);
                 }
 
-                int destid = (int)(binReceive.Length - (SerialPacketSize + length));
+                int destid = (int)(binReceive.Length - (BlockSize + length));
 
                 if (inprogress)
                 {
@@ -289,9 +275,9 @@ namespace System.Deal
 
             lock (binReceive)
             {
-                if (SerialPacketSize == 0)
+                if (BlockSize == 0)
                 {
-                    SerialPacketSize = 1;
+                    BlockSize = 1;
                     msReceive = new MemoryStream();
                 }
 
@@ -299,7 +285,7 @@ namespace System.Deal
 
                 if (received < BufferSize)
                 {
-                    SerialPacketSize = 0;
+                    BlockSize = 0;
                     msReceive.Position = 0;
                     ParseRequest(msReceive);
                     ReadHeaders(msReceive);
@@ -329,32 +315,32 @@ namespace System.Deal
                 int offset = 0, length = received;
                 bool inprogress = false;
 
-                if (SerialPacketSize == 0)
+                if (BlockSize == 0)
                 {
-                    SerialPacketSize = *((int*)(messageBufferAddress + 4).ToPointer());
-                    DeserialPacketId = *((int*)(messageBufferAddress + 12).ToPointer());
+                    BlockSize = *((int*)(messageBufferAddress + 4).ToPointer());
+                    DeserialBlockId = *((int*)(messageBufferAddress + 12).ToPointer());
 
-                    binReceive = new byte[SerialPacketSize];
+                    binReceive = new byte[BlockSize];
                     GCHandle gc = GCHandle.Alloc(binReceive, GCHandleType.Pinned);
                     binReceiveHandler = GCHandle.ToIntPtr(gc);
                     binReceiveAddress = gc.AddrOfPinnedObject();
 
-                    offset = SerialPacketOffset;
-                    length -= SerialPacketOffset;
+                    offset = BlockOffset;
+                    length -= BlockOffset;
                 }
 
-                if (SerialPacketSize > 0)
+                if (BlockSize > 0)
                     inprogress = true;
 
-                SerialPacketSize -= length;
+                BlockSize -= length;
 
-                if (SerialPacketSize < 1)
+                if (BlockSize < 1)
                 {
                     long endPosition = length;
                     noiseKind = MessageBuffer.SeekMarkup(out endPosition, SeekDirection.Backward);
                 }
 
-                int destid = (int)(binReceive.Length - (SerialPacketSize + length));
+                int destid = (int)(binReceive.Length - (BlockSize + length));
                 if (inprogress)
                 {
                     Extractor.CopyBlock(binReceiveAddress, destid, messageBufferAddress, offset, length);

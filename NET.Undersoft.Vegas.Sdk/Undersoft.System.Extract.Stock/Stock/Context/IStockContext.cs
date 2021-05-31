@@ -4,9 +4,9 @@ using System;
 
 namespace System.Extract.Stock
 {
-    public interface IStockContext : IDisposable
+    public interface IStockContext : ISerialBlock, IDisposable
     {
-        string Place { get; set; }
+        string Path { get; set; }
         string File { get; set; }
 
         ushort StockId { get; set; }

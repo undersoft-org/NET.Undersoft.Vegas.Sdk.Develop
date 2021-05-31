@@ -4,7 +4,7 @@ using System.Instant.Linking;
 
 namespace System.Instant
 {
-    public interface IFigures : IDeck<IFigure>, IFigure, IFigureFormatter
+    public interface IFigures : IDeck<IFigure>, IFigure, ISerialFormatter
     {
         IInstant Instant { get; set; }
 

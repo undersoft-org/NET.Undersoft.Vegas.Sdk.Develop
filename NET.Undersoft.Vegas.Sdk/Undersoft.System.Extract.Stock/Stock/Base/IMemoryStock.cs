@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 
 namespace System.Extract.Stock
 {
-    public interface IStockHandle
+    public interface IMemoryStock
     {
-        void WriteStock();
-        void ReadStock();
-        bool TryReadStock();
-        void OpenStock();
-        bool TryOpenStock();
-        void CloseStock();
+        bool WriteStock();
+        bool ReadStock();
+        bool OpenStock();
+        bool CloseStock();
         IStock Stock { get; set; }
     }
 }

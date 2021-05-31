@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace System.Instant
 {
-    public enum FigureFormat
+    public enum SerialFormat
     {
         None,
         Binary,

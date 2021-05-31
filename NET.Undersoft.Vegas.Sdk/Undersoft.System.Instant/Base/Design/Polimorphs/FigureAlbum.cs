@@ -191,20 +191,20 @@ namespace System.Instant
         public int DeserialCount { get; set; }
         public int ProgressCount { get; set; }
 
-        public int Serialize(Stream stream, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary)
+        public int Serialize(Stream stream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
-        public int Serialize(IFigurePacket buffor, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary)
+        public int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
 
-        public object Deserialize(Stream stream, FigureFormat serialFormat = FigureFormat.Binary)
+        public object Deserialize(Stream stream, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
-        public object Deserialize(ref object block, FigureFormat serialFormat = FigureFormat.Binary)
+        public object Deserialize(ref object block, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }

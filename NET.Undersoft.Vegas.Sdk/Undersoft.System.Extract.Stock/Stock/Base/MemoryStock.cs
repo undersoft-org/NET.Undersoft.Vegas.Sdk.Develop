@@ -5,7 +5,7 @@ namespace System.Extract.Stock
 {
     [SecurityPermission(SecurityAction.LinkDemand)]
     [SecurityPermission(SecurityAction.InheritanceDemand)]
-    public abstract class StockHandle : Stock
+    public abstract class MemoryStock : Stock
     {
        // protected EventWaitHandle WriteWaitEvent { get; private set; }                    /// An event handle used for blocking write operations.
        // protected EventWaitHandle ReadWaitEvent { get; private set; }                     /// An event handle used for blocking read operations.
@@ -13,7 +13,7 @@ namespace System.Extract.Stock
         protected ManualResetEvent WriteWaitEvent { get; private set; }
         protected ManualResetEvent ReadWaitEvent { get; private set; }
 
-        protected StockHandle(string path, string name, long bufferSize, bool ownsSharedMemory, bool fixsize) :
+        protected MemoryStock(string path, string name, long bufferSize, bool ownsSharedMemory, bool fixsize) :
                                 base(path, name, bufferSize, ownsSharedMemory, fixsize)
         {
             WriteWaitEvent = new ManualResetEvent(true); //new EventWaitHandle(true, EventResetMode.ManualReset, Name + "_evt_write");

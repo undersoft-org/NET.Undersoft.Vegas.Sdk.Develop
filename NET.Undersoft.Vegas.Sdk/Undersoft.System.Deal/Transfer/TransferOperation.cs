@@ -12,7 +12,7 @@ namespace System.Deal
         private DealTransfer transaction;
         private DealContext transportContext;
 
-        private ITransferContext vsspContext;
+        private ITransferContext transferContext;
         private ServiceSite site;
         private DirectionType direction;
         private MessagePart part;
@@ -22,13 +22,13 @@ namespace System.Deal
         public TransferOperation(DealTransfer _transaction, MessagePart _part, DirectionType _direction)
         {
             transaction = _transaction;
-            vsspContext = transaction.Context;
+            transferContext = transaction.Context;
             transportContext = transaction.MyHeader.Context;
             site = transportContext.IdentitySite;
             direction = _direction;
             part = _part;
-            protocol = vsspContext.Protocol;
-            method = vsspContext.Method;
+            protocol = transferContext.Protocol;
+            method = transferContext.Method;
         }
 
         public void Resolve(object argument0 = null, object argument1 = null)
@@ -264,10 +264,10 @@ namespace System.Deal
                             //((ISettings)_content).State.Synced = false;
 
                             Type[] ifaces = _content.GetType().GetInterfaces();
-                            if (ifaces.Contains(typeof(IFigureFormatter)) && ifaces.Contains(typeof(IDealSource)))
+                            if (ifaces.Contains(typeof(ISerialFormatter)) && ifaces.Contains(typeof(IDealSource)))
                             {
                                 int objectCount = transaction.HeaderReceived.Context.ObjectsCount;
-                                vsspContext.Synchronic = transaction.HeaderReceived.Context.Synchronic;
+                                transferContext.Synchronic = transaction.HeaderReceived.Context.Synchronic;
 
                                 object myheader = ((IDealSource)_content).Locate();
 
@@ -275,7 +275,7 @@ namespace System.Deal
                                 {
                                     if (objectCount == 0)
                                     {
-                                        vsspContext.ReceiveMessage = false;
+                                        transferContext.ReceiveMessage = false;
 
                                         //if (((ISettings)_content).Config.DealerId.IsNotEmpty)
                                         //    transaction.MyHeader.Content = ((IDealSource)myheader).Impact(_content);
@@ -345,8 +345,8 @@ namespace System.Deal
         private void SrvRecMsg(ref object array, int readposition)
         {
             object serialCardsObj = ((object[])transaction.MessageReceived.Content)[readposition];
-            object deserialCardsObj = ((IFigureFormatter)serialCardsObj).Deserialize(ref array);
-            IFigureFormatter deserialCards = (IFigureFormatter)deserialCardsObj;
+            object deserialCardsObj = ((ISerialFormatter)serialCardsObj).Deserialize(ref array);
+            ISerialFormatter deserialCards = (ISerialFormatter)deserialCardsObj;
             if (deserialCards.DeserialCount <= deserialCards.ProgressCount || deserialCards.ProgressCount == 0)
             {
                 transaction.Context.ObjectsLeft--;
@@ -357,29 +357,29 @@ namespace System.Deal
 
         private void SrvSendHead()
         {
-            transaction.Manager.HeaderContent(vsspContext.Transfer.MyHeader.Content,
-                                              vsspContext.Transfer.MyHeader.Content, 
+            transaction.Manager.HeaderContent(transferContext.Transfer.MyHeader.Content,
+                                              transferContext.Transfer.MyHeader.Content, 
                                               DirectionType.Send);
 
             if (transaction.MyHeader.Context.ObjectsCount == 0)
-                vsspContext.SendMessage = false;
+                transferContext.SendMessage = false;
 
-            vsspContext.Transfer.MyHeader.Serialize(vsspContext, 0, 0);
+            transferContext.Transfer.MyHeader.Serialize(transferContext, 0, 0);
         }
         private void SrvSendMsg()
         {            
-            int serialBlockId = ((IFigureFormatter[])transaction.MyMessage.Content)[vsspContext.ObjectPosition].Serialize(vsspContext, vsspContext.SerialPacketId, 5000);
+            int serialBlockId = ((ISerialFormatter[])transaction.MyMessage.Content)[transferContext.ObjectPosition].Serialize(transferContext, transferContext.SerialBlockId, 5000);
 
             if (serialBlockId < 0)
             {
-                if (vsspContext.ObjectPosition < (transaction.MyHeader.Context.ObjectsCount - 1))
+                if (transferContext.ObjectPosition < (transaction.MyHeader.Context.ObjectsCount - 1))
                 {
-                    vsspContext.ObjectPosition++;
-                    vsspContext.SerialPacketId = 0;
+                    transferContext.ObjectPosition++;
+                    transferContext.SerialBlockId = 0;
                     return;
                 }           
             }
-            vsspContext.SerialPacketId = serialBlockId;
+            transferContext.SerialBlockId = serialBlockId;
         }
 
         private void CltRecHead(ref object array)
@@ -399,7 +399,7 @@ namespace System.Deal
                 object reciveContent = transaction.HeaderReceived.Content;
 
                 Type[] ifaces = reciveContent.GetType().GetInterfaces();
-                if (ifaces.Contains(typeof(IFigureFormatter)) && ifaces.Contains(typeof(IDealSource)))
+                if (ifaces.Contains(typeof(ISerialFormatter)) && ifaces.Contains(typeof(IDealSource)))
                 {
                     if (transaction.MyHeader.Content == null)
                         transaction.MyHeader.Content = ((IDealSource)reciveContent).Locate();
@@ -410,7 +410,7 @@ namespace System.Deal
 
                     int objectCount = transaction.HeaderReceived.Context.ObjectsCount;
                     if (objectCount == 0)
-                        vsspContext.ReceiveMessage = false;
+                        transferContext.ReceiveMessage = false;
                     else
                         transaction.MessageReceived = new DealMessage(transaction, DirectionType.Receive, myContent);
                 }
@@ -419,29 +419,29 @@ namespace System.Deal
                     Hashtable hashTable = (Hashtable)reciveContent;
                     if (hashTable.Contains("Register"))
                     {
-                        vsspContext.Denied = !(bool)hashTable["Register"];
-                        if (vsspContext.Denied)
+                        transferContext.Denied = !(bool)hashTable["Register"];
+                        if (transferContext.Denied)
                         {
-                            vsspContext.Close = true;
-                            vsspContext.ReceiveMessage = false;
-                            vsspContext.SendMessage = false;
+                            transferContext.Close = true;
+                            transferContext.ReceiveMessage = false;
+                            transferContext.SendMessage = false;
                         }
                     }
                 }
                 else
-                    vsspContext.SendMessage = false;
+                    transferContext.SendMessage = false;
             }
         }
         private void CltRecMsg(ref object array, int readposition)
         {
             object serialCardsObj = ((object[])transaction.MessageReceived.Content)[readposition];
-            IFigureFormatter serialCards = (IFigureFormatter)serialCardsObj;
+            ISerialFormatter serialCards = (ISerialFormatter)serialCardsObj;
 
             //if (serialCards.ProgressCount == 0)
             //    ((ISettings)serialCardsObj).State.withPropagate = false;
 
             object deserialCardsObj = serialCards.Deserialize(ref array);
-            IFigureFormatter deserialCards = (IFigureFormatter)deserialCardsObj;
+            ISerialFormatter deserialCards = (ISerialFormatter)deserialCardsObj;
             if (deserialCards.DeserialCount <= deserialCards.ProgressCount || deserialCards.ProgressCount == 0)
             {
                 transaction.Context.ObjectsLeft--;
@@ -455,52 +455,52 @@ namespace System.Deal
 
         private void CltSendHead()
         {
-            transaction.Manager.HeaderContent(vsspContext.Transfer.MyHeader.Content, 
-                                              vsspContext.Transfer.MyHeader.Content, 
+            transaction.Manager.HeaderContent(transferContext.Transfer.MyHeader.Content, 
+                                              transferContext.Transfer.MyHeader.Content, 
                                               DirectionType.Send);
 
             if (transaction.MyHeader.Context.ObjectsCount == 0)
-                vsspContext.SendMessage = false;
+                transferContext.SendMessage = false;
 
-            vsspContext.Transfer.MyHeader.Serialize(vsspContext, 0, 0);
+            transferContext.Transfer.MyHeader.Serialize(transferContext, 0, 0);
         }
         private void CltSendMsg()
         {
-            object serialcards = ((object[])transaction.MyMessage.Content)[vsspContext.ObjectPosition];
+            object serialcards = ((object[])transaction.MyMessage.Content)[transferContext.ObjectPosition];
 
             //((ISettings)serialcards).State.Synced = false;
-            int serialBlockId = ((IFigureFormatter)serialcards).Serialize(vsspContext, vsspContext.SerialPacketId, 5000);
+            int serialBlockId = ((ISerialFormatter)serialcards).Serialize(transferContext, transferContext.SerialBlockId, 5000);
             if (serialBlockId < 0)
             {
-                if (vsspContext.ObjectPosition < (transaction.MyHeader.Context.ObjectsCount - 1))
+                if (transferContext.ObjectPosition < (transaction.MyHeader.Context.ObjectsCount - 1))
                 {
-                    vsspContext.ObjectPosition++;
-                    vsspContext.SerialPacketId = 0;
+                    transferContext.ObjectPosition++;
+                    transferContext.SerialBlockId = 0;
                     return;
                 }
             }
-            vsspContext.SerialPacketId = serialBlockId;
+            transferContext.SerialBlockId = serialBlockId;
         }
 
         private void SrvRecGet(ref object array)
         {
-            vsspContext.SendMessage = false;
-            vsspContext.ReceiveMessage = false;
+            transferContext.SendMessage = false;
+            transferContext.ReceiveMessage = false;
             transaction.HeaderReceived = transaction.MyHeader;        
-            vsspContext.HandleGetRequest();
+            transferContext.HandleGetRequest();
         }
         private void SrvSendGet()
         {
-            vsspContext.SendMessage = false;
-            vsspContext.ReceiveMessage = false;           
+            transferContext.SendMessage = false;
+            transferContext.ReceiveMessage = false;           
         }
 
         private void SrvRecPost(ref object array)
         {
             if (SrvRecPostDealer(ref array))
                 transaction.HeaderReceived = transaction.MyHeader;
-            vsspContext.SendMessage = false;
-            vsspContext.ReceiveMessage = false;
+            transferContext.SendMessage = false;
+            transferContext.ReceiveMessage = false;
         }
         private bool SrvRecPostDealer(ref object array)
         {
@@ -565,7 +565,7 @@ namespace System.Deal
             string errorMessage = "";
             try
             {
-                DealHeader headerObject = (DealHeader)transaction.MyHeader.Deserialize(ref array, FigureFormat.Json);
+                DealHeader headerObject = (DealHeader)transaction.MyHeader.Deserialize(ref array, SerialFormat.Json);
                 headerObject.Context.Identity.Ip = transaction.MyHeader.Context.RemoteEndPoint.Address.ToString();
                 if (DealServer.Security.Register(headerObject.Context.Identity, true))
                 {
@@ -579,12 +579,12 @@ namespace System.Deal
                         object instance = new object();
                         JsonParser.PrepareInstance(out instance, headerObject.Context.ContentType);
                         object content = headerObject.Content;
-                        object result = ((IFigureFormatter)instance).Deserialize(ref content, FigureFormat.Json);
+                        object result = ((ISerialFormatter)instance).Deserialize(ref content, SerialFormat.Json);
                         transaction.HeaderReceived.Content = result;
                         object _content = transaction.HeaderReceived.Content;
 
                         Type[] ifaces = _content.GetType().GetInterfaces();
-                        if (ifaces.Contains(typeof(IFigureFormatter)) && ifaces.Contains(typeof(IDealSource)))
+                        if (ifaces.Contains(typeof(ISerialFormatter)) && ifaces.Contains(typeof(IDealSource)))
                         {
                             int objectCount = objcount;
 
@@ -596,7 +596,7 @@ namespace System.Deal
                             {
                                 if (objectCount == 0)
                                 {
-                                    vsspContext.ReceiveMessage = false;
+                                    transferContext.ReceiveMessage = false;
 
                                     //if (clientConfig.DealerId.IsNotEmpty)
                                     //    transaction.MyHeader.Content = ((IDealSource)myheader).Impact(_content);
@@ -662,7 +662,7 @@ namespace System.Deal
             string errorMessage = "";
             try
             {
-              //  ((IFigureFormatter[])transaction.MessageReceived.Content).DeserializeJsonCards(ref array);                
+              //  ((ISerialFormatter[])transaction.MessageReceived.Content).DeserializeJsonCards(ref array);                
             }
             catch (Exception ex)
             {
@@ -685,16 +685,16 @@ namespace System.Deal
 
         private void SrvSendPost()
         {
-            vsspContext.SendMessage = false;
-            vsspContext.ReceiveMessage = false;
-            vsspContext.RequestBuilder.Clear();
-            if (!vsspContext.Denied)
+            transferContext.SendMessage = false;
+            transferContext.ReceiveMessage = false;
+            transferContext.RequestBuilder.Clear();
+            if (!transferContext.Denied)
             {
                 SrvSendPostDealer();
-                vsspContext.HandlePostRequest("application/json");
+                transferContext.HandlePostRequest("application/json");
             }
             else
-                vsspContext.HandleDeniedRequest();
+                transferContext.HandleDeniedRequest();
         }
         private void SrvSendPostDealer()
         {
@@ -703,8 +703,8 @@ namespace System.Deal
         }
         private void SrvSendPostDealHeader()
         {
-            transaction.Manager.HeaderContent(vsspContext.Transfer.MyHeader.Content, vsspContext.Transfer.MyHeader.Content, DirectionType.Send);
-            transaction.MyHeader.SetJson(vsspContext.RequestBuilder);
+            transaction.Manager.HeaderContent(transferContext.Transfer.MyHeader.Content, transferContext.Transfer.MyHeader.Content, DirectionType.Send);
+            transaction.MyHeader.SetJson(transferContext.RequestBuilder);
         }
         private void SrvSendPostDealMessage()
         {
@@ -712,30 +712,30 @@ namespace System.Deal
 
             Type[] ifaces = transaction.MyMessage.Content.GetType().GetInterfaces();
            // if (ifaces.Contains(typeof(ICollection)) && transaction.MyHeader.Context.Errors == 0)
-              //  ((IFigureFormatter[])transaction.MyMessage.Content).SerializeJsonCards(msgcnt, 0, 0, transaction.MyHeader.Context.Complexity);
+              //  ((ISerialFormatter[])transaction.MyMessage.Content).SerializeJsonCards(msgcnt, 0, 0, transaction.MyHeader.Context.Complexity);
           //  else
                 msgcnt.Append("null");
 
             transaction.MyMessage.Content = new object();
-            transaction.MyMessage.SetJson(vsspContext.RequestBuilder);
+            transaction.MyMessage.SetJson(transferContext.RequestBuilder);
             string msg = msgcnt.ToString().Replace("}\r\n{", ",").Trim(new char[] { '\n', '\r' });
-            vsspContext.RequestBuilder.Replace("\"Content\":{}", "\"Content\":" + msgcnt.ToString());          
-            vsspContext.RequestBuilder.Replace("}\r\n{", ",");
-            vsspContext.SendMessage = false;
-            vsspContext.ReceiveMessage = false;
+            transferContext.RequestBuilder.Replace("\"Content\":{}", "\"Content\":" + msgcnt.ToString());          
+            transferContext.RequestBuilder.Replace("}\r\n{", ",");
+            transferContext.SendMessage = false;
+            transferContext.ReceiveMessage = false;
         }
 
         private void SrvRecOptions()
         {
             transaction.HeaderReceived = transaction.MyHeader;
-            vsspContext.SendMessage = false;
-            vsspContext.ReceiveMessage = false;
-            vsspContext.HandleOptionsRequest("application/json");
+            transferContext.SendMessage = false;
+            transferContext.ReceiveMessage = false;
+            transferContext.HandleOptionsRequest("application/json");
         }
         private void SrvSendOptions()
         {
-            vsspContext.SendMessage = false;
-            vsspContext.ReceiveMessage = false;
+            transferContext.SendMessage = false;
+            transferContext.ReceiveMessage = false;
         }
     }
 }

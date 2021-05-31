@@ -32,20 +32,20 @@ namespace System.Instant
         public FigureSort Sort { get => Sleeves.Sort; set => Sleeves.Sort = value; }
         public Func<IFigure, bool> Organizer { get => Sleeves.Organizer; set => Sleeves.Organizer = value; }
 
-        public int Serialize(Stream tostream, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary)
+        public int Serialize(Stream tostream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
-        public int Serialize(IFigurePacket buffor, int offset, int batchSize, FigureFormat serialFormat = FigureFormat.Binary)
+        public int Serialize(ISerialBlock buffor, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
 
-        public object Deserialize(Stream fromstream, FigureFormat serialFormat = FigureFormat.Binary)
+        public object Deserialize(Stream fromstream, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
-        public object Deserialize(ref object fromarray, FigureFormat serialFormat = FigureFormat.Binary)
+        public object Deserialize(ref object fromarray, SerialFormat serialFormat = SerialFormat.Binary)
         {
             throw new NotImplementedException();
         }
