@@ -103,7 +103,7 @@ namespace System.Instant
 
         public Type Type { get; set; }
 
-        public IFigures Organized { get; set; }
+        public IFigures View { get; set; }
 
         public IFigure Summary { get; set; }
 
@@ -111,7 +111,7 @@ namespace System.Instant
 
         public FigureSort Sort { get; set; }
 
-        public Func<IFigure, bool> Organizer { get; set; }
+        public Func<IFigure, bool> QueryFormula { get; set; }
 
         public Linker Linker { get; set; } = new Linker();
 

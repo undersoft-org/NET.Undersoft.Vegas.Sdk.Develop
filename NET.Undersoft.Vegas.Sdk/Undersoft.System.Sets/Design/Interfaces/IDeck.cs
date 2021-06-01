@@ -113,5 +113,7 @@ namespace System.Sets
         void CopyTo(ICard<V>[] array, int destIndex);
 
         new void Clear();
+
+        void Flush();
     }    
 }

@@ -115,7 +115,7 @@ namespace System.Instant
 
         public Type Type { get; set; }
 
-        public IFigures Organized { get; set; }
+        public IFigures View { get; set; }
 
         public IFigure Summary { get; set; }
 
@@ -123,7 +123,7 @@ namespace System.Instant
 
         public FigureSort Sort { get; set; }
 
-        public Func<IFigure, bool> Organizer { get; set; }
+        public Func<IFigure, bool> QueryFormula { get; set; }
 
         public IUnique Empty => Ussn.Empty;
 
@@ -147,7 +147,7 @@ namespace System.Instant
             return SerialCode.GetUniqueBytes();
         }
 
-        public new ulong UniqueKey
+        public ulong UniqueKey
         {
             get => SerialCode.UniqueKey;
             set => SerialCode.SetUniqueKey(value);

@@ -8,12 +8,12 @@ namespace System.Instant.Treatments
 {
     public static class Aggregator
     {
-        //public static  IFigures Aggregate(this IFigures figures, bool onlyOrganized = false)
+        //public static  IFigures Aggregate(this IFigures figures, bool onlyView = false)
         //{
-        //    return;//Result(figures.Organized, onlyOrganized);
+        //    return;//Result(figures.View, onlyView);
         //}
 
-        //private static IFigures Result(IFigures figures, bool onlyOrganized)
+        //private static IFigures Result(IFigures figures, bool onlyView)
         //{
 
         //    MemberRubric[] aggregateRubrics = figures.Treatment.AggregateRubrics.ToArray();
@@ -25,17 +25,17 @@ namespace System.Instant.Treatments
         //                          .Select(j => targetLinkIds
         //                            .Add(j.AggregateIndex[0])).ToArray();
 
-        //        FigureLink[] allOrOrganized = figures.Linkmap
+        //        FigureLink[] allOrView = figures.Linkmap
         //                                                .TargetLinks.AsValues()
         //                                                    .Cast<FigureLink>()
-        //                                                        .Where(d => d.Target.Figures.Organize.Terms.Count > 0).ToArray();
+        //                                                        .Where(d => d.Target.Figures.Query.Terms.Count > 0).ToArray();
         //        int[] ids = null;
         //        IDeck<LinkBranch> subresult;
 
-        //        if (onlyOrganized)
+        //        if (onlyView)
         //        {
-        //            ids = allOrOrganized.Select(r => figures.Linkmap.TargetLinks.IndexOf(r)).Where(id => targetLinkIds.Contains(id)).ToArray();
-        //            subresult = figures.Linkmap.CreateTargetLinks(allOrOrganized);
+        //            ids = allOrView.Select(r => figures.Linkmap.TargetLinks.IndexOf(r)).Where(id => targetLinkIds.Contains(id)).ToArray();
+        //            subresult = figures.Linkmap.CreateTargetLinks(allOrView);
         //        }
         //        else
         //        {

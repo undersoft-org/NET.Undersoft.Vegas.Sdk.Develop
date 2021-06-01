@@ -46,7 +46,7 @@ namespace System
 
         #region Properties
 
-        private static ILogWriter writer { get; set; }
+        private static ILogHandler handler { get; set; }
 
         #endregion
 
@@ -68,18 +68,18 @@ namespace System
             }
         }
 
-        public static void AttachWriter(IDeputy writingMethod)
+        public static void CreateHandler(IDeputy writeEvent, IDeputy cleanEvent = null)
         {
-            writer = new LogWriter(deputy);
+            handler = new LogHandler(writeEvent, cleanEvent);
         }
 
         public static void ClearLog()
         {
             try
             {
-                if (writer != null)
+                if (handler != null)
                 {
-                    writer.Clear(clearLogTime);
+                    handler.Clean(clearLogTime);
                     clearLogTime = DateTime.Now;
                 }
             }
@@ -111,9 +111,9 @@ namespace System
             }
         }
 
-        public static void Start(int logLevel, IDeputy writingMethod)
+        public static void Start(int logLevel, IDeputy writeEvent, IDeputy cleanEvent = null)
         {
-            AttachWriter(writingMethod);
+            CreateHandler(writeEvent, cleanEvent);
             SetLogLevel(logLevel);
             if (!threadLive)
             {
@@ -141,8 +141,8 @@ namespace System
                         string message;
                         if (logQueue.TryDequeue(out message))
                         {
-                            if (writer != null)
-                                writer.Write(message);
+                            if (handler != null)
+                                handler.Write(message);
                             else
                                 Debug.WriteLine(message);
                         }

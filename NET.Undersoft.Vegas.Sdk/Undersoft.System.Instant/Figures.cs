@@ -79,9 +79,9 @@ namespace System.Instant
             IFigures newfigures = newFigures((IFigures)(this.Type.New()));
             newfigures.Rubrics = CloneRubrics();
             newfigures.KeyRubrics = newfigures.Rubrics.KeyRubrics;
-            newfigures.Organized = newFigures((IFigures)this.Type.New());
-            newfigures.Organized.Rubrics = newfigures.Rubrics;
-            newfigures.Organized.KeyRubrics = newfigures.KeyRubrics;
+            newfigures.View = newFigures((IFigures)this.Type.New());
+            newfigures.View.Rubrics = newfigures.Rubrics;
+            newfigures.View.KeyRubrics = newfigures.KeyRubrics;
             return newfigures;
         }
       

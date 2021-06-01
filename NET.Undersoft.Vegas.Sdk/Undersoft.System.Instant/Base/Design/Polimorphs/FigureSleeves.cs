@@ -38,11 +38,11 @@ namespace System.Instant
 
         public abstract IFigures Figures { get; set; }
 
-        public IFigures Organized { get => Sleeves.Organized; set => Sleeves.Organized = value; }
+        public IFigures View { get => Sleeves.View; set => Sleeves.View = value; }
 
         public FigureFilter Filter { get => Sleeves.Filter; set => Sleeves.Filter = value; }
         public FigureSort Sort { get => Sleeves.Sort; set => Sleeves.Sort = value; }
-        public Func<IFigure, bool> Organizer { get => Sleeves.Organizer; set => Sleeves.Organizer = value; }
+        public Func<IFigure, bool> QueryFormula { get => Sleeves.QueryFormula; set => Sleeves.QueryFormula = value; }
 
         public int Serialize(Stream tostream, int offset, int batchSize, SerialFormat serialFormat = SerialFormat.Binary)
         {
@@ -74,6 +74,11 @@ namespace System.Instant
         public void Clear()
         {
             Sleeves.Clear();
+        }
+
+        public void Flush()
+        {
+            Sleeves.Flush();
         }
 
         public IFigure NewFigure()

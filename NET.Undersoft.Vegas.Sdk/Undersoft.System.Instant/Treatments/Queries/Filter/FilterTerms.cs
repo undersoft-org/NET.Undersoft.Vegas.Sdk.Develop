@@ -41,7 +41,7 @@ namespace System.Instant.Treatments
         Or
     }
     [Serializable]
-    public enum OrganizeStage
+    public enum FilterStage
     {
         None,
         First,
@@ -66,11 +66,11 @@ namespace System.Instant.Treatments
 
         public FilterTerm()
         {
-            Stage = OrganizeStage.First;
+            Stage = FilterStage.First;
         }
         public FilterTerm(IFigures figures)
         {
-            Stage = OrganizeStage.First;
+            Stage = FilterStage.First;
             this.figures = figures;
         }
         public FilterTerm(IFigures figures, string filterColumn, string operand, object value, string logic = "And", int stage = 1)
@@ -89,22 +89,22 @@ namespace System.Instant.Treatments
                 MemberRubric[] filterRubrics = this.figures.Rubrics.AsValues().Where(c => c.RubricName == RubricName).ToArray();
                 if (filterRubrics.Length > 0)
                 {
-                    OrganizeRubric = filterRubrics[0]; ValueType = OrganizeRubric.RubricType;
+                    FilterRubric = filterRubrics[0]; ValueType = FilterRubric.RubricType;
                 }
             }
-            Stage = (OrganizeStage)Enum.ToObject(typeof(OrganizeStage), stage);
+            Stage = (FilterStage)Enum.ToObject(typeof(FilterStage), stage);
         }
-        public FilterTerm(MemberRubric filterColumn, OperandType operand, object value, LogicType logic = LogicType.And, OrganizeStage stage = OrganizeStage.First)
+        public FilterTerm(MemberRubric filterColumn, OperandType operand, object value, LogicType logic = LogicType.And, FilterStage stage = FilterStage.First)
         {
             Operand = operand;
             Value = value;
             Logic = logic;
             ValueType = filterColumn.RubricType;
             RubricName = filterColumn.RubricName;
-            OrganizeRubric = filterColumn;
+            FilterRubric = filterColumn;
             Stage = stage;
         }
-        public FilterTerm(string filterColumn, OperandType operand, object value, LogicType logic = LogicType.And, OrganizeStage stage = OrganizeStage.First)
+        public FilterTerm(string filterColumn, OperandType operand, object value, LogicType logic = LogicType.And, FilterStage stage = FilterStage.First)
         {
             RubricName = filterColumn;
             Operand = operand;
@@ -122,7 +122,7 @@ namespace System.Instant.Treatments
             LogicType tempLogic;
             Enum.TryParse(logic, true, out tempLogic);
             Logic = tempLogic;
-            Stage = (OrganizeStage)Enum.ToObject(typeof(OrganizeStage), stage);
+            Stage = (FilterStage)Enum.ToObject(typeof(FilterStage), stage);
         }
 
         #endregion
@@ -138,20 +138,20 @@ namespace System.Instant.Treatments
             set
             {
                 figures = value;
-                if (OrganizeRubric == null && value != null)
+                if (FilterRubric == null && value != null)
                 {
                     MemberRubric[] filterRubrics = figures.Rubrics.AsValues()
                              .Where(c => c.RubricName == RubricName).ToArray();
                     if (filterRubrics.Length > 0)
                     {
-                        OrganizeRubric = filterRubrics[0];
-                        ValueType = OrganizeRubric.RubricType;
+                        FilterRubric = filterRubrics[0];
+                        ValueType = FilterRubric.RubricType;
                     }
                 }
             }
         }
 
-        public MemberRubric OrganizeRubric { get; set; }
+        public MemberRubric FilterRubric { get; set; }
 
         [DisplayName("Pos")]
         public int Index { get; set; }
@@ -162,7 +162,7 @@ namespace System.Instant.Treatments
 
         public string RubricName { get; set; }
 
-        public OrganizeStage Stage { get; set; } = OrganizeStage.First;
+        public FilterStage Stage { get; set; } = FilterStage.First;
 
         public object Value { get; set; }
 
@@ -188,14 +188,14 @@ namespace System.Instant.Treatments
         public object Clone()
         {
             FilterTerm clone = (FilterTerm)this.MemberwiseClone();
-            clone.OrganizeRubric = OrganizeRubric;
+            clone.FilterRubric = FilterRubric;
             return clone;
         }
 
         public FilterTerm Clone(object value)
         {
             FilterTerm clone = (FilterTerm)this.MemberwiseClone();
-            clone.OrganizeRubric = OrganizeRubric;
+            clone.FilterRubric = FilterRubric;
             clone.Value = value;
             return clone;
         }
@@ -352,13 +352,13 @@ namespace System.Instant.Treatments
 
         public List<FilterTerm> Get(int stage)
         {
-            OrganizeStage filterStage = (OrganizeStage)Enum.ToObject(typeof(OrganizeStage), stage);
+            FilterStage filterStage = (FilterStage)Enum.ToObject(typeof(FilterStage), stage);
             return this.AsEnumerable().Where(c => filterStage.Equals(c.Stage)).ToList();
         }
 
         public List<FilterTerm> Get(List<string> RubricNames)
         {
-            return this.AsEnumerable().Where(c => RubricNames.Contains(c.OrganizeRubric.RubricName)).ToList();
+            return this.AsEnumerable().Where(c => RubricNames.Contains(c.FilterRubric.RubricName)).ToList();
         }
 
         public FilterTerm[] Get(string RubricName)

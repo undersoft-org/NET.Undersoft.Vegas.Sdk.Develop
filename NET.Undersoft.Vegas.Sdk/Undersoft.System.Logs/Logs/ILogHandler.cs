@@ -2,10 +2,10 @@
 
 namespace System
 {
-    public interface ILogWriter
+    public interface ILogHandler
     {
         bool Write(string information);
 
-        bool Clear(DateTime olderThen);
+        bool Clean(DateTime olderThen);
     }
 }

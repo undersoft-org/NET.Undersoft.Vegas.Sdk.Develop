@@ -4,12 +4,12 @@ namespace System.Instant.Treatments
 {  
     public static class Summarizer
     {
-        public static IFigure Summarize(this IFigures figures, bool onlyOrganized = false)
+        public static IFigure Summarize(this IFigures figures, bool onlyView = false)
         {
-            return Result(figures.Organized, onlyOrganized);
+            return Result(figures.View, onlyView);
         }
 
-        private static IFigure Result(IFigures figures, bool onlyOrganized = true)
+        private static IFigure Result(IFigures figures, bool onlyView = true)
         {
             IRubrics summaryRubrics = figures.Treatment.SummaryRubrics;
             if (summaryRubrics.Count > 0)

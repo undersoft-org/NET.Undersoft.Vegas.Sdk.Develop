@@ -298,7 +298,7 @@ namespace System.Uniques
                 return ((string)obj).UniqueKey64();
             }
 
-            if (type == typeof(IUnique))
+            if (obj is IUnique)
                 return ((IUnique)obj).UniqueKey();
             if (type == typeof(DateTime))
                 return (ulong)((DateTime)obj).Ticks;
@@ -325,7 +325,7 @@ namespace System.Uniques
                 return (((string)obj).UniqueKey64());
             }
 
-            if (type == typeof(IUnique))
+            if (obj is IUnique)
                 return (((IUnique)obj).UniqueKey());
             if (type == typeof(DateTime))
                 return ((DateTime)obj).ToOADate();
