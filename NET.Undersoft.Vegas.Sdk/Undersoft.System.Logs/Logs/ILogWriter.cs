@@ -4,8 +4,8 @@ namespace System
 {
     public interface ILogWriter
     {
-        void Write(string information);
+        bool Write(string information);
 
-        void Clear(DateTime olderThen);
+        bool Clear(DateTime olderThen);
     }
 }
