@@ -1,21 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-/***************************************************
-    Copyright (c) 2020 Undersoft
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
 
-    System.Sets.IDeck
+   System.Sets.IDeck.cs
    
-        
-    @author Darius Hanc                                                  
-    @project NETStandard.Undersoft.SDK                                    
-    @version 0.8.D (Feb 7, 2020)                                            
-    @licence MIT                                     
- 
- ***************************************************/
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (01.06.2021) 
+   @licence MIT
+ *************************************************/
+
 namespace System.Sets
 {
-    public interface IDeck<V>: IEnumerable, IEnumerable<V>, IList<V>, IProducerConsumerCollection<V>, IDisposable
+    using System.Collections;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+
+
+
+    public interface IDeck<V> : IEnumerable, IEnumerable<V>, IList<V>, IProducerConsumerCollection<V>, IDisposable
     {
         new V this[int index] { get; set; }
         V this[object key] { get; set; }
@@ -65,7 +68,7 @@ namespace System.Sets
         void Enqueue(ICard<V> card);
         bool Enqueue(V card);
 
-              V Dequeue();
+        V Dequeue();
         bool TryDequeue(out ICard<V> item);
         bool TryDequeue(out V item);
         new bool TryTake(out V item);
@@ -73,16 +76,16 @@ namespace System.Sets
         ICard<V> Put(object key, V value);
         ICard<V> Put(ulong key, V value);
         ICard<V> Put(ICard<V> card);
-           void Put(IList<ICard<V>> cardList);
-           void Put(IEnumerable<ICard<V>> cards);
-           void Put(IList<V> cards);
-           void Put(IEnumerable<V> cards);
-       ICard<V> Put(V value);
-       ICard<V> Put(IUnique<V> cards);
-           void Put(IList<IUnique<V>> cards);
-           void Put(IEnumerable<IUnique<V>> cards);
+        void Put(IList<ICard<V>> cardList);
+        void Put(IEnumerable<ICard<V>> cards);
+        void Put(IList<V> cards);
+        void Put(IEnumerable<V> cards);
+        ICard<V> Put(V value);
+        ICard<V> Put(IUnique<V> cards);
+        void Put(IList<IUnique<V>> cards);
+        void Put(IEnumerable<IUnique<V>> cards);
 
-           V Remove(object key);
+        V Remove(object key);
         bool Remove(ICard<V> item);
         bool Remove(IUnique<V> item);
         bool TryRemove(object key);
@@ -92,7 +95,7 @@ namespace System.Sets
         void Renew(IList<ICard<V>> cards);
         void Renew(IEnumerable<ICard<V>> cards);
 
-            new V[] ToArray();
+        new V[] ToArray();
 
         IEnumerable<ICard<V>> AsCards();
 
@@ -102,7 +105,7 @@ namespace System.Sets
 
         new void CopyTo(Array array, int arrayIndex);
 
-          new bool IsSynchronized { get; set; }
+        new bool IsSynchronized { get; set; }
         new object SyncRoot { get; set; }
 
         ICard<V> NewCard(V value);
@@ -115,5 +118,5 @@ namespace System.Sets
         new void Clear();
 
         void Flush();
-    }    
+    }
 }
