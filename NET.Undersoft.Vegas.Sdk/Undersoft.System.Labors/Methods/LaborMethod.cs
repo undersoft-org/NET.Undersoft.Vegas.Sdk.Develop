@@ -12,7 +12,7 @@ namespace System.Labors
 {
     using System.Extract;
     using System.Instant;
-    using System.Multemic;
+    using System.Sets;
     using System.Uniques;
 
     /// <summary>

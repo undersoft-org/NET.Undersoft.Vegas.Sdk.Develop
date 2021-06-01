@@ -1,7 +1,7 @@
 ﻿/*************************************************************************************
     Copyright (c) 2020 Undersoft
 
-    System.Multemic.Uniques.SizePrimes
+    System.Sets.Uniques.SizePrimes
               
     @author Darius Hanc                                                  
     @project NETStandard.Undersoft.SDK                 

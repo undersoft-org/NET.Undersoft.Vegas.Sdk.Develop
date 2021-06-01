@@ -12,7 +12,7 @@
 
 namespace System.Instant
 {
-    using System.Multemic;
+    using System.Sets;
 
     public interface IRubrics : IUnique, IDeck<MemberRubric>
     {

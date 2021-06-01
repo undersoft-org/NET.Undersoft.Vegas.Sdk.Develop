@@ -17,7 +17,7 @@ namespace System.Instant
     using System.Instant.Linking;
     using System.Instant.Treatments;
     using System.IO;
-    using System.Multemic;
+    using System.Sets;
     using System.Runtime.InteropServices;
     using System.Uniques;
 

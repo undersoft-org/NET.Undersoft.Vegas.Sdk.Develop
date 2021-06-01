@@ -5,7 +5,7 @@ using System.Reflection;
 using Xunit;
 using System.Globalization;
 
-namespace System.Instant
+namespace System.Instant.Tests
 {
 
     public static class FigureMocks

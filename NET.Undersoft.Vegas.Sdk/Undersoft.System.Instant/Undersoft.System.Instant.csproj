@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Undersoft.System.Extract\Undersoft.System.Extract.csproj" />
-    <ProjectReference Include="..\Undersoft.System.Multemic\Undersoft.System.Multemic.csproj" />
+    <ProjectReference Include="..\Undersoft.System.Sets\Undersoft.System.Sets.csproj" />
   </ItemGroup>
 
 </Project>

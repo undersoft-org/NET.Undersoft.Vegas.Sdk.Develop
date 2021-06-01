@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Extract;
 using Xunit;
 
-namespace System.Instant
+namespace System.Instant.Tests
 {   
     public class FigureTest
     {

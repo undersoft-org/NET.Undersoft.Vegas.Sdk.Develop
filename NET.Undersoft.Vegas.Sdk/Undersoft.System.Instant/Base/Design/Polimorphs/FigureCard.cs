@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Extract;
 using System.Uniques;
-using System.Multemic;
+using System.Sets;
 using System.Instant.Linking;
 using System.Linq;
 using System.Reflection;
@@ -22,7 +22,7 @@ namespace System.Instant
 {     
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class FigureCard : Card<IFigure>, IFigure, IEquatable<IFigure>, IComparable<IFigure>
+    public class FigureCard : BaseCard<IFigure>, IFigure, IEquatable<IFigure>, IComparable<IFigure>
     {
         private IDeck<object> presets;
 

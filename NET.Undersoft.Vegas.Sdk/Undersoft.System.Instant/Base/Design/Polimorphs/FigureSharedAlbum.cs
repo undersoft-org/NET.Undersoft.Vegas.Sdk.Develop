@@ -1,13 +1,13 @@
 ﻿using System.Uniques;
 using System.Collections.Generic;
-using System.Multemic;
+using System.Sets;
 
 /******************************************************************
     Copyright (c) 2020 Undersoft
 
     System.Figures.Catalog64
     
-    Implementation of CardBook abstract class
+    Implementation of BaseAlbum abstract class
     using 64 bit hash code and long representation;  
         
     @author Darius Hanc                                                  
@@ -18,56 +18,56 @@ using System.Multemic;
  ******************************************************************/
 namespace System.Instant
 {  
-    public abstract class FigureSharedAlbum : SharedAlbum<IFigure>
+    public abstract class FigureBaseCatalog : BaseCatalog<IFigure>
     {
-        public FigureSharedAlbum() : base(17, HashBits.bit64)
+        public FigureBaseCatalog() : base(17, HashBits.bit64)
         {          
         }
-        public FigureSharedAlbum(int _cardSize = 17) : base(_cardSize, HashBits.bit64)
+        public FigureBaseCatalog(int _cardSize = 17) : base(_cardSize, HashBits.bit64)
         {
         }
-        public FigureSharedAlbum(ICollection<IFigure> collections, int _cardSize = 17) : base(collections, _cardSize, HashBits.bit64)
+        public FigureBaseCatalog(ICollection<IFigure> collections, int _cardSize = 17) : base(collections, _cardSize, HashBits.bit64)
         {
         }
-        public FigureSharedAlbum(IEnumerable<IFigure> collections, int _cardSize = 17) : base(collections, _cardSize, HashBits.bit64)
+        public FigureBaseCatalog(IEnumerable<IFigure> collections, int _cardSize = 17) : base(collections, _cardSize, HashBits.bit64)
         {
         }
 
         public override ICard<IFigure> EmptyCard()
         {
-            return new Card64<IFigure>();
+            return new Card<IFigure>();
         }
 
         public override ICard<IFigure> NewCard(ulong  key, IFigure value)
         {
-            return new Card64<IFigure>(key, value);
+            return new Card<IFigure>(key, value);
         }
         public override ICard<IFigure> NewCard(object key, IFigure value)
         {
-           return new Card64<IFigure>(key, value);
+           return new Card<IFigure>(key, value);
         }
         public override ICard<IFigure> NewCard(ICard<IFigure> value)
         {
-            return new Card64<IFigure>(value);
+            return new Card<IFigure>(value);
         }
         public override ICard<IFigure> NewCard(IFigure value)
         {
-            return new Card64<IFigure>(value);
+            return new Card<IFigure>(value);
         }
 
         public override ICard<IFigure>[] EmptyCardTable(int size)
         {
-            return new Card64<IFigure>[size];
+            return new Card<IFigure>[size];
         }
 
-        public override ICard<IFigure>[] EmptyCardList(int size)
+        public override ICard<IFigure>[] EmptyBaseDeck(int size)
         {
-            cards = new Card64<IFigure>[size];
+            cards = new Card<IFigure>[size];
             return cards;
         }
       
         private ICard<IFigure>[] cards;
-        public ICard<IFigure>[] Cards { get => cards; }
+        public ICard<IFigure>[] BaseCards { get => cards; }
 
         protected override bool InnerAdd(IFigure value)
         {

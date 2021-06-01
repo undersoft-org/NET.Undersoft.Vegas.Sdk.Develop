@@ -11,7 +11,7 @@
 namespace System.Labors
 {
     using System.Instant;
-    using System.Multemic;
+    using System.Sets;
 
     /// <summary>
     /// Defines the <see cref="LaborMethods" />.
@@ -30,11 +30,11 @@ namespace System.Labors
         }
 
         /// <summary>
-        /// The EmptyCardList.
+        /// The EmptyBaseDeck.
         /// </summary>
         /// <param name="size">The size<see cref="int"/>.</param>
         /// <returns>The <see cref="ICard{IDeputy}[]"/>.</returns>
-        public override ICard<IDeputy>[] EmptyCardList(int size)
+        public override ICard<IDeputy>[] EmptyBaseDeck(int size)
         {
             return new LaborMethod[size];
         }

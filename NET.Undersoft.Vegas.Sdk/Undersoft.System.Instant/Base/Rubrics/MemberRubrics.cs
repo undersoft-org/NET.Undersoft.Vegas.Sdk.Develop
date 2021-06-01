@@ -15,10 +15,10 @@ namespace System.Instant
     using System.Collections.Generic;
     using System.Extract;
     using System.Linq;
-    using System.Multemic;
+    using System.Sets;
     using System.Uniques;
 
-    public partial class MemberRubrics : CardBook<MemberRubric>, IRubrics
+    public partial class MemberRubrics : BaseAlbum<MemberRubric>, IRubrics
     {
         #region Fields
 
@@ -77,7 +77,7 @@ namespace System.Instant
             return new RubricCard();
         }
 
-        public override ICard<MemberRubric>[] EmptyCardList(int size)
+        public override ICard<MemberRubric>[] EmptyBaseDeck(int size)
         {
             return new RubricCard[size];
         }

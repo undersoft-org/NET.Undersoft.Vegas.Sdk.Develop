@@ -19,25 +19,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Extract", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Extract.Stock", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Extract.Stock\Undersoft.System.Extract.Stock.csproj", "{EFD8573E-8588-40FB-8F04-174261703E89}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Mathline", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Instant.Mathline\Undersoft.System.Instant.Mathline.csproj", "{9D4B7BD1-2999-4CD9-ABAC-1DA2BC00503E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Mathset", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Instant.Mathset\Undersoft.System.Instant.Mathset.csproj", "{9D4B7BD1-2999-4CD9-ABAC-1DA2BC00503E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Sqlbank", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Instant.Sqlbank\Undersoft.System.Instant.Sqlbank.csproj", "{F64703D3-853A-4F32-A439-29BE46CA8F9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Sqlset", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Instant.Sqlset\Undersoft.System.Instant.Sqlset.csproj", "{F64703D3-853A-4F32-A439-29BE46CA8F9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Multemic", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Multemic\Undersoft.System.Multemic.csproj", "{BAC88EBF-67B8-43D3-9815-DEBB0D034613}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Sets", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Sets\Undersoft.System.Sets.csproj", "{BAC88EBF-67B8-43D3-9815-DEBB0D034613}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Multemic.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Multemic.Tests\Undersoft.System.Multemic.Tests.csproj", "{886BF7FB-2466-4B3F-9960-11F743C87544}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Sets.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Sets.Tests\Undersoft.System.Sets.Tests.csproj", "{886BF7FB-2466-4B3F-9960-11F743C87544}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Instant.Tests\Undersoft.System.Instant.Tests.csproj", "{48934DBC-4E96-4BDE-8808-4C361825AAC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Extract.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Extract.Tests\Undersoft.System.Extract.Tests.csproj", "{B23D7C35-4B89-4AD1-AC06-216EFD8130D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Mathline.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Instant.Mathline.Tests\Undersoft.System.Instant.Mathline.Tests.csproj", "{6C1255CB-BDD7-4403-ABE3-30FDAB10E99C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Mathset.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Instant.Mathset.Tests\Undersoft.System.Instant.Mathset.Tests.csproj", "{6C1255CB-BDD7-4403-ABE3-30FDAB10E99C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System", "NET.Undersoft.Vegas.Sdk\Undersoft.System\Undersoft.System.csproj", "{74B074DB-BF07-4EA6-9BE0-E1D1BB9C90B0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Labors.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Labors.Tests\Undersoft.System.Labors.Tests.csproj", "{07B6596D-8DE4-4D97-A65B-39875BA929B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Sqlbank.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Instant.Sqlbank.Tests\Undersoft.System.Instant.Sqlbank.Tests.csproj", "{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Instant.Sqlset.Tests", "NET.Undersoft.Vegas.Sdk.Tests\Undersoft.System.Instant.Sqlset.Tests\Undersoft.System.Instant.Sqlset.Tests.csproj", "{903D7BAB-B0CD-4231-9DB3-ACF8AA535AE1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Undersoft.System.Logs", "NET.Undersoft.Vegas.Sdk\Undersoft.System.Logs\Undersoft.System.Logs.csproj", "{98782E30-575B-4E1C-8616-8CC9384ADA92}"
 EndProject

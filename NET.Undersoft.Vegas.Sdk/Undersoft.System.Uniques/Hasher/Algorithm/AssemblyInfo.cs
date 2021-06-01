@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("System.Deal")]
-[assembly: InternalsVisibleTo("System.Multemic")]
+[assembly: InternalsVisibleTo("System.Sets")]
 [assembly: InternalsVisibleTo("System.Extract")]
 [assembly: InternalsVisibleTo("System.Extractor.Stock")]
 [assembly: InternalsVisibleTo("System.Instant")]

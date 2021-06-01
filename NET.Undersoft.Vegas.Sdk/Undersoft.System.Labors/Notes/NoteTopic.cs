@@ -11,7 +11,7 @@
 namespace System.Labors
 {
     using System.Collections.Generic;
-    using System.Multemic;
+    using System.Sets;
 
     /// <summary>
     /// Defines the <see cref="NoteTopic" />.

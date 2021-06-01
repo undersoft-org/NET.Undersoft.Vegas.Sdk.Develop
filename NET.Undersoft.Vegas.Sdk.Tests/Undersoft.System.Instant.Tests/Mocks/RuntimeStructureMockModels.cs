@@ -2,7 +2,7 @@ using System.Uniques;
 using System.Instant.Treatments;
 using System.Runtime.InteropServices;
 
-namespace System.Instant
+namespace System.Instant.Tests
 {
 
     [StructLayout(LayoutKind.Sequential)]

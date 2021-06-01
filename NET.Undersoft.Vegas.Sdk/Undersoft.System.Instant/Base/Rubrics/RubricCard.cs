@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using System.Multemic;
+using System.Sets;
 using System.Uniques;
 
 
@@ -7,7 +7,7 @@ namespace System.Instant
 {     
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class RubricCard : Card<MemberRubric>
+    public class RubricCard : BaseCard<MemberRubric>
     {
         private ulong _key;
 

@@ -12,7 +12,7 @@ namespace System.Labors
 {
     using System.Instant;
     using System.Linq;
-    using System.Multemic;
+    using System.Sets;
 
     public class QuickLabor
     {

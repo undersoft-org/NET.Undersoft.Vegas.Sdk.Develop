@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Multemic;
+using System.Sets;
 using System.Uniques;
 
 namespace System.Instant
@@ -22,39 +22,39 @@ namespace System.Instant
     }
 
     [Serializable]
-    public class FieldMappings : CardBook<FieldMapping>
+    public class FieldMappings : BaseAlbum<FieldMapping>
     {
         public override ICard<FieldMapping> EmptyCard()
         {
-            return new Card64<FieldMapping>();
+            return new Card<FieldMapping>();
         }
 
         public override ICard<FieldMapping>[] EmptyCardTable(int size)
         {
-            return new Card64<FieldMapping>[size];
+            return new Card<FieldMapping>[size];
         }
-        public override ICard<FieldMapping>[] EmptyCardList(int size)
+        public override ICard<FieldMapping>[] EmptyBaseDeck(int size)
         {
-            return new Card64<FieldMapping>[size];
+            return new Card<FieldMapping>[size];
         }
 
         public override ICard<FieldMapping> NewCard(object key, FieldMapping value)
         {
-            return new Card64<FieldMapping>(key, value);
+            return new Card<FieldMapping>(key, value);
         }
 
         public override ICard<FieldMapping> NewCard(ulong  key, FieldMapping value)
         {
-            return new Card64<FieldMapping>(key, value);
+            return new Card<FieldMapping>(key, value);
         }
 
         public override ICard<FieldMapping> NewCard(FieldMapping value)
         {
-            return new Card64<FieldMapping>(value.DbTableName.UniqueKey(), value);
+            return new Card<FieldMapping>(value.DbTableName.UniqueKey(), value);
         }
         public override ICard<FieldMapping> NewCard(ICard<FieldMapping> value)
         {
-            return new Card64<FieldMapping>(value);
+            return new Card<FieldMapping>(value);
         }
     }
 

@@ -2,12 +2,12 @@
 using System.Instant.Linking;
 using System.Instant.Treatments;
 using System.IO;
-using System.Multemic;
+using System.Sets;
 using System.Runtime.InteropServices;
 
 namespace System.Instant
 {
-    public abstract class FigureCatalog : SharedAlbum<IFigure>, IFigures
+    public abstract class FigureCatalog : BaseCatalog<IFigure>, IFigures
     {
         public IInstant Instant { get; set; }
 
@@ -58,7 +58,7 @@ namespace System.Instant
             return new FigureCard[size];
         }
 
-        public override ICard<IFigure>[] EmptyCardList(int size)
+        public override ICard<IFigure>[] EmptyBaseDeck(int size)
         {
             cards = new FigureCard[size];
             return cards;

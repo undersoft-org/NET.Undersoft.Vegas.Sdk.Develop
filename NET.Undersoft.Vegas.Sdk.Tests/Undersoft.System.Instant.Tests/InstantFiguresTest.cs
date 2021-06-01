@@ -1,7 +1,7 @@
 using System.Reflection;
 using Xunit;
 
-namespace System.Instant
+namespace System.Instant.Tests
 {   
     public class FiguresTest
     {

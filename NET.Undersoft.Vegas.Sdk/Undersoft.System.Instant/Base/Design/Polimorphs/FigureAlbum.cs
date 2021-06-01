@@ -15,10 +15,10 @@ namespace System.Instant
     using System.Instant.Linking;
     using System.Instant.Treatments;
     using System.IO;
-    using System.Multemic;
+    using System.Sets;
     using System.Uniques;
 
-    public abstract class FigureAlbum : CardBook<IFigure>, IFigures
+    public abstract class FigureAlbum : BaseAlbum<IFigure>, IFigures
     {
         public IInstant Instant { get; set; }
 
@@ -69,7 +69,7 @@ namespace System.Instant
             return new FigureCard[size];
         }
 
-        public override ICard<IFigure>[] EmptyCardList(int size)
+        public override ICard<IFigure>[] EmptyBaseDeck(int size)
         {
             cards = null;
             cards = new FigureCard[size];

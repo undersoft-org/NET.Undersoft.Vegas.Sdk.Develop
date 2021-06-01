@@ -1,9 +1,9 @@
-using System.Multemic;
+using System.Sets;
 using System.Instant.Linking;
 using System.Reflection;
 using Xunit;
 
-namespace System.Instant
+namespace System.Instant.Tests
 {   
     public class FiguresLinkmapTest
     {
