@@ -16,15 +16,11 @@ namespace System.Instant
 
         object this[int index, int fieldId] { get; set; }        
 
-        ICard<IFigure>[] Cards { get; } 
-
         IRubrics Rubrics { get; set; }
 
         IRubrics KeyRubrics { get; set; }
 
         IFigure NewFigure();
-
-        int Length { get; }
 
         Type FigureType { get; set; }
 

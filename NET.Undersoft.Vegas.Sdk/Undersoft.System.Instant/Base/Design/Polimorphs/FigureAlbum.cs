@@ -40,8 +40,6 @@ namespace System.Instant
 
         public abstract Ussn SerialCode { get; set; }
 
-        public int Length => Cards.Length;
-
         public override ICard<IFigure> EmptyCard()
         {
             return new FigureCard(this);
@@ -71,9 +69,7 @@ namespace System.Instant
 
         public override ICard<IFigure>[] EmptyBaseDeck(int size)
         {
-            cards = null;
-            cards = new FigureCard[size];
-            return cards;
+            return new FigureCard[size];
         }
 
         protected override bool InnerAdd(IFigure value)
@@ -107,9 +103,6 @@ namespace System.Instant
                 return newCard;
             return null;
         }
-
-        private ICard<IFigure>[] cards;
-        public ICard<IFigure>[] Cards { get => cards; }
 
         public object[] ValueArray { get => ToObjectArray(); set => Put(value); }
 

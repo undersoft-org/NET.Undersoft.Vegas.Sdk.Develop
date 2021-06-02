@@ -13,15 +13,15 @@ namespace System.Instant
         bool IsDBNull { get; set; }
         bool IsColossus { get; set; }
 
-        IRubric AggregatePattern { get; set; }
+        IRubric AggregateRubric { get; set; }
         AggregateOperand AggregateOperand { get; set; }
-        int[] AggregateIndex { get; set; }
-        int[] AggregateOrdinal { get; set; }
+        int AggregateLinkId { get; set; }
+        int AggregateOrdinal { get; set; }
 
         Links AggregateLinks { get; set; }
 
         int SummaryOrdinal { get; set; }
-        IRubric SummaryPattern { get; set; }
+        IRubric SummaryRubric { get; set; }
         AggregateOperand SummaryOperand { get; set; }
     }
 }

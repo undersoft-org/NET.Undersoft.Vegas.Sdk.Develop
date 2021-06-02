@@ -20,12 +20,6 @@ namespace System.Instant
 
     #region Delegates
 
-    /// <summary>
-    /// The InstantDelegate.
-    /// </summary>
-    /// <param name="target">The target<see cref="object"/>.</param>
-    /// <param name="parameters">The parameters<see cref="object[]"/>.</param>
-    /// <returns>The <see cref="object"/>.</returns>
     public delegate object InstantDelegate(object target, params object[] parameters);
 
     #endregion
@@ -42,45 +36,9 @@ namespace System.Instant
 
     #endregion
 
-
-
     public class Deputy : IDeputy
     {
-        public Object TargetObject;
-        public Delegate Method;
-
-        public MethodInfo Info { get; set; }
-
-        public IUnique Empty => Ussn.Empty;
-
-        public ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
-
-        public ParameterInfo[] Parameters { get; set; }
-        public object[] ParameterValues { get; set; }
-        public object[] ValueArray { get => ParameterValues; set => ParameterValues = value; }
-
         private Ussn serialcode;
-        public Ussn SerialCode { get => serialcode; set => serialcode = value; }
-
-        public object this[int fieldId] { get => ParameterValues[fieldId]; set => ParameterValues[fieldId] = value; }
-        public object this[string propertyName]
-        {
-            get
-            {
-                for (int i = 0; i < Parameters.Length; i++)
-                    if (Parameters[i].Name == propertyName)
-                        return ParameterValues[i];
-                return null;
-            }
-            set
-            {
-                for (int i = 0; i < Parameters.Length; i++)
-                    if (Parameters[i].Name == propertyName)
-                        ParameterValues[i] = value;
-            }
-        }
-
-        public int NumberOfArguments;
 
         public Deputy(Delegate TargetMethod)
         {
@@ -98,10 +56,11 @@ namespace System.Instant
                                 $"{Info.Name}" +
                                 $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
 
-            serialcode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
+            ulong seed = Unique.NewKey;
+            serialcode.UniqueKey = decription.UniqueKey64(seed);
+            serialcode.UniqueSeed = seed;
             serialcode.TimeBlock = time;
         }
-
         public Deputy(Object TargetObject, String MethodName) : this(TargetObject, MethodName, null)
         {
         }
@@ -120,43 +79,61 @@ namespace System.Instant
                                 $"{Info.Name}" +
                                 $"{new String(Parameters.SelectMany(p => "." + p.ParameterType.Name).ToArray())}";
 
-            serialcode.UniqueKey = new object[] { decription, DateTime.Now }.UniqueKey();
+            ulong seed = Unique.NewKey;
+            serialcode.UniqueKey = decription.UniqueKey64(seed);
+            serialcode.UniqueSeed = seed;
             serialcode.TimeBlock = time;
         }
-
         public Deputy(Type TargetType, String MethodName) : this(Summon.New(TargetType), MethodName, null)
         {
         }
         public Deputy(Type TargetType, String MethodName, Type[] parameters) : this(Summon.New(TargetType), MethodName, parameters)
         {
         }
-
         public Deputy(String TargetName, String MethodName) : this(Summon.New(TargetName), MethodName, null)
         {
         }
         public Deputy(String TargetName, String MethodName, Type[] parameters) : this(Summon.New(TargetName), MethodName, parameters)
         {
         }
-
         public Deputy(MethodInfo MethodInvokeInfo) : this(MethodInvokeInfo.DeclaringType.New(), MethodInvokeInfo.Name, MethodInvokeInfo.GetParameters().Select(p => p.ParameterType).ToArray())
         {
         }
 
-        public byte[] GetBytes()
+        public object this[int fieldId]
         {
-            return serialcode.GetBytes();
+            get => ParameterValues[fieldId];
+            set => ParameterValues[fieldId] = value;
         }
-        public byte[] GetUniqueBytes()
+        public object this[string propertyName]
         {
-            return serialcode.GetUniqueBytes();
+            get
+            {
+                for (int i = 0; i < Parameters.Length; i++)
+                    if (Parameters[i].Name == propertyName)
+                        return ParameterValues[i];
+                return null;
+            }
+            set
+            {
+                for (int i = 0; i < Parameters.Length; i++)
+                    if (Parameters[i].Name == propertyName)
+                        ParameterValues[i] = value;
+            }
         }
-        public bool Equals(IUnique other)
+
+        public Object TargetObject { get; set; }
+
+        public Delegate Method { get; set; }
+
+        public MethodInfo Info { get; set; }
+
+        public IUnique Empty => Ussn.Empty;
+
+        public ulong UniqueKey
         {
-            return serialcode.Equals(other);
-        }
-        public int CompareTo(IUnique other)
-        {
-            return serialcode.CompareTo(other);
+            get => serialcode.UniqueKey;
+            set => serialcode.UniqueKey = value;
         }
 
         public ulong UniqueSeed
@@ -165,58 +142,15 @@ namespace System.Instant
             set => serialcode.UniqueSeed = value;
         }
 
-        public object Execute(params object[] FunctionParameters)
-        {
-            try
-            {
-                return Method.DynamicInvoke(TargetObject, FunctionParameters);
-            }
-            catch (Exception e)
-            {
-                throw new TargetInvocationException(e);
-            }
-        }
-        public T Execute<T>(params object[] FunctionParameters)
-        {
-            try
-            {
-                return (T)Method.DynamicInvoke(TargetObject, FunctionParameters);
-            }
-            catch (Exception e)
-            {
-                throw new TargetInvocationException(e);
-            }
-        }
+        public ParameterInfo[] Parameters { get; set; }
 
-        public async Task<object> ExecuteAsync(params object[] FunctionParameters)
-        {
-            try
-            {
-                return await Task.Run<object>(() => Execute(FunctionParameters)).ConfigureAwait(true);
-            }
-            catch (Exception e)
-            {
-                throw new TargetInvocationException(e);
-            }
-        }
-        public async Task<T> ExecuteAsync<T>(params object[] FunctionParameters)
-        {
-            try
-            {
-                return await Task.Run<T>(() => Execute<T>(FunctionParameters)).ConfigureAwait(true);
-            }
-            catch (Exception e)
-            {
-                throw new TargetInvocationException(e);
-            }
-        }
+        public object[] ParameterValues { get; set; }
 
-        public object TypeConvert(object source, Type DestType)
-        {
+        public object[] ValueArray { get => ParameterValues; set => ParameterValues = value; }
 
-            object NewObject = System.Convert.ChangeType(source, DestType);
-            return (NewObject);
-        }
+        public Ussn SerialCode { get => serialcode; set => serialcode = value; }
+
+        public int NumberOfArguments { get; set; }
 
         private Delegate invoking(MethodInfo methodInfo)
         {
@@ -286,6 +220,7 @@ namespace System.Instant
                dynamicMethod.CreateDelegate(typeof(InstantDelegate));
             return invoder;
         }
+
         private static void casting(ILGenerator il, Type type)
         {
             if (type.IsValueType)
@@ -297,13 +232,15 @@ namespace System.Instant
                 il.Emit(OpCodes.Castclass, type);
             }
         }
-        private static void boxing(ILGenerator il, System.Type type)
+
+        private static void boxing(ILGenerator il, Type type)
         {
             if (type.IsValueType)
             {
                 il.Emit(OpCodes.Box, type);
             }
         }
+
         private static void directint(ILGenerator il, int value)
         {
             switch (value)
@@ -349,12 +286,83 @@ namespace System.Instant
                 il.Emit(OpCodes.Ldc_I4, value);
             }
         }
+
+        public byte[] GetBytes()
+        {
+            return serialcode.GetBytes();
+        }
+
+        public byte[] GetUniqueBytes()
+        {
+            return serialcode.GetUniqueBytes();
+        }
+
+        public bool Equals(IUnique other)
+        {
+            return serialcode.Equals(other);
+        }
+
+        public int CompareTo(IUnique other)
+        {
+            return serialcode.CompareTo(other);
+        }
+
+        public object Execute(params object[] FunctionParameters)
+        {
+            try
+            {
+                return Method.DynamicInvoke(TargetObject, FunctionParameters);
+            }
+            catch (Exception e)
+            {
+                throw new TargetInvocationException(e);
+            }
+        }
+
+        public T Execute<T>(params object[] FunctionParameters)
+        {
+            try
+            {
+                return (T)Method.DynamicInvoke(TargetObject, FunctionParameters);
+            }
+            catch (Exception e)
+            {
+                throw new TargetInvocationException(e);
+            }
+        }
+
+        public async Task<object> ExecuteAsync(params object[] FunctionParameters)
+        {
+            try
+            {
+                return await Task.Run<object>(() => Execute(FunctionParameters)).ConfigureAwait(true);
+            }
+            catch (Exception e)
+            {
+                throw new TargetInvocationException(e);
+            }
+        }
+
+        public async Task<T> ExecuteAsync<T>(params object[] FunctionParameters)
+        {
+            try
+            {
+                return await Task.Run<T>(() => Execute<T>(FunctionParameters)).ConfigureAwait(true);
+            }
+            catch (Exception e)
+            {
+                throw new TargetInvocationException(e);
+            }
+        }
+
+        public object TypeConvert(object source, Type DestType)
+        {
+
+            object NewObject = System.Convert.ChangeType(source, DestType);
+            return (NewObject);
+        }
     }
 
-    /// <summary>
-    /// Defines the <see cref="ItemChangedEventArgs{T}" />.
-    /// </summary>
-    /// <typeparam name="T">.</typeparam>
     public class ItemChangedEventArgs<T> : EventArgs
     {
         #region Fields

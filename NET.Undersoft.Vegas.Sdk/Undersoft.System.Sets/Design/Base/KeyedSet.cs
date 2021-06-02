@@ -22,9 +22,9 @@ namespace System.Sets.Basedeck
     {
         #region Globals       
 
-        static protected readonly float RESIZING_VECTOR = 1.766f;
-        static protected readonly float CONFLICTS_PERCENT_LIMIT = 0.22f;
-        static protected readonly float REMOVED_PERCENT_LIMIT = 0.15f;
+        static protected readonly float RESIZING_VECTOR = 1.766F;
+        static protected readonly float CONFLICTS_PERCENT_LIMIT = 0.222F;
+        static protected readonly float REMOVED_PERCENT_LIMIT = 0.15F;
         //static protected readonly ulong MAX_BIT_MASK = 0xFFFFFFFFFFFFFFFF;       
 
         protected ICard<V> first, last;
@@ -47,9 +47,9 @@ namespace System.Sets.Basedeck
 
         protected void countIncrement()
         {
-            if ((++count + 7) > size)               
+            if ((++count + 3) > size)               
                 Rehash(nextSize());
-            // Rehash((((size * 2)^3); // Evaluate size without primes
+            // Rehash((((size * 2)^2); // Evaluate size without primes
         }
         protected void conflictIncrement()
         { 

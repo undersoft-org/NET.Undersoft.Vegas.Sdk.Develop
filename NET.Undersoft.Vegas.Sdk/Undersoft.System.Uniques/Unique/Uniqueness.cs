@@ -182,11 +182,11 @@ namespace System.Uniques
         }
         public override UInt64 Key(IUnique obj, ulong seed)
         {
-            return Key(obj.GetBytes(), seed);
+            return ComputeKey(obj.GetUniqueBytes(), seed);
         }
         public override UInt64 Key(IUnique obj)
         {
-            return obj.UniqueKey();
+            return obj.UniqueKey;
         }
         public override UInt64 Key<V>(IUnique<V> obj, ulong seed)
         {
@@ -290,11 +290,11 @@ namespace System.Uniques
         }
         public virtual UInt64 Key(IUnique obj, ulong seed)
         {
-            return unique.Key(obj.UniqueKey(), seed);
+            return unique.ComputeKey(obj.GetUniqueBytes(), seed);
         }
         public virtual UInt64 Key(IUnique obj)
         {
-            return obj.UniqueKey();
+            return obj.UniqueKey;
         }
         public virtual UInt64 Key<V>(IUnique<V> obj, ulong seed)
         {

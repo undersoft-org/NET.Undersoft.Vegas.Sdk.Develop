@@ -11,13 +11,14 @@ namespace System.Instant
 {
     public class SleevesCompiler
     {
-        private readonly ConstructorInfo marshalAsCtor =
-            typeof(MarshalAsAttribute)
+        private readonly ConstructorInfo 
+            marshalAsCtor = typeof(MarshalAsAttribute)
             .GetConstructor(new Type[] { typeof(UnmanagedType) });
+
+        private Type SleeveType = typeof(FigureSleeves);
         private FieldBuilder selectiveField = null;
         private FieldBuilder multemicField = null;
         private Sleeves sleeve;
-        private Type SleeveType = typeof(FigureSleeves);
 
         public SleevesCompiler(Sleeves instantSleeve)
         {
@@ -30,15 +31,15 @@ namespace System.Instant
 
             CreateSleeveField(tb);
 
-            CreateFiguresField(tb);
-
-         //   CreateArrayLengthField(tb);         
+            CreateFiguresField(tb);        
 
             CreateElementByIntProperty(tb);
 
             CreateItemByIntProperty(tb);
 
             CreateItemByStringProperty(tb);
+
+            // CreateArrayLengthField(tb); 
 
             return tb.CreateTypeInfo();
         }
@@ -69,9 +70,6 @@ namespace System.Instant
         {
             FieldBuilder fb = CreateField(tb, typeof(object).MakeArrayType(), "Sleeves");
             selectiveField = fb;
-            //CreateMarshalAttribue(fb, new MarshalAsAttribute(UnmanagedType.ByValArray) { SizeConst = selective.Cou });
-            //PropertyBuilder prop = tb.DefineProperty("Sleeve", PropertyAttributes.HasDefault,
-            //                                         typeof(object).MakeArrayType(), new Type[] { typeof(object).MakeArrayType() });
 
             PropertyInfo iprop = SleeveType.GetProperty("Sleeves");
 
@@ -114,9 +112,6 @@ namespace System.Instant
         {
             FieldBuilder fb = CreateField(tb, typeof(object).MakeArrayType(), "Figures");
             multemicField = fb;
-            //CreateMarshalAttribue(fb, new MarshalAsAttribute(UnmanagedType.ByValArray) { SizeConst = selective.Length });
-            //PropertyBuilder prop = tb.DefineProperty("Sleeve", PropertyAttributes.HasDefault,
-            //                                         typeof(object).MakeArrayType(), new Type[] { typeof(object).MakeArrayType() });
 
             PropertyInfo iprop = SleeveType.GetProperty("Figures");
 
@@ -181,10 +176,6 @@ namespace System.Instant
 
         private void CreateArrayLengthField(TypeBuilder tb)
         {
-
-            //PropertyBuilder prop = tb.DefineProperty("Length", PropertyAttributes.HasDefault,
-            //                                         typeof(int), Type.EmptyTypes);
-
             PropertyInfo iprop = SleeveType.GetProperty("Length");
 
             MethodInfo accessor = iprop.GetGetMethod();
@@ -203,8 +194,6 @@ namespace System.Instant
             il.Emit(OpCodes.Ldfld, selectiveField); // load
             il.Emit(OpCodes.Ldlen); // load
             il.Emit(OpCodes.Ret); // return
-
-            //return prop;
         }
        
         private void CreateMarshalAttribue(FieldBuilder field, MarshalAsAttribute attrib)

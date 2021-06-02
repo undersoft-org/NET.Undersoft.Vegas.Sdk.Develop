@@ -23,6 +23,8 @@ namespace System.Instant
         #region Fields
 
         private int[] ordinals;
+        private int[] binarySizes;
+        private int   binarySize;
 
         #endregion
 
@@ -54,6 +56,10 @@ namespace System.Instant
         public FieldMappings Mappings { get; set; }
 
         public int[] Ordinals { get => ordinals; }
+
+        public int[] BinarySizes { get => binarySizes; }
+
+        public int BinarySize { get => binarySize; }
 
         public Ussn SerialCode { get => Figures.SerialCode; set => Figures.SerialCode = value; }
 
@@ -186,6 +192,8 @@ namespace System.Instant
         public void Update()
         {
             ordinals = this.AsValues().Select(o => o.FigureFieldId).ToArray();
+            binarySizes = this.AsValues().Select(o => o.RubricSize).ToArray();
+            binarySize = this.AsValues().Sum(b => b.RubricSize);
             if (KeyRubrics != null)
                 KeyRubrics.Update();
         }

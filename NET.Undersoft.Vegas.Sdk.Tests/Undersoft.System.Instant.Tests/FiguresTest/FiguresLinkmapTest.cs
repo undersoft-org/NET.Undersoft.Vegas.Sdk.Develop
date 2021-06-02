@@ -1,4 +1,7 @@
+using System.Uniques;
 using System.Sets;
+using System.Linq;
+using System.Extract;
 using System.Instant.Linking;
 using System.Reflection;
 using Xunit;
@@ -55,12 +58,14 @@ namespace System.Instant.Tests
             IFigure figureMock = FiguresLinkmap_SetValues_Helper_Test(_figures, fom);
             int idSeed = (int)figureMock["Id"];
             DateTime seedKeyTick = DateTime.Now;
+            //IntPtr b = figureMock.GetStructureIntPtr();
             for (int i = 0; i < 100000; i++)
             {
-                for (int y = 0; i < 3; i++)
+                for (int y = 0; y < 3; y++)
                 {
                     IFigure figure = _figures.NewFigure();
                     figure.ValueArray = figureMock.ValueArray;
+                    //figure.StructureFrom(b);
                     figure["Id"] = idSeed + i;
                     figure["Time"] = seedKeyTick.AddMinutes(y);
                     _figures.Put(figure);
@@ -81,10 +86,37 @@ namespace System.Instant.Tests
             FiguresLinkmap_AddFigures_B_Helper_Test(figuresB);
 
             Link fl = new Link(figuresA, figuresB, figuresA.Rubrics.KeyRubrics);
+           
+            NodeCatalog nc = Linker.Map;
+            LinkMember olm = fl.Origin;
+            var ocards = figuresA.AsCards().ToArray();
+            for (int i = 0; i < ocards.Length; i++)
+            {
+                var ocard = ocards[i];
+                // var bcard = new BranchCard(ocard, olm);
+                //ulong linkKey = bcard.UniquesAsKey();
+                ulong linkKey = olm.FigureLinkKey(ocard.Value);
+                BranchDeck branch;
+                if (!nc.TryGet(linkKey, out branch))
+                    branch = new BranchDeck(olm, linkKey);
+                branch.Put(ocard);
+                nc.Add(branch);
+            }
+            LinkMember tlm = fl.Target;
+            var tcards = figuresB.AsCards().ToArray();
+            for (int i = 0; i < tcards.Length; i++)
+            {
+                var tcard = tcards[i];
+               // var bcard = new BranchCard(tcard, tlm);
+               // ulong linkKey = bcard.UniquesAsKey();
+                ulong linkKey = tlm.FigureLinkKey(tcard.Value);
+                BranchDeck branch;
+                if (!nc.TryGet(linkKey, out branch))
+                    branch = new BranchDeck(tlm, linkKey);
+                branch.Put(tcard);
+                nc.Add(branch);
+            }
 
-            // LinkBranches targetsA = figuresA.Linkmap.CreateTargetLinks();
-
-            // LinkBranches originsB = figuresB.Linkmap.LinkOrigins();
         }
 
      

@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Uniques;
 using System.Threading;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 /*******************************************************************************
     Copyright (c) 2020 Undersoft
 
-    System.Sets.BaseCatalog
+    System.Sets.SharedMassAlbum
     
-    Abstract class for Safe-Thread BaseAlbum, 
+    abstract class for Safe-Thread MultiBaseAlbum, 
         
     @author Darius Hanc      
     @project NETStandard.Undersoft.SDK                                   
@@ -17,7 +19,7 @@ using System.Threading;
  ********************************************************************************/
 namespace System.Sets
 {
-    public abstract class BaseCatalog<V> : BaseAlbum<V>
+    public abstract class BaseMassCatalog<V> : BaseMassAlbum<V> where V : IUnique
     {
         #region Globals       
 
@@ -74,28 +76,28 @@ namespace System.Sets
 
         #region Constructor
 
-        public BaseCatalog() : base(16, HashBits.bit64)
+        public BaseMassCatalog() : base(17, HashBits.bit64)
         {
         }
-        public BaseCatalog(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        public BaseMassCatalog(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
         {      
         }
-        public BaseCatalog(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public BaseMassCatalog(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public BaseCatalog(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        public BaseMassCatalog(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public BaseCatalog(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public BaseMassCatalog(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
         }
-        public BaseCatalog(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        public BaseMassCatalog(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
         {
             foreach (var c in collection)
                 this.Add(c);
@@ -120,7 +122,7 @@ namespace System.Sets
             return test;
         }
 
-        protected override         ICard<V> InnerGetCard(ulong key)
+        protected override          ICard<V> InnerGetCard(ulong key)
         {
             acquireReader();
             var card = base.InnerGetCard(key);

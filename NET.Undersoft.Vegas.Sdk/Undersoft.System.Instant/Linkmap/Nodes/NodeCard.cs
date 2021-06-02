@@ -22,8 +22,6 @@ namespace System.Instant
     [StructLayout(LayoutKind.Sequential)]
     public class NodeCard : BaseCard<BranchDeck>, IEquatable<BranchDeck>, IComparable<BranchDeck>
     {
-        private ulong _key;
-
         public NodeCard()
         {
         }
@@ -56,24 +54,20 @@ namespace System.Instant
         {
             this.value = value;
             Member = value.Member;
-            Key = key.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(object key, BranchDeck value)
         {
             this.value = value;
             Member = value.Member;
-            Key = key.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(BranchDeck value)
         {
             this.value = value;
             Member = value.Member;
-            Key = value.UniqueKey64(value.UniqueSeed);
         }
         public override void Set(ICard<BranchDeck> card)
         {
             this.value = card.Value;
-            this.Key = card.Key;
         }
 
         public override bool Equals(ulong key)
@@ -140,8 +134,8 @@ namespace System.Instant
 
         public override ulong Key
         {
-            get => _key;
-            set => _key = value;
+            get => value.UniqueKey;
+            set => this.value.UniqueKey = value;
         }
 
         public override ulong UniqueKey

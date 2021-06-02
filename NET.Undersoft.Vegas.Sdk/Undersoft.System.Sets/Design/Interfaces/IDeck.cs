@@ -16,8 +16,6 @@ namespace System.Sets
     using System.Collections.Concurrent;
     using System.Collections.Generic;
 
-
-
     public interface IDeck<V> : IEnumerable, IEnumerable<V>, IList<V>, IProducerConsumerCollection<V>, IDisposable
     {
         new V this[int index] { get; set; }

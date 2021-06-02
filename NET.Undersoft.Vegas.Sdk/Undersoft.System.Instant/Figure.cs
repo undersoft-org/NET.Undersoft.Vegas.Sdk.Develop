@@ -7,18 +7,22 @@ using System.Runtime.InteropServices;
 namespace System.Instant
 {
     public class Figure : IInstant
-    {
+    {       
         private Type compiledType;
         private MemberRubric[] members;
         private FigureMode mode { get; set; }
 
-        public Figure(Type figureModelType, FigureMode modeType = FigureMode.Reference) : this(figureModelType,null,  modeType) { }
-        public Figure(Type figureModelType, string figureTypeName, FigureMode modeType = FigureMode.Reference) :
+        public Figure(Type figureModelType, FigureMode modeType) : this(figureModelType, null, false, modeType) { }
+        public Figure(Type figureModelType, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference) : this(figureModelType, null, IsVirtual,  modeType) { }
+        public Figure(Type figureModelType, string figureTypeName, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference) :
             this(figureModelType.GetMembers().Select(m => m.MemberType == MemberTypes.Field ? m :
                                                m.MemberType == MemberTypes.Property ? m :
                                                null).Where(p => p != null).ToArray(),
-                                               figureTypeName == null ? figureModelType.Name : figureTypeName, modeType){}
-
+                                               figureTypeName == null ? figureModelType.Name : figureTypeName, modeType)
+        {
+            IsDerived = IsVirtual;
+            BaseType = figureModelType;
+        }
         public Figure(IList<MemberInfo> figureMembers, FigureMode modeType = FigureMode.Reference) : this(figureMembers.ToArray(), null, modeType) {}
         public Figure(IList<MemberInfo> figureMembers, string figureTypeName, FigureMode modeType = FigureMode.Reference)
         {
@@ -30,7 +34,6 @@ namespace System.Instant
             Rubrics = new MemberRubrics(members);
             Rubrics.KeyRubrics = new MemberRubrics();         
         }
-
         public Figure(MemberRubrics figureRubrics, string figureTypeName, FigureMode modeType = FigureMode.Reference) : this(figureRubrics.ToArray(), figureTypeName, modeType)
         {          
         }
@@ -69,13 +72,14 @@ namespace System.Instant
                     }).ToArray();
 
                 Rubrics.Insert(0, members[0]);
-
+                Rubrics.KeyRubrics.Add(Rubrics.Where(k => k.IsKey).ToArray());
                 Rubrics.Update();
             }
 
             return newFigure();
         }
-
+        public bool IsDerived { get; set; }
+        public Type BaseType { get; set; }
         public string Name { get; set; }
         public Type Type { get; set; }
         public int Size { get; set; }

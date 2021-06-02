@@ -21,6 +21,7 @@ namespace System.Instant.Linking
 
     public enum LinkSite
     {
+        None,
         Origin,
         Target
     }
@@ -62,28 +63,28 @@ namespace System.Instant.Linking
             }
         }
 
-        public IList<Link> Collect(IList<string> LinkNames = null)
+        public Link TargetLink(string TargetName)
         {
-            if (LinkNames != null)
-                return LinkNames.Select(l => this[l]).Where(f => f != null).ToArray();
-            else
-                return this.AsValues().ToArray();
+            return AsValues().Where(o => o.TargetName.Equals(TargetName)).FirstOrDefault();
         }
-        public IList<Link> Collect(IList<Link> links = null)
+        public Link OriginLink(string OriginName)
         {
-            if (links != null)
-                return links.Select(l => this[l.Name]).Where(f => f != null).ToArray();
-            else
-                return this.AsValues().ToArray();
+            return AsValues().Where(o => o.OriginName.Equals(OriginName)).FirstOrDefault();
         }
 
-        public IList<Link> GetTarget(string TargetName)
+        public LinkMember TargetMember(string TargetName)
         {
-            return AsValues().Where(c => c.TargetName == TargetName).ToArray();
+            Link link = TargetLink(TargetName);
+            if (link != null)
+                return link.Target;
+            return null;
         }
-        public IList<Link> GetOrigin(string OriginName)
+        public LinkMember OriginMember(string OriginName)
         {
-            return AsValues().Where(c => c.OriginName == OriginName).ToArray();
+            Link link = OriginLink(OriginName);
+            if (link != null)
+                return link.Origin;
+            return null;
         }
 
         public override ICard<Link> EmptyCard()
@@ -115,25 +116,17 @@ namespace System.Instant.Linking
 
         public override ICard<Link>[] EmptyBaseDeck(int size)
         {
-            cards = new Card<Link>[size];
-            return cards;
+            return new Card<Link>[size];
         }
-
-        private ICard<Link>[] cards;
-        public ICard<Link>[] BaseCards { get => cards; }
 
         protected override bool InnerAdd(Link value)
         {
-            var card = NewCard(value);
-            Linker.Map.Links.Add(card);
-            return InnerAdd(card);
+            return InnerAdd(NewCard(value));
         }
 
         protected override ICard<Link> InnerPut(Link value)
         {
-            var card = NewCard(value);
-            Linker.Map.Links.Put(card);
-            return InnerPut(card);
+            return InnerPut(NewCard(value));
         }
 
         public Ussn SerialCode
@@ -144,7 +137,7 @@ namespace System.Instant.Linking
 
         public IUnique Empty => Ussn.Empty;
 
-        public new ulong UniqueKey
+        public ulong UniqueKey
         {
             get => serialcode.UniqueKey;
             set => serialcode.UniqueKey = value;

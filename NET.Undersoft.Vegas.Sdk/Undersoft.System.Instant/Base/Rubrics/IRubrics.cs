@@ -26,6 +26,10 @@ namespace System.Instant
 
         int[] Ordinals { get; }
 
+        int[] BinarySizes { get; }
+
+        int BinarySize { get; }
+
         #endregion
 
         #region Methods

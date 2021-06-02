@@ -15,12 +15,14 @@ namespace System.Instant.Linking
     using System.Collections.Generic;
     using System.Sets;
     using System.Uniques;
+    using System.Linq;
 
     public interface ILinker
     {
         #region Properties
 
-        Links Links { get; }
+        Links OriginLinks { get; }
+        Links TargetLinks { get; }
 
         #endregion
 
@@ -28,17 +30,13 @@ namespace System.Instant.Linking
 
         void Clear();
 
-        IDeck<Link> GetLinks(IList<LinkMember> members);
+        BranchDeck GetTarget(IFigure origin, string TargetName);
 
-        Link GetLink(LinkMember member);
+        BranchDeck GetOrigin(IFigure target, string OriginName);
 
-        IDeck<IDeck<BranchDeck>> GetMaps(IList<LinkMember> members);
+        IDeck<BranchDeck> GetTargets(IFigures origin, string TargetName);
 
-        IDeck<BranchDeck> GetMap(LinkMember member);
-
-        NodeCatalog Build();
-
-        NodeCatalog Update();
+        IDeck<BranchDeck> GetOrigins(IFigures target, string OriginName);
 
         #endregion
     }
@@ -49,61 +47,100 @@ namespace System.Instant.Linking
         #region Fields
 
         private static NodeCatalog map = new NodeCatalog(new Links(), PRIMES_ARRAY.Get(9));
-        
-        private Links links;
+
+        private Links originLinks;
+        private Links targetLinks;
+
+        public IFigures Figures { get; set; }
 
         #endregion
 
         public Linker()
         {
-            links = new Links();
+            originLinks = new Links();
+            targetLinks = new Links();
         }
 
         #region Properties
 
         public static NodeCatalog Map { get => map; }
 
-        public Links Links { get => links; } 
+        public Links OriginLinks { get => originLinks; }
+        public Links TargetLinks { get => targetLinks; }
 
         #endregion
 
         #region Methods
-
+      
         public void Clear()
         {
             Map.Flush();
         }
 
-        public IDeck<Link> GetLinks(IList<LinkMember> members)
+        public Link GetTargetLink(string TargetName)
         {
-            throw new NotImplementedException();
+            return TargetLinks[Figures.Instant.Name + "_" + TargetName];
+        }
+        public Link GetOriginLink(string OriginName)
+        {
+            return OriginLinks[OriginName + "_" + Figures.Instant.Name];
         }
 
-        public Link GetLink(LinkMember member)
+        public LinkMember GetTargetMember(string TargetName)
         {
-            throw new NotImplementedException();
+            Link link = GetTargetLink(TargetName);
+            if (link != null)
+                return link.Target;
+            return null;
+        }
+        public LinkMember GetOriginMember(string OriginName)
+        {
+            Link link = GetOriginLink(OriginName);
+            if (link != null)
+                return link.Origin;
+            return null;
         }
 
-        public IDeck<IDeck<BranchDeck>> GetMaps(IList<LinkMember> members)
+        public ulong OriginLinkKey(IFigure figure, string OriginName)
         {
-            throw new NotImplementedException();
+            return GetOriginMember(OriginName).FigureLinkKey(figure);
+        }
+        public ulong TargetLinkKey(IFigure figure, string TargetName)
+        {
+            return GetTargetMember(TargetName).FigureLinkKey(figure);
         }
 
-        public IDeck<BranchDeck> GetMap(LinkMember member)
+        public BranchDeck GetTarget(IFigure figure, string TargetName)
         {
-            throw new NotImplementedException();
+            return map[TargetLinkKey(figure, TargetName)];
         }
-         
-        public NodeCatalog Build()
+        public BranchDeck GetOrigin(IFigure figure, string OriginName)
         {
-            throw new NotImplementedException();
+            return map[OriginLinkKey(figure, OriginName)];
         }
 
-        public NodeCatalog Update()
+        public IDeck<BranchDeck> GetTargets(IFigures figures,string TargetName)
         {
-            throw new NotImplementedException();
+            return new Deck<BranchDeck>(figures.Select(f => map[TargetLinkKey(f, TargetName)]).ToArray(), 255);
+        }
+        public IDeck<BranchDeck> GetOrigins(IFigures figures, string OriginName)
+        {
+            return new Deck<BranchDeck>(figures.Select(f => map[OriginLinkKey(f, OriginName)]).ToArray(), 255);
         }
 
         #endregion
+    }
+
+    public static class LinkerExtension
+    {
+        public static Link GetTargetLink(this IFigures figures, string TargetName)
+        {
+            return Linker.Map.Links[figures.Instant.Name + "_" + TargetName];
+        }
+
+        public static Link GetOriginLink(this IFigures figures, string OriginName)
+        {
+            return Linker.Map.Links[OriginName + "_" + figures.Instant.Name];
+        }
     }
 }

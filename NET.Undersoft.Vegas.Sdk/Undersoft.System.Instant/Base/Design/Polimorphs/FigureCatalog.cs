@@ -29,7 +29,9 @@ namespace System.Instant
 
         public abstract Ussn SerialCode { get; set; }
 
-        public int Length { get; }
+        public abstract ulong UniqueKey { get; set; }
+
+        public abstract ulong UniqueSeed { get; set; }
 
         public override ICard<IFigure> EmptyCard()
         {
@@ -60,12 +62,8 @@ namespace System.Instant
 
         public override ICard<IFigure>[] EmptyBaseDeck(int size)
         {
-            cards = new FigureCard[size];
-            return cards;
+            return new FigureCard[size];
         }
-
-        private ICard<IFigure>[] cards;
-        public ICard<IFigure>[] Cards { get => cards; }
 
         protected override bool InnerAdd(IFigure value)
         {
@@ -139,14 +137,6 @@ namespace System.Instant
         public byte[] GetUniqueBytes()
         {
             return SerialCode.GetUniqueBytes();
-        }
-
-        public new ulong UniqueKey { get => SerialCode.UniqueKey; set => SerialCode.SetUniqueKey(value); }
-
-        public ulong UniqueSeed
-        {
-            get => SerialCode.UniqueSeed;
-            set => SerialCode.SetUniqueSeed(value);
         }
 
         public bool Equals(IUnique other)

@@ -177,8 +177,7 @@ namespace System.Instant.Tests
             FieldsOnlyModel fom = new FieldsOnlyModel();
             Figure_Compilation_Helper_Test(referenceType, fom);
 
-            Figure valueType = new Figure(typeof(FieldsOnlyModel),
-                                                               null, FigureMode.ValueType);
+            Figure valueType = new Figure(typeof(FieldsOnlyModel), false, FigureMode.ValueType);
             fom = new FieldsOnlyModel();
             Figure_Compilation_Helper_Test(valueType, fom);
         }
@@ -200,7 +199,7 @@ namespace System.Instant.Tests
             PropertiesOnlyModel fom = new PropertiesOnlyModel();
             Figure_Compilation_Helper_Test(str, fom);
 
-            Figure valueType = new Figure(typeof(PropertiesOnlyModel));
+            Figure valueType = new Figure(typeof(PropertiesOnlyModel), FigureMode.ValueType);
 
             fom = new PropertiesOnlyModel();
             Figure_Compilation_Helper_Test(valueType, fom);
@@ -225,7 +224,7 @@ namespace System.Instant.Tests
             FieldsAndPropertiesModel fom = new FieldsAndPropertiesModel();
             Figure_Compilation_Helper_Test(referenceType, fom);
 
-            Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), null, FigureMode.ValueType);
+            Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), false, FigureMode.ValueType);
             fom = new FieldsAndPropertiesModel();
             Figure_Compilation_Helper_Test(valueType, fom);
 
@@ -249,7 +248,7 @@ namespace System.Instant.Tests
 
             Figure_Compilation_Helper_Test(referenceType, Figure_Compilation_Helper_Test(referenceType, new FieldsAndPropertiesModel()));
 
-            Figure valueType = new Figure(typeof(PropertiesOnlyModel), null, FigureMode.ValueType);
+            Figure valueType = new Figure(typeof(PropertiesOnlyModel), false, FigureMode.ValueType);
           
             Figure_Compilation_Helper_Test(valueType, Figure_Compilation_Helper_Test(valueType, new FieldsAndPropertiesModel()));
 
@@ -272,7 +271,7 @@ namespace System.Instant.Tests
             object rts4 = referenceType.New();
             rts4.StructureFrom(bserial);
 
-            Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), null, FigureMode.ValueType);
+            Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), false, FigureMode.ValueType);
             fom = new FieldsAndPropertiesModel();
             object vts = Figure_Compilation_Helper_Test(valueType, fom);
             ValueType v = (ValueType)vts;

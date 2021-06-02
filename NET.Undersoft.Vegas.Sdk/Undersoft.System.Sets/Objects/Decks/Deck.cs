@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Uniques;
 
 /*************************************************************************************
     Copyright (c) 2020 Undersoft
@@ -18,6 +19,32 @@ namespace System.Sets
     public class Deck<V> : BaseDeck<V>                                                     
     {
         public Deck(int capacity = 9) : base(capacity) { }
+        public Deck() : base(17, HashBits.bit64)
+        {
+        }
+        public Deck(int capacity = 17, HashBits bits = HashBits.bit64) : base(capacity, bits)
+        {
+        }
+        public Deck(IList<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        {
+            foreach (var c in collection)
+                this.Add(c);
+        }
+        public Deck(IList<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity > collection.Count ? capacity : collection.Count, bits)
+        {
+            foreach (var c in collection)
+                this.Add(c);
+        }
+        public Deck(IEnumerable<V> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        {
+            foreach (var c in collection)
+                this.Add(c);
+        }
+        public Deck(IEnumerable<IUnique<V>> collection, int capacity = 17, HashBits bits = HashBits.bit64) : this(capacity, bits)
+        {
+            foreach (var c in collection)
+                this.Add(c);
+        }
         public Deck(IList<ICard<V>> collection, int capacity = 9) : base(collection, capacity) { }
         public Deck(IList<IUnique<V>> collection, int capacity = 9) : base(collection, capacity) { }   
         public Deck(IEnumerable<ICard<V>> collection, int capacity = 9) : base(collection, capacity) { }

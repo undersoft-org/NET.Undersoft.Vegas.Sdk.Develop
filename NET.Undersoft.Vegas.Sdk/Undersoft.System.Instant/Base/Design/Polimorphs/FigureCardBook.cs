@@ -22,16 +22,16 @@ namespace System.Instant
 {  
     public abstract class FigureBaseAlbum : BaseAlbum<IFigure>
     {
-        public FigureBaseAlbum() : base(17, HashBits.bit64)
+        public FigureBaseAlbum() : base()
         {
         }
-        public FigureBaseAlbum(int deckSize = 17) : base(deckSize, HashBits.bit64)
+        public FigureBaseAlbum(int capacity) : base(capacity)
         {
         }
-        public FigureBaseAlbum(ICollection<IFigure> collections, int deckSize = 17) : base(collections, deckSize, HashBits.bit64)
+        public FigureBaseAlbum(ICollection<IFigure> collections) : base(collections)
         {
         }
-        public FigureBaseAlbum(IEnumerable<IFigure> collections, int deckSize = 17) : base(collections, deckSize, HashBits.bit64)
+        public FigureBaseAlbum(IEnumerable<IFigure> collections) : base(collections)
         {
         }
 
@@ -64,12 +64,8 @@ namespace System.Instant
 
         public override ICard<IFigure>[] EmptyBaseDeck(int size)
         {
-            cards = new Card<IFigure>[size];
-            return cards;
+            return new Card<IFigure>[size];
         }      
-
-        private Card<IFigure>[] cards;
-        public ICard<IFigure>[] Cards => cards;
 
         protected override bool InnerAdd(IFigure value)
         {

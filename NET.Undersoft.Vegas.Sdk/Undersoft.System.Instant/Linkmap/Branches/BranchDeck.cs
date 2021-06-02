@@ -20,46 +20,52 @@ namespace System.Instant.Linking
     {
         #region Fields
 
-        private ICard<ICard<IFigure>>[] cards;
         private Usid serialcode;
 
         #endregion
 
         #region Constructors
 
-        public BranchDeck(LinkMember member, ICard<IFigure> value) : base(5, HashBits.bit64)
+        public BranchDeck(LinkMember member, ulong linkkey) : base(9)
+        {
+            Member = member;
+            UniqueKey = linkkey;
+        }
+        public BranchDeck(LinkMember member, ICard<IFigure> value) : base(7)
         {
             Member = member;
             var card = NewCard(value);
-            UniqueKey = card.UniquesAsKey();
+            UniqueKey = member.FigureLinkKey(value.Value);
             InnerAdd(card);
         }
-        public BranchDeck(LinkMember member, ICard<IFigure> value, int _cardSize) : base(_cardSize, HashBits.bit64)
+        public BranchDeck(LinkMember member, ICard<IFigure> value, int capacity) : base(capacity)
         {
             Member = member;
             var card = NewCard(value);
-            UniqueKey = card.UniquesAsKey();
+            UniqueKey = member.FigureLinkKey(value.Value);
             InnerAdd(card);
         }
-        public BranchDeck(LinkMember member, ICollection<ICard<IFigure>> collections, int _cardSize = 5) : base(_cardSize, HashBits.bit64)
+        public BranchDeck(LinkMember member, ICollection<ICard<IFigure>> collections, int capacity = 7) : base(capacity)
         {
             Member = member;
             if (collections.Any())
             {
-                var card = NewCard(collections.First());
-                UniqueKey = card.UniquesAsKey();
+                var val = collections.First();
+                var card = NewCard(val);
+                UniqueKey = member.FigureLinkKey(val.Value);
                 InnerAdd(card);
             }
             foreach (var card in collections.Skip(1))
                 InnerAdd(card);
         }
-        public BranchDeck(LinkMember member, IEnumerable<ICard<IFigure>> collections, int _cardSize = 5) : base(_cardSize, HashBits.bit64)
+        public BranchDeck(LinkMember member, IEnumerable<ICard<IFigure>> collections, int capacity = 7) : base(capacity)
         {
             Member = member;
             if (collections.Any())
             {
-                var card = NewCard(collections.First());
-                UniqueKey = card.UniquesAsKey();
+                var val = collections.First();
+                var card = NewCard(val);
+                UniqueKey = member.FigureLinkKey(val.Value);
                 InnerAdd(card);
             }
             foreach (var card in collections.Skip(1))
@@ -70,11 +76,9 @@ namespace System.Instant.Linking
 
         #region Properties
 
-        public ICard<ICard<IFigure>>[] BaseCards { get => cards; }
-
         public IUnique Empty => Usid.Empty;
 
-        public new ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
+        public ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.UniqueKey = value; }
 
         public LinkMember Member { get; set; }
 

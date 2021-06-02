@@ -33,8 +33,6 @@ namespace System.Sets
     public abstract class BaseCard<V> : IEquatable<ICard<V>>, IEquatable<object>, IEquatable<ulong>, IComparable<object>, 
                                     IComparable<ulong>, IComparable<ICard<V>>, ICard<V>
     {       
-        protected      int index = -1;
-        protected     bool removed;
         protected       V  value;
         private   ICard<V> extent;
         private   ICard<V> next;
@@ -58,8 +56,8 @@ namespace System.Sets
             Set(value);
         }
 
-        public int    Index { get => index; set => index = value; }
-        public bool Removed { get => removed; set => removed = value; }
+        public virtual int Index { get; set; } = -1;
+        public virtual bool Removed { get; set; }
         
         public abstract ulong Key { get; set; }
         

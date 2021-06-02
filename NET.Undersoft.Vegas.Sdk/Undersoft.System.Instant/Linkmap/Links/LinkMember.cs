@@ -14,6 +14,7 @@ namespace System.Instant.Linking
 {
     using System.Extract;
     using System.Uniques;
+    using System.Linq;
 
     [JsonObject]
     [Serializable]
@@ -98,6 +99,11 @@ namespace System.Instant.Linking
             return serialcode.GetUniqueBytes();
         }
 
-        #endregion
+        public ulong FigureLinkKey(IFigure figure)
+        {
+            return KeyRubrics.Ordinals.Select(x => figure[x]).ToArray().UniqueKey64(KeyRubrics.BinarySizes, KeyRubrics.BinarySize, UniqueKey);
+        }
+          
+        #endregion 
     }
 }

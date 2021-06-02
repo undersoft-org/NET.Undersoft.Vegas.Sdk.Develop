@@ -21,7 +21,6 @@ namespace System.Instant
     using System.Runtime.InteropServices;
     using System.Uniques;
 
-    [StructLayout(LayoutKind.Sequential)]
     public abstract class FigureSleeves : ISleeves
     {
         public IInstant Instant { get; set; }
@@ -552,26 +551,6 @@ namespace System.Instant
             return Sleeves.GetUniqueBytes();
         }
 
-        //public void SetUniqueKey(long value)
-        //{
-        //    Sleeves.SetUniqueKey(value);
-        //}
-
-        //public long GetUniqueKey()
-        //{
-        //    return Sleeves.UniqueKey;
-        //}
-
-        //public void SetUniqueSeed(uint seed)
-        //{
-        //    Sleeves.SetUniqueSeed(seed);
-        //}
-
-        //public uint GetUniqueSeed()
-        //{
-        //    return Sleeves.GetUniqueSeed();
-        //}
-
         public bool Equals(IUnique other)
         {
             return Sleeves.Equals(other);
@@ -625,13 +604,9 @@ namespace System.Instant
 
         public int Count => Sleeves.Count;
 
-        public ICard<IFigure>[] Cards => Sleeves.Cards;
-
         public IRubrics Rubrics { get => Sleeves.Rubrics; set => Sleeves.Rubrics = value; }
 
         public IRubrics KeyRubrics { get => Sleeves.KeyRubrics; set => Sleeves.KeyRubrics = value; }
-
-        public int Length => Sleeves.Length;
 
         public Type FigureType { get => Figures.FigureType; set => Figures.FigureType = value; }
 
@@ -681,7 +656,7 @@ namespace System.Instant
         public object this[string propertyName] { get => Sleeves[propertyName]; set => Sleeves[propertyName] = value; }
         public IFigure this[object key] { get => Sleeves[key]; set => Sleeves[key] = value; }
 
-        private bool disposedValue = false; // To detect redundant calls
+        private bool disposedValue = false;
 
         protected virtual void Dispose(bool disposing)
         {

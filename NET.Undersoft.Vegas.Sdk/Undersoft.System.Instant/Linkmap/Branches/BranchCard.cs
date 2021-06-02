@@ -122,7 +122,9 @@ namespace System.Instant
         }
         public override     ulong UniquesAsKey()
         {
-            return Member.KeyRubrics.Ordinals.Select(x => value.Value[x]).ToArray().UniqueKey();
+            IRubrics r = Member.KeyRubrics;
+            IFigure f = value.Value;
+            return r.Ordinals.Select(x => f[x]).ToArray().UniqueKey64(r.BinarySizes, r.BinarySize, UniqueSeed);
         }
 
         public override ulong Key
@@ -135,6 +137,12 @@ namespace System.Instant
         {
             get => value.UniqueKey;
             set => this.value.UniqueKey = value;
+        }
+
+        public override ulong UniqueSeed
+        {
+            get => Member.UniqueKey;
+            set => Member.UniqueKey = value;
         }
 
         public object[] ValueArray
@@ -156,6 +164,5 @@ namespace System.Instant
         }
 
         public LinkMember Member { get; set; }
-
     }
 }

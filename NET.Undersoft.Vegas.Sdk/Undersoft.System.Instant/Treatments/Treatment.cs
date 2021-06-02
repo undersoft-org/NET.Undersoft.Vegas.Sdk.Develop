@@ -12,82 +12,96 @@ namespace System.Instant.Treatments
             figures = Figures;
         }
 
-        private MemberRubrics  replicativeRubrics;
-        public  MemberRubrics  ReplicativeRubrics
+        private MemberRubrics  replicateRubrics;
+        public  MemberRubrics  ReplicateRubrics
         {
             get
             {
-                if (replicativeRubrics == null)
+                if (replicateRubrics == null)
                 {
-                    if (replicativeRubrics == null)
-                        UpdateAggregatives();
+                    if (aggregateRubrics == null)
+                        UpdateAggregation();
                     else
-                        UpdateReplicatives();
+                        UpdateReplication();
                 }
-                return replicativeRubrics;
+                return aggregateRubrics;
             }
         }
 
-        public MemberRubrics   UpdateReplicatives()
+        public MemberRubrics   UpdateReplication()
         {
-            replicativeRubrics = new MemberRubrics();
-            replicativeRubrics.Put(aggregativeRubrics.AsValues().Where(p => p.AggregateOperand == AggregateOperand.Bind));
-            return replicativeRubrics;
+            replicateRubrics = new MemberRubrics();
+            replicateRubrics.Put(aggregateRubrics.AsValues().Where(p => p.AggregateOperand == AggregateOperand.Bind));
+            return replicateRubrics;
         }
 
-        private MemberRubrics  aggregativeRubrics;
-        public  MemberRubrics  AggregativeRubrics
+        private MemberRubrics  aggregateRubrics;
+        public  MemberRubrics  AggregateRubrics
         {
             get
             {
-                if (aggregativeRubrics == null)
+                if (aggregateRubrics == null)
                 {
-                    UpdateAggregatives();
+                    UpdateAggregation();
                 }
-                return aggregativeRubrics;
+                return aggregateRubrics;
             }
         }
 
-        public MemberRubrics   UpdateAggregatives()
+        public MemberRubrics   UpdateAggregation()
         {
             AggregateOperand parsed = new AggregateOperand();
-            Links targetLinks = figures.Linker.Links;
-            aggregativeRubrics = new MemberRubrics();
+            Links targetLinks = figures.Linker.TargetLinks;
+            aggregateRubrics = new MemberRubrics();
             MemberRubric[] _aggregateRubrics = figures.Rubrics.AsValues()
                                                                .Where(c => (c.RubricName.Split('#').Length > 1) ||
-                                                                  (c.AggregatePattern != null &&
+                                                                  (c.AggregateRubric != null &&
                                                                   c.AggregateOperand != AggregateOperand.None) ||
                                                                   c.AggregateOperand != AggregateOperand.None).ToArray();
             foreach (MemberRubric c in _aggregateRubrics)
             {
-                c.AggregatePattern = (c.AggregatePattern != null) ? c.AggregatePattern : (c.AggregateOperand != AggregateOperand.None) ? new MemberRubric(c) { RubricName = c.RubricName } : new MemberRubric(c) { RubricName = c.RubricName.Split('#')[1] };
-                c.AggregateOperand = c.AggregateOperand != AggregateOperand.None ? c.AggregateOperand : (Enum.TryParse(c.RubricName.Split('#')[0], true, out parsed)) ? parsed : AggregateOperand.None;
-                c.AggregateIndex = (targetLinks.Cast<Link>().Where(cr => cr.Target.Figures.Rubrics.AsValues()
-                                              .Where(ct => ct.RubricName == ((c.AggregatePattern != null) ?
-                                              c.AggregatePattern.RubricName :
+                c.AggregateRubric = (c.AggregateRubric != null) ? 
+                                      c.AggregateRubric : 
+                                     (c.AggregateOperand != AggregateOperand.None) ? 
+                                            new MemberRubric(c) { RubricName = c.RubricName } :
+                                            new MemberRubric(c) { RubricName = c.RubricName.Split('#')[1] };
+
+                c.AggregateOperand = c.AggregateOperand != AggregateOperand.None ?
+                                     c.AggregateOperand : 
+                                     (Enum.TryParse(c.RubricName.Split('#')[0], true, out parsed)) ?
+                                     parsed : AggregateOperand.None;
+
+                c.AggregateLinkId = (targetLinks.AsValues().Where(cr => cr.Target.Figures.Rubrics.AsValues()
+                                              .Where(ct => ct.RubricName == ((c.AggregateRubric != null) ?
+                                              c.AggregateRubric.RubricName :
                                               c.RubricName.Split('#')[1])).Any()).Any()) ?
-                             targetLinks.Cast<Link>().Where(cr => cr.Target.Figures.Rubrics.AsValues()
-                                              .Where(ct => ct.RubricName == ((c.AggregatePattern != null) ?
-                                              c.AggregatePattern.RubricName :
-                                              c.RubricName.Split('#')[1])).Any()).ToArray().Select(ix => targetLinks.IndexOf(ix)).ToArray()
-                                              : null;
-                c.AggregateOrdinal = targetLinks.Cast<Link>().Where(cr => cr.Target.Figures.Rubrics.AsValues()
-                                    .Where(ct => ct.RubricName == ((c.AggregatePattern != null) ?
-                                     c.AggregatePattern.RubricName :
+                                              targetLinks.AsValues().Where(cr => cr.Target.Figures.Rubrics.AsValues()
+                                              .Where(ct => ct.RubricName == ((c.AggregateRubric != null) ?
+                                              c.AggregateRubric.RubricName :
+                                              c.RubricName.Split('#')[1])).Any()).ToArray()
+                                              .Select(ix => targetLinks.IndexOf(ix)).FirstOrDefault()
+                                              : -1;
+
+                c.AggregateOrdinal = targetLinks.AsValues().Where(cr => cr.Target.Figures.Rubrics.AsValues()
+                                    .Where(ct => ct.RubricName == ((c.AggregateRubric != null) ?
+                                     c.AggregateRubric.RubricName :
                                      c.RubricName.Split('#')[1])).Any())
                                      .Select(cr => cr.Target.Figures.Rubrics.AsValues()
-                                    .Where(ct => ct.RubricName == ((c.AggregatePattern != null) ?
-                                     c.AggregatePattern.RubricName :
+                                    .Where(ct => ct.RubricName == ((c.AggregateRubric != null) ?
+                                     c.AggregateRubric.RubricName :
                                      c.RubricName.Split('#')[1]))
-                                     .Select(o => o.RubricId).FirstOrDefault()).ToArray();
+                                     .Select(o => o.RubricId).FirstOrDefault()).FirstOrDefault();
             }
 
-            aggregativeRubrics.Put(_aggregateRubrics);
-            aggregativeRubrics.AsValues().Where(j => j.AggregateIndex != null).Select(p => p.AggregateLinks = new Links(targetLinks.Cast<Link>().Where((x, y) => p.AggregateIndex.Contains(y)).ToArray()));
+            aggregateRubrics.Put(_aggregateRubrics);
+            aggregateRubrics.AsValues().Where(j => j.AggregateLinkId > -1)
+                                            .Select(p => p.AggregateLinks = 
+                                               new Links(targetLinks.AsCards().Where((x, y) =>
+                                                p.AggregateLinkId == x.Index).Select(v => v.Value).ToArray()));
 
-            UpdateReplicatives();
+            UpdateReplication();
 
-            return aggregativeRubrics;
+            return aggregateRubrics;
         }
 
         private MemberRubrics  summaryRubrics;
@@ -97,13 +111,13 @@ namespace System.Instant.Treatments
             {
                 if (summaryRubrics == null)
                 {
-                    UpdateSummatives();
+                    UpdateSummation();
                 }
                 return summaryRubrics;
             }
         }
 
-        public  MemberRubrics  UpdateSummatives()
+        public  MemberRubrics  UpdateSummation()
         {
             AggregateOperand parsed = new AggregateOperand();
             summaryRubrics = new MemberRubrics();
@@ -112,7 +126,7 @@ namespace System.Instant.Treatments
                                                (c.SummaryOperand != AggregateOperand.None))).Select(c =>
                                                (new MemberRubric(c)
                                                {
-                                                   SummaryPattern = (c.SummaryPattern != null) ? c.SummaryPattern :
+                                                   SummaryRubric = (c.SummaryRubric != null) ? c.SummaryRubric :
                                                                     (c.RubricName.Split('=').Length > 1) ?
                                                                     new MemberRubric(c) { RubricName = c.RubricName.Split('=')[1] } : null,
                                                    SummaryOperand = (Enum.TryParse(c.RubricName.Split('=')[0], true, out parsed)) ? parsed : c.SummaryOperand

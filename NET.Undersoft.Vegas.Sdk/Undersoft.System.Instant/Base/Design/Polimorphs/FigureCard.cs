@@ -148,7 +148,8 @@ namespace System.Instant
             ulong key = value.UniqueKey;
             if (key == 0)
             {
-                key = Figures.KeyRubrics.Ordinals.Select(x => value[x]).ToArray().UniqueKey();
+                IRubrics r = Figures.KeyRubrics;
+                key = r.Ordinals.Select(x => value[x]).ToArray().UniqueKey64(r.BinarySizes, r.BinarySize);
                 value.UniqueKey = key;
             }
             return key;
@@ -231,7 +232,7 @@ namespace System.Instant
             if (!Figures.Prime)
             {
                 if (presets == null)
-                    presets = new Deck<object>(5);
+                    presets = new Deck<object>(9);
                 presets.Put(fieldId, value);
             }
             else

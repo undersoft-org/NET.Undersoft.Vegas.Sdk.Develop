@@ -8,23 +8,24 @@ using System.Runtime.InteropServices;
 namespace System.Instant
 {
     public class FiguresCompiler
-    {
-        private readonly ConstructorInfo marshalAsCtor =
-            typeof(MarshalAsAttribute)
-            .GetConstructor(new Type[] { typeof(UnmanagedType) });
-        private FieldBuilder tableField = null;
-        private FieldBuilder structTypeField = null;
-        private FieldBuilder rubricsField = null;
-        private FieldBuilder structSizeField = null;
-        private FieldBuilder count = null;
-        private Figures collection;
+    {       
+        private FieldBuilder tableField;
+        private FieldBuilder structTypeField;
+        private FieldBuilder rubricsField;
+        private FieldBuilder structSizeField;
+        private FieldBuilder serialCodeField;
+        private FieldBuilder count;
+        private Figures figures;
         private Type DeckType = typeof(FigureAlbum);
+        private readonly ConstructorInfo marshalAsCtor = typeof(MarshalAsAttribute)
+                            .GetConstructor(new Type[] { typeof(UnmanagedType) });
 
-        public FiguresCompiler(Figures instantCollection, bool safeThread)
+        public FiguresCompiler(Figures instantFigures, bool safeThread)
         {
-            collection = instantCollection;
+            figures = instantFigures;
             if(safeThread)
                 DeckType = typeof(FigureCatalog);
+            figures.BaseType = DeckType;
         }
 
         public Type CompileFigureType(string typeName)
@@ -33,6 +34,10 @@ namespace System.Instant
             TypeBuilder tb = GetTypeBuilder(typeName);
 
             CreateSerialCodeProperty(tb, typeof(Ussn), "SerialCode");
+
+            CreateUniqueKeyProperty(tb);
+
+            CreateUniqueSeedProperty(tb);
 
             CreateIsPrimeField(tb, typeof(bool), "Prime");
 
@@ -58,7 +63,7 @@ namespace System.Instant
         private TypeBuilder GetTypeBuilder(string typeName)
         {
             string typeSignature = typeName;
-            collection.Name = typeName;
+            figures.Name = typeName;
             AssemblyName an = new AssemblyName(typeSignature);
 
             AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(an, AssemblyBuilderAccess.RunAndCollect);
@@ -76,7 +81,7 @@ namespace System.Instant
         private void CreateSerialCodeProperty(TypeBuilder tb, Type type, string name)
         {
             FieldBuilder fb = CreateField(tb, type, name);
-
+            serialCodeField = fb;
             PropertyBuilder prop = tb.DefineProperty(name, PropertyAttributes.HasDefault,
                                                      type, new Type[] { type });
 
@@ -115,6 +120,98 @@ namespace System.Instant
             il.Emit(OpCodes.Stfld, fb); // assign
             il.Emit(OpCodes.Ret);
 
+        }
+
+        public void CreateUniqueKeyProperty(TypeBuilder tb)
+        {
+
+            PropertyBuilder prop = tb.DefineProperty("UniqueKey", PropertyAttributes.HasDefault,
+                                                     typeof(ulong), new Type[] { typeof(ulong) });
+
+            PropertyInfo iprop = DeckType.GetProperty("UniqueKey");
+
+            MethodInfo accessor = iprop.GetGetMethod();
+
+            ParameterInfo[] args = accessor.GetParameters();
+            Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
+
+            MethodBuilder getter = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
+                                                          accessor.CallingConvention, accessor.ReturnType, argTypes);
+            tb.DefineMethodOverride(getter, accessor);
+
+            prop.SetGetMethod(getter);
+            ILGenerator il = getter.GetILGenerator();
+
+            il.Emit(OpCodes.Ldarg_0); // this
+            il.Emit(OpCodes.Ldflda, serialCodeField); // load
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueKey").GetGetMethod(), null);
+            il.Emit(OpCodes.Ret); // return
+
+            MethodInfo mutator = iprop.GetSetMethod();
+
+            args = mutator.GetParameters();
+            argTypes = Array.ConvertAll(args, a => a.ParameterType);
+
+            MethodBuilder setter = tb.DefineMethod(mutator.Name, mutator.Attributes & ~MethodAttributes.Abstract,
+                                                          mutator.CallingConvention, mutator.ReturnType, argTypes);
+            tb.DefineMethodOverride(setter, mutator);
+
+            prop.SetSetMethod(setter);
+            il = setter.GetILGenerator();
+
+            il.Emit(OpCodes.Ldarg_0); // this
+            il.Emit(OpCodes.Ldflda, serialCodeField); // load
+            il.Emit(OpCodes.Ldarg_1); // value
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueKey").GetSetMethod(), null);
+            il.Emit(OpCodes.Ret); // return
+
+            // return prop;
+        }
+
+        public void CreateUniqueSeedProperty(TypeBuilder tb)
+        {
+
+            PropertyBuilder prop = tb.DefineProperty("UniqueSeed", PropertyAttributes.HasDefault,
+                                                     typeof(ulong), new Type[] { typeof(ulong) });
+
+            PropertyInfo iprop = DeckType.GetProperty("UniqueSeed");
+
+            MethodInfo accessor = iprop.GetGetMethod();
+
+            ParameterInfo[] args = accessor.GetParameters();
+            Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
+
+            MethodBuilder getter = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
+                                                          accessor.CallingConvention, accessor.ReturnType, argTypes);
+            tb.DefineMethodOverride(getter, accessor);
+
+            prop.SetGetMethod(getter);
+            ILGenerator il = getter.GetILGenerator();
+
+            il.Emit(OpCodes.Ldarg_0); // this
+            il.Emit(OpCodes.Ldflda, serialCodeField); // load
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueSeed").GetGetMethod(), null);
+            il.Emit(OpCodes.Ret); // return
+
+            MethodInfo mutator = iprop.GetSetMethod();
+
+            args = mutator.GetParameters();
+            argTypes = Array.ConvertAll(args, a => a.ParameterType);
+
+            MethodBuilder setter = tb.DefineMethod(mutator.Name, mutator.Attributes & ~MethodAttributes.Abstract,
+                                                          mutator.CallingConvention, mutator.ReturnType, argTypes);
+            tb.DefineMethodOverride(setter, mutator);
+
+            prop.SetSetMethod(setter);
+            il = setter.GetILGenerator();
+
+            il.Emit(OpCodes.Ldarg_0); // this
+            il.Emit(OpCodes.Ldflda, serialCodeField); // load
+            il.Emit(OpCodes.Ldarg_1); // value
+            il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueSeed").GetSetMethod(), null);
+            il.Emit(OpCodes.Ret); // return
+
+            // return prop;
         }
 
         private void CreateDeckField(TypeBuilder tb, Type type, string name)
@@ -736,7 +833,6 @@ namespace System.Instant
             return prop;
 
         }
-
     }
 
 

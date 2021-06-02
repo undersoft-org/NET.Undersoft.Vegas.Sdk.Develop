@@ -28,10 +28,11 @@ namespace System.Instant.Linking
 
         public Link()
         {
-            Name = Unique.NewKey.ToString() + "_Link";
+            Name = Unique.NewKey.ToString() + "_L";
             UniqueKey = Name.UniqueKey64();
             Origin = new LinkMember(this, LinkSite.Origin);
             Target = new LinkMember(this, LinkSite.Target);
+            Linker.Map.Links.Put(this);
         }
         public Link(IFigures origin, IFigures target)
         {
@@ -39,8 +40,23 @@ namespace System.Instant.Linking
             UniqueKey = Name.UniqueKey64();
             Origin = new LinkMember(origin, this, LinkSite.Origin);
             Target = new LinkMember(target, this, LinkSite.Target);            
-            origin.Linker.Links.Put(this);
-            target.Linker.Links.Put(this);
+            origin.Linker.TargetLinks.Put(this);
+            target.Linker.OriginLinks.Put(this);
+            Linker.Map.Links.Put(this);
+        }
+        public Link(IFigures origin, IFigures target, IRubric keyRubric) : this(origin, target)
+        {
+            var originRubric = origin.Rubrics[keyRubric];
+            var targetRubric = target.Rubrics[keyRubric];
+            if (originRubric != null && targetRubric != null)
+            {
+                OriginKeys.Add(originRubric);
+                TargetKeys.Add(targetRubric);
+            }
+            else
+                throw new IndexOutOfRangeException("Rubric not found");
+            OriginKeys.Update();
+            TargetKeys.Update();
         }
         public Link(IFigures origin, IFigures target, IRubrics keyRubrics) : this(origin, target)
         {
@@ -55,6 +71,8 @@ namespace System.Instant.Linking
                 }
                 else
                     throw new IndexOutOfRangeException("Rubric not found");
+                OriginKeys.Update();
+                TargetKeys.Update();
             }
         }
         public Link(IFigures origin, IFigures target, string[] keyRubricNames) : this(origin, target)
@@ -71,6 +89,8 @@ namespace System.Instant.Linking
                 else
                     throw new IndexOutOfRangeException("Rubric not found");
             }
+            OriginKeys.Update();
+            TargetKeys.Update();
         }
 
         #endregion
@@ -94,6 +114,7 @@ namespace System.Instant.Linking
             set
             {
                 Origin.KeyRubrics.Renew(value);
+                Origin.KeyRubrics.Update();
             }
         }
 
@@ -137,6 +158,7 @@ namespace System.Instant.Linking
             set
             {
                 Target.KeyRubrics.Renew(value);
+                Target.KeyRubrics.Update();
             }
         }
 

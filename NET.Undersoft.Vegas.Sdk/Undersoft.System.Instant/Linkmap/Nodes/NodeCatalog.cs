@@ -15,14 +15,19 @@ namespace System.Instant.Linking
     using System.Sets;
 
     [Serializable]
-    public class NodeCatalog : BaseMassAlbum<BranchDeck>
+    public class NodeCatalog : BaseCatalog<BranchDeck>
     {
         #region Constructors
 
-        public NodeCatalog(int capacity = 17) : base(capacity)
+        public NodeCatalog() : base()
         {
+            Links = Linker.Map.Links;
         }
-        public NodeCatalog(Links links, int capacity = 17) : base(capacity)
+        public NodeCatalog(int capacity) : base(capacity)
+        {
+            Links = Linker.Map.Links;
+        }
+        public NodeCatalog(Links links, int capacity) : base(capacity)
         {
             Links = links;
         }

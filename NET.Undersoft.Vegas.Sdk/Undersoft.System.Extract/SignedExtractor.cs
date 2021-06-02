@@ -178,7 +178,7 @@ namespace System.Extract
             if (structure is ValueType)
             {
                 Type t = structure.GetType();
-                if (t.IsPrimitive || t.IsLayoutSequential)
+                if (t.IsLayoutSequential)
                 {
                     return Extraction.PointerToValueStructure((byte*)binary, structure, 0);                    
                 }
@@ -246,7 +246,14 @@ namespace System.Extract
                     structure = ((DateTime)structure).ToBinary();
                     Marshal.StructureToPtr(structure, binary, false);
                     return;
-                }             
+                }          
+                
+                if(structure is Enum)
+                {
+                    structure = Convert.ToUInt32(structure);
+                    Marshal.StructureToPtr(structure, binary, false);
+                    return;
+                }
             }
 
             Marshal.StructureToPtr(structure, binary, false);
@@ -373,10 +380,10 @@ namespace System.Extract
                     size = 8;
                     structure = ((DateTime)structure).ToBinary();
                 }
-                else if (structure is ISerialNumber)
-                    size = 24;
-                else if (structure is IUnique)
-                    size = 8;
+                //else if (structure is ISerialNumber)
+                //    size = 24;
+                //else if (structure is IUnique)
+                //    size = 8;
                 else if (structure is Enum)
                 {
                     size = 4;
@@ -410,10 +417,10 @@ namespace System.Extract
                     size = 8;
                     structure = ((DateTime)structure).ToBinary();
                 }             
-                else if (structure is ISerialNumber)
-                    size = 24;
-                else if (structure is IUnique)
-                    size = 8;
+                //else if (structure is ISerialNumber)
+                //    size = 24;
+                //else if (structure is IUnique)
+                //    size = 8;
                 else if (structure is Enum)
                 {
                     size = 4;

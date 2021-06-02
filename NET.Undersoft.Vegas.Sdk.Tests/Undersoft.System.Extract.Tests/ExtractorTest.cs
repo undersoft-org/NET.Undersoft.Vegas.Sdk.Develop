@@ -267,7 +267,7 @@ namespace System.Extract
             IFigure rts4 = referenceType.Generate();
             rts4.StructureFrom(bserial);
 
-            Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), null, FigureMode.ValueType);
+            Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), false, FigureMode.ValueType);
             fom = new FieldsAndPropertiesModel();
             IFigure vts = Figure_Compilation_Helper_Test(valueType, fom);
             ValueType v = (ValueType)vts;

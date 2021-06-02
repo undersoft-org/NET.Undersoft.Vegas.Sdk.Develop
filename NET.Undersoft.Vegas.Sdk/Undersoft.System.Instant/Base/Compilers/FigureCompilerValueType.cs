@@ -59,7 +59,7 @@ namespace System.Instant
 
         private TypeBuilder GetTypeBuilder(string typeName)
         {
-            string typeSignature = (typeName != null && typeName != "") ? typeName : "Figure_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            string typeSignature = (typeName != null && typeName != "") ? typeName : Unique.NewKey.ToString();
             AssemblyName an = new AssemblyName(typeSignature);
 
             AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(an, AssemblyBuilderAccess.RunAndCollect);
@@ -78,7 +78,8 @@ namespace System.Instant
                                                                 .GetConstructor(Type.EmptyTypes), new object[0]));
 
             tb.AddInterfaceImplementation(typeof(IFigure));
-
+            if (IsDerived)
+                tb.SetParent(figure.BaseType);
             return tb;
         }
 
@@ -99,7 +100,8 @@ namespace System.Instant
 
             MethodBuilder getter = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
                                                           accessor.CallingConvention, accessor.ReturnType, argTypes);
-            //tb.DefineMethodOverride(getter, accessor);
+
+            tb.DefineMethodOverride(getter, accessor);
 
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();
@@ -115,7 +117,7 @@ namespace System.Instant
 
             MethodBuilder setter = tb.DefineMethod(mutator.Name, mutator.Attributes & ~MethodAttributes.Abstract,
                                                mutator.CallingConvention, mutator.ReturnType, argTypes);
-            //tb.DefineMethodOverride(setter, mutator);
+            tb.DefineMethodOverride(setter, mutator);
 
             prop.SetSetMethod(setter);
             il = setter.GetILGenerator();
@@ -256,11 +258,28 @@ namespace System.Instant
         {
 
             PropertyBuilder prop = tb.DefineProperty(name, PropertyAttributes.HasDefault,
-                                                     type, new Type[] { type });
+                                                     type, new Type[] { type });          
 
             MethodBuilder getter = tb.DefineMethod("get_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, type,
                                                             Type.EmptyTypes);
+
+            bool derivedProperty = false;
+            PropertyInfo iprop = null;
+            if (IsDerived)
+            {
+                iprop = figure.BaseType.GetProperty(name);
+                if (iprop != null)
+                {
+                    MethodInfo accessor = iprop.GetGetMethod();
+                    if (accessor.IsVirtual)
+                    {
+                        tb.DefineMethodOverride(getter, accessor);
+                        derivedProperty = true;
+                    }
+                }
+            }
+
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();
 
@@ -271,6 +290,12 @@ namespace System.Instant
             MethodBuilder setter = tb.DefineMethod("set_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, typeof(void),
                                                             new Type[] { type });
+            if (derivedProperty)
+            {
+                MethodInfo mutator = iprop.GetSetMethod();
+                tb.DefineMethodOverride(setter, mutator);
+            }
+
             prop.SetSetMethod(setter);
             il = setter.GetILGenerator();
 
@@ -280,7 +305,6 @@ namespace System.Instant
             il.Emit(OpCodes.Ret);
 
             return prop;
-
         }
 
         private PropertyBuilder CreateStringProperty(TypeBuilder tb, FieldBuilder field, Type type, string name)
@@ -291,6 +315,22 @@ namespace System.Instant
             MethodBuilder getter = tb.DefineMethod("get_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, type,
                                                             Type.EmptyTypes);
+            bool derivedProperty = false;
+            PropertyInfo iprop = null;
+            if (IsDerived)
+            {
+                iprop = figure.BaseType.GetProperty(name);
+                if (iprop != null)
+                {
+                    MethodInfo accessor = iprop.GetGetMethod();
+                    if (accessor.IsVirtual)
+                    {
+                        tb.DefineMethodOverride(getter, accessor);
+                        derivedProperty = true;
+                    }
+                }
+            }
+
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();
 
@@ -307,6 +347,13 @@ namespace System.Instant
             MethodBuilder setter = tb.DefineMethod("set_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, typeof(void),
                                                             new Type[] { type });
+
+            if (derivedProperty)
+            {
+                MethodInfo mutator = iprop.GetSetMethod();
+                tb.DefineMethodOverride(setter, mutator);
+            }
+
             prop.SetSetMethod(setter);
             il = setter.GetILGenerator();
 

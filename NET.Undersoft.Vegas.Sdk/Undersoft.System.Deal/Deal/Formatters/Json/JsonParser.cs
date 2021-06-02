@@ -149,7 +149,7 @@ namespace System.Deal
                     if (info.PropertyType == typeof(byte[]))                    
                        if (value.GetType() == typeof(List<object>)) value = ((List<object>)value).Select(symbol => Convert.ToByte(symbol)).ToArray();
                                                                else value = ((object[])value).Select(symbol => Convert.ToByte(symbol)).ToArray();
-                    else if (info.PropertyType == typeof(Usid))     value = new Usid(value.ToString());
+                    else if (info.PropertyType == typeof(Ussn))     value = new Ussn(value.ToString());
                     else if (info.PropertyType == typeof(Single))   value = Convert.ToSingle(value, nfi);
                     else if (info.PropertyType == typeof(DateTime)) value = Convert.ToDateTime(value);
                     else if (info.PropertyType == typeof(double))   value = Convert.ToDouble(value, nfi);                    
@@ -914,21 +914,21 @@ namespace System.Deal
         public static Dictionary<string, string[]> Deck = new Dictionary<string, string[]>()
         {
                {
-                "System.FigureAs.Netdeal.TransactionHeader",
+                "System.Deal.DealHeader",
                 new string[]
                 {
                     "Context",   "Content"
                 }
              },
             {
-                "System.FigureAs.Netdeal.TransactionMessage",
+                "System.Deal.DealMessage",
                 new string[]
                 {
                     "Notice",   "Content"
                 }
              },
             {
-                "System.Core.TransactionContext",
+                "System.Deal.DealContext",
                 new string[]
                 {
                     "Identity",   "ContentType",  "Complexity",
@@ -936,7 +936,7 @@ namespace System.Deal
                 }
              },
              {
-                "System.Core.NetdealIdentity_Advanced",
+                "System.Deal.DealIdentity_Advanced",
                 new string[]
                 {
                     "Id",     "Name",   "Key",  "Token", "UserId",
@@ -944,7 +944,7 @@ namespace System.Deal
                 }
              },
               {
-                "System.Core.NetdealIdentity_Basic",
+                "System.DealIdentity_Basic",
                 new string[]
                 {
                     "UserId", "DeptId", "Token", "DataPlace",

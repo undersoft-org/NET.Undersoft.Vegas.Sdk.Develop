@@ -78,15 +78,15 @@ namespace System.Instant
 
         #region Properties
 
-        public int[] AggregateIndex { get; set; }
+        public int AggregateLinkId { get; set; }
 
         public Links AggregateLinks { get; set; }
 
         public AggregateOperand AggregateOperand { get; set; }
 
-        public int[] AggregateOrdinal { get; set; }
+        public int AggregateOrdinal { get; set; }
 
-        public IRubric AggregatePattern { get; set; }
+        public IRubric AggregateRubric { get; set; }
 
         public override Type DeclaringType => FigureType != null ? FigureType : RubricInfo.DeclaringType;
 
@@ -162,7 +162,7 @@ namespace System.Instant
 
         public int SummaryOrdinal { get; set; }
 
-        public IRubric SummaryPattern { get; set; }
+        public IRubric SummaryRubric { get; set; }
 
         public ulong UniqueKey { get => serialcode.UniqueKey; set => serialcode.SetUniqueKey(value); }
 

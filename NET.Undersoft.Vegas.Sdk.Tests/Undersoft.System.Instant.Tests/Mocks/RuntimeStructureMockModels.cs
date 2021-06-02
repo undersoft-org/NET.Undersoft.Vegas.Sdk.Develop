@@ -41,38 +41,38 @@ namespace System.Instant.Tests
     public class PropertiesOnlyModel
     {
         [FigureKey(IsAutoincrement = true, Order = 0)]
-        public int Id { get; set; } = 405;
+        public virtual int Id { get; set; } = 405;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 10)]
-        public string Alias = "ProperSize";
+        [FigureAs(UnmanagedType.ByValTStr, SizeConst = 10)]
+        public virtual string Alias { get; set; } = "ProperSize";
 
         [FigureKey(Order = 1)]
         [FigureDisplay("ProductName")]
         [FigureAs(UnmanagedType.ByValTStr, SizeConst = 10)]
-        public string Name { get; set; } = "SizeIsTwoTimesLonger";
+        public virtual string Name { get; set; } = "SizeIsTwoTimesLonger";
 
         [FigureKey]
-        private long Key = long.MaxValue;
+        public virtual long Key { get; set; } = long.MaxValue;
 
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public byte[] ByteArray { get; set; }
+        public virtual byte[] ByteArray { get; set; }
 
         [FigureDisplay("AvgPrice")]
-        [FigureTreatment( AggregateOperand = AggregateOperand.Avg, SummaryOperand = AggregateOperand.Sum )]
-        public double Price { get; set; }
+        [FigureTreatment( AggregateOperand = AggregateOperand.Avg, SummaryOperand = AggregateOperand.Avg )]
+        public virtual double Price { get; set; }
 
-        public Usid SystemKey { get; set; } = Usid.Empty;
+        public virtual Usid SystemKey { get; set; } = Usid.Empty;
 
-        public bool Status { get; set; }
+        public virtual bool Status { get; set; }
 
-        public DateTime Time { get; set; } = DateTime.Now;
+        public virtual DateTime Time { get; set; } = DateTime.Now;
 
-        public Guid GlobalId { get; set;} = new Guid();
+        public virtual Guid GlobalId { get; set;} = new Guid();
 
-        public double Factor { get; set; } = 2 * (long)int.MaxValue;
+        public virtual double Factor { get; set; } = 2 * (long)int.MaxValue;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential)]
     public class FieldsAndPropertiesModel
     {
         [FigureKey]

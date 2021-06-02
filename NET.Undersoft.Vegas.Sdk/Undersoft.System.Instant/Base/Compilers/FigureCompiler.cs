@@ -12,52 +12,33 @@ namespace System.Instant
     public class FigureCompiler
     {
         public SortedList<short, MemberRubric> identities = new SortedList<short, MemberRubric>();
-
-        public readonly ConstructorInfo dataMemberCtor = typeof(DataMemberAttribute)
-                                                            .GetConstructor(Type.EmptyTypes);
-
-        public readonly PropertyInfo[] dataMemberProps = new[] { typeof(DataMemberAttribute).GetProperty("Order"), 
-                                                         typeof(DataMemberAttribute).GetProperty("Name") };
-
-        public readonly ConstructorInfo structLayoutCtor = typeof(StructLayoutAttribute)
-                                                            .GetConstructor(new Type[] { typeof(LayoutKind) });
-
+        public readonly PropertyInfo[]  dataMemberProps = new[] { typeof(DataMemberAttribute).GetProperty("Order"), 
+                                                                  typeof(DataMemberAttribute).GetProperty("Name") };
         public readonly FieldInfo[] structLayoutFields = new[] { typeof(StructLayoutAttribute).GetField("CharSet"),
-                                                         typeof(StructLayoutAttribute).GetField("Pack") };
+                                                                 typeof(StructLayoutAttribute).GetField("Pack") };
+        public readonly ConstructorInfo dataMemberCtor = typeof(DataMemberAttribute).GetConstructor(Type.EmptyTypes);
+        public readonly ConstructorInfo structLayoutCtor = typeof(StructLayoutAttribute).GetConstructor(new Type[] { typeof(LayoutKind) });
+        public readonly ConstructorInfo marshalAsCtor = typeof(MarshalAsAttribute).GetConstructor(new Type[] { typeof(UnmanagedType) });
+        public readonly ConstructorInfo figureKeyCtor = typeof(FigureKeyAttribute).GetConstructor(Type.EmptyTypes);
+        public readonly ConstructorInfo figureLinkCtor = typeof(FigureLinkAttribute).GetConstructor(Type.EmptyTypes);
+        public readonly ConstructorInfo figureIdentityCtor = typeof(FigureIdentityAttribute).GetConstructor(Type.EmptyTypes);
+        public readonly ConstructorInfo figureRequiredCtor = typeof(FigureRequiredAttribute).GetConstructor(Type.EmptyTypes);
+        public readonly ConstructorInfo figureDisplayCtor = typeof(FigureDisplayAttribute).GetConstructor(new Type[] { typeof(string) });
+        public readonly ConstructorInfo figuresTreatmentCtor = typeof(FigureTreatmentAttribute) .GetConstructor(Type.EmptyTypes);
 
-        public readonly ConstructorInfo marshalAsCtor = typeof(MarshalAsAttribute)
-                                                            .GetConstructor(new Type[] { typeof(UnmanagedType) });
-
-        public readonly ConstructorInfo figureKeyCtor = typeof(FigureKeyAttribute)
-                                                            .GetConstructor(Type.EmptyTypes);
-
-        public readonly ConstructorInfo figureLinkCtor = typeof(FigureLinkAttribute)
-                                                            .GetConstructor(Type.EmptyTypes);
-
-        public readonly ConstructorInfo figureIdentityCtor = typeof(FigureIdentityAttribute)
-                                                            .GetConstructor(Type.EmptyTypes);
-
-        public readonly ConstructorInfo figureRequiredCtor = typeof(FigureRequiredAttribute)
-                                                            .GetConstructor(Type.EmptyTypes);
-
-        public readonly ConstructorInfo figureDisplayCtor = typeof(FigureDisplayAttribute)
-                                                            .GetConstructor(new Type[] { typeof(string) });
-
-        public readonly ConstructorInfo figuresTreatmentCtor = typeof(FigureTreatmentAttribute)
-                                                           .GetConstructor(Type.EmptyTypes);
-
+        public MemberRubrics members => (MemberRubrics)figure.Rubrics;
         public FieldBuilder[] fields = null;
         public PropertyBuilder[] props = null;
         public FigureMode mode;
         public int length;
-        public int scode = 1;
-        public MemberRubrics members => (MemberRubrics)figure.Rubrics;
+        public int scode = 1;        
         public Figure figure;
+        public bool IsDerived => figure.IsDerived;
 
         public FigureCompiler(Figure instantFigure)
         {
             figure = instantFigure;
-            length = members.Count;        
+            length = members.Count;
         }
 
         public void CreateFieldCustomAttributes(FieldBuilder fb, MemberInfo mi, MemberRubric mr)
@@ -358,7 +339,6 @@ namespace System.Instant
 
         public void CreateUniqueKeyProperty(TypeBuilder tb)
         {
-
             PropertyBuilder prop = tb.DefineProperty("UniqueKey", PropertyAttributes.HasDefault,
                                                      typeof(ulong), new Type[] { typeof(ulong) });
 
@@ -371,7 +351,7 @@ namespace System.Instant
 
             MethodBuilder getter = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
                                                           accessor.CallingConvention, accessor.ReturnType, argTypes);
-            //tb.DefineMethodOverride(getter, accessor);
+            tb.DefineMethodOverride(getter, accessor);
 
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();           
@@ -388,7 +368,7 @@ namespace System.Instant
 
             MethodBuilder setter = tb.DefineMethod(mutator.Name, mutator.Attributes & ~MethodAttributes.Abstract,
                                                           mutator.CallingConvention, mutator.ReturnType, argTypes);
-            //tb.DefineMethodOverride(setter, mutator);
+            tb.DefineMethodOverride(setter, mutator);
 
             prop.SetSetMethod(setter);
             il = setter.GetILGenerator();
@@ -417,7 +397,7 @@ namespace System.Instant
 
             MethodBuilder getter = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
                                                           accessor.CallingConvention, accessor.ReturnType, argTypes);
-            //tb.DefineMethodOverride(getter, accessor);
+            tb.DefineMethodOverride(getter, accessor);
 
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();
@@ -434,7 +414,7 @@ namespace System.Instant
 
             MethodBuilder setter = tb.DefineMethod(mutator.Name, mutator.Attributes & ~MethodAttributes.Abstract,
                                                           mutator.CallingConvention, mutator.ReturnType, argTypes);
-            //tb.DefineMethodOverride(setter, mutator);
+            tb.DefineMethodOverride(setter, mutator);
 
             prop.SetSetMethod(setter);
             il = setter.GetILGenerator();

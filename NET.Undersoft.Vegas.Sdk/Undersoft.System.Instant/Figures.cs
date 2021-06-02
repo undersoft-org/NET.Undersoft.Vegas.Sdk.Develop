@@ -1,4 +1,4 @@
-﻿using System.Sets;
+﻿using System.Uniques;
 
 namespace System.Instant
 {
@@ -7,6 +7,7 @@ namespace System.Instant
         private Type compiledType;
         private Figure figure;
         private bool safeThread;
+        private ulong key;
 
         public Figures(Figure figureGenerator, string figuresTypeName = null, bool safeThread = true)
         {
@@ -14,36 +15,37 @@ namespace System.Instant
                 figureGenerator.Generate();
             this.safeThread = safeThread;
             this.figure = figureGenerator;
-            Name = (figuresTypeName != null && figuresTypeName != "") ? figuresTypeName : figure.Name + "_Figures";
+            Name = (figuresTypeName != null && figuresTypeName != "") ? figuresTypeName : figure.Name + "_F";
         }
 
-        public Figures(Type figureModelType, bool safeThread = true)
-           : this(figureModelType, null, null, FigureMode.Reference, safeThread)
+        public Figures(Type figureModelType, bool IsVirtual = false, bool safeThread = true)
+           : this(figureModelType, null, null, IsVirtual, FigureMode.Reference, safeThread)
         {
         }
-        public Figures(Type figureModelType, string figuresTypeName, bool safeThread = true)
-           : this(figureModelType, figuresTypeName, null, FigureMode.Reference, safeThread)
+        public Figures(Type figureModelType, string figuresTypeName, bool IsVirtual = false, bool safeThread = true)
+           : this(figureModelType, figuresTypeName, null, IsVirtual, FigureMode.Reference, safeThread)
         {
         }
-        public Figures(Type figureModelType, string figuresTypeName, string figureTypeName, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
-           : this(new Figure(figureModelType, figureTypeName, modeType), figuresTypeName, safeThread)
-        {
-        }
-
-        public Figures(IFigure figureObject, bool safeThread = true)
-        : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, FigureMode.Reference), null, safeThread)
-        {
-        }
-        public Figures(IFigure figureObject, string figuresTypeName, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
-           : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, modeType), figuresTypeName, safeThread)
+        public Figures(Type figureModelType, string figuresTypeName, string figureTypeName, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
+           : this(new Figure(figureModelType, figureTypeName, IsVirtual,  modeType), figuresTypeName, safeThread)
         {
         }
 
-        public Figures(MemberRubrics figureRubrics, string figuresTypeName = null, string figureTypeName = null, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
+        public Figures(IFigure figureObject, bool IsVirtual = false, bool safeThread = true)
+        : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, IsVirtual, FigureMode.Reference), null, safeThread)
+        {
+        }
+        public Figures(IFigure figureObject, string figuresTypeName, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
+           : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, IsVirtual, modeType), figuresTypeName, safeThread)
+        {
+        }
+
+        public Figures(MemberRubrics figureRubrics, string figuresTypeName = null, string figureTypeName = null, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
          : this(new Figure(figureRubrics, figureTypeName, modeType), figuresTypeName, safeThread)
         {
         }
-       
+
+        public Type   BaseType { get; set; }
         public Type   Type { get; set; }
         public string Name { get; set; }
         public int Size { get => figure.Size; }
@@ -61,6 +63,7 @@ namespace System.Instant
                 var ifc = new FiguresCompiler(this, safeThread);
                 compiledType = ifc.CompileFigureType(Name);
                 this.Type = compiledType.New().GetType();
+                key = Name.UniqueKey64();
             }
             return newFigures();
         }
@@ -72,6 +75,9 @@ namespace System.Instant
             newfigures.Type = this.Type;                 
             newfigures.Instant = this;
             newfigures.Prime = true;
+            newfigures.UniqueKey = key;
+            newfigures.UniqueSeed = Unique.NewKey;
+            newfigures.Linker.Figures = newfigures;
             return newfigures;
         }
         private IFigures newFigures()
@@ -87,15 +93,19 @@ namespace System.Instant
       
         private MemberRubrics CloneRubrics()
         {
-            var rbrcs = new MemberRubrics();
-            rbrcs.KeyRubrics = new MemberRubrics();
-            foreach (var rbrc in figure.Rubrics.AsValues())
-                rbrcs.Add(new MemberRubric(rbrc));
-            foreach (var rbrk in rbrcs.AsValues())
-                if(rbrk.IsKey)
-                    rbrcs.KeyRubrics.Add(new MemberRubric(rbrk));
-            rbrcs.Update();
-            return rbrcs;
+            var rubrics = new MemberRubrics();
+            rubrics.KeyRubrics = new MemberRubrics();
+            foreach (var rubric in figure.Rubrics.AsValues())
+            {
+                var clonedRubric = new MemberRubric(rubric);
+                rubrics.Add(clonedRubric);
+                if(clonedRubric.IsKey)
+                {
+                    rubrics.KeyRubrics.Add(clonedRubric);
+                }
+            }
+            rubrics.Update();
+            return rubrics;
         }
     }
 }
