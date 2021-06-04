@@ -104,7 +104,7 @@ namespace System.Instant.Sqlset
                 return DataDbColumns.List.Select(c =>
                     new MemberRubric(new FieldRubric(c.RubricType, c.ColumnName, c.DbColumnSize, c.DbOrdinal) { RubricSize = c.DbColumnSize })
                     {
-                        FigureFieldId = c.DbOrdinal - 1,
+                        FieldId = c.DbOrdinal - 1,
                         IsAutoincrement = c.isAutoincrement,
                         IsDBNull = c.isDBNull,
                         IsIdentity = c.isIdentity                        
@@ -118,7 +118,7 @@ namespace System.Instant.Sqlset
                 return DbPrimaryKey.Select(c =>
                                                  new MemberRubric(new FieldRubric(c.RubricType, c.ColumnName, c.DbColumnSize, c.DbOrdinal) { RubricSize = c.DbColumnSize })
                                                  {
-                                                     FigureFieldId = c.DbOrdinal - 1,
+                                                     FieldId = c.DbOrdinal - 1,
                                                      IsAutoincrement = c.isAutoincrement,
                                                      IsDBNull = c.isDBNull,
                                                      IsIdentity = c.isIdentity

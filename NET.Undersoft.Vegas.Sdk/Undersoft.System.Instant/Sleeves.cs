@@ -54,7 +54,7 @@ namespace System.Instant
 
         #region Methods
 
-        public ISleeves Generate()
+        public ISleeves Combine()
         {
             if (figures != null)
             {

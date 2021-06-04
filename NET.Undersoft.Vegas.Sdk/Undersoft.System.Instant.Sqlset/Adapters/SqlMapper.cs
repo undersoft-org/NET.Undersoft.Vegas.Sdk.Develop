@@ -41,9 +41,9 @@ namespace System.Instant.Sqlset
                         {
                             Album<int> colOrdinal = new Album<int>(t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName) &&
                                                                                                     !DbHand.Schema.DataDbTables[dbtName].DbPrimaryKey.Select(pk => pk.ColumnName)
-                                                                                                         .Contains(c.RubricName)).Select(o => o.FigureFieldId));
+                                                                                                         .Contains(c.RubricName)).Select(o => o.FieldId));
                             Album<int> keyOrdinal = new Album<int>(t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DbPrimaryKey.Select(pk => pk.ColumnName)
-                                                                                                         .Contains(c.RubricName)).Select(o => o.FigureFieldId));
+                                                                                                         .Contains(c.RubricName)).Select(o => o.FieldId));
                             FieldMapping iSqlsetMap = new FieldMapping(dbtName, keyOrdinal, colOrdinal);
                             if (t.Rubrics.Mappings == null)
                                 t.Rubrics.Mappings = new FieldMappings();
@@ -52,9 +52,9 @@ namespace System.Instant.Sqlset
                         else
                         {
                             Album<int> colOrdinal = new Album<int>(t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName) &&
-                                                                                                          !c.IsKey).Select(o => o.FigureFieldId));
+                                                                                                          !c.IsKey).Select(o => o.FieldId));
                             Album<int> keyOrdinal = new Album<int>(t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName) &&
-                                                                                                          c.IsKey).Select(o => o.FigureFieldId));
+                                                                                                          c.IsKey).Select(o => o.FieldId));
                             FieldMapping iSqlsetMap = new FieldMapping(dbtName, keyOrdinal, colOrdinal);
                             if (t.Rubrics.Mappings == null)
                                 t.Rubrics.Mappings = new FieldMappings();
@@ -71,11 +71,11 @@ namespace System.Instant.Sqlset
                             dbtName = dbtNameMix;
                             Album<int> colOrdinal = new Album<int>(t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName) &&
                                                                                                           !DbHand.Schema.DataDbTables[dbtName].DbPrimaryKey.Select(pk => pk.ColumnName)
-                                                                                                        .Contains(c.RubricName)).Select(o => o.FigureFieldId));
+                                                                                                        .Contains(c.RubricName)).Select(o => o.FieldId));
                             Album<int> keyOrdinal = new Album<int>((t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DbPrimaryKey.Select(pk => pk.ColumnName)
-                                                                                                         .Contains(c.RubricName)).Select(o => o.FigureFieldId)));
+                                                                                                         .Contains(c.RubricName)).Select(o => o.FieldId)));
                             if (keyOrdinal.Count == 0)
-                                keyOrdinal = new Album<int>(t.Rubrics.KeyRubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName)).Select(o => o.FigureFieldId));
+                                keyOrdinal = new Album<int>(t.Rubrics.KeyRubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName)).Select(o => o.FieldId));
                             FieldMapping iSqlsetMap = new FieldMapping(dbtName, keyOrdinal, colOrdinal);
                             if (t.Rubrics.Mappings == null)
                                 t.Rubrics.Mappings = new FieldMappings();
@@ -88,11 +88,11 @@ namespace System.Instant.Sqlset
                         {
                             dbtName = dbtNameMix;
                             Album<int> colOrdinal = new Album<int>(t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName) &&
-                                                                                                          !c.IsKey).Select(o => o.FigureFieldId));
+                                                                                                          !c.IsKey).Select(o => o.FieldId));
                             Album<int> keyOrdinal = new Album<int>(t.Rubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName) &&
-                                                                                                          c.IsKey).Select(o => o.FigureFieldId));
+                                                                                                          c.IsKey).Select(o => o.FieldId));
                             if (keyOrdinal.Count == 0)
-                                keyOrdinal = new Album<int>(t.Rubrics.KeyRubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName)).Select(o => o.FigureFieldId));
+                                keyOrdinal = new Album<int>(t.Rubrics.KeyRubrics.AsValues().Where(c => DbHand.Schema.DataDbTables[dbtName].DataDbColumns.Have(c.RubricName)).Select(o => o.FieldId));
                             FieldMapping iSqlsetMap = new FieldMapping(dbtName, keyOrdinal, colOrdinal);
                             if (t.Rubrics.Mappings == null)
                                 t.Rubrics.Mappings = new FieldMappings();

@@ -39,7 +39,7 @@ namespace System.Instant.Tests
         public void Sleeve_SelectionFromFiguresMultiNesting_Test()
         {
             rtsq = new Figures(typeof(FieldsAndPropertiesModel), "InstantSequence_Compilation_Test", true);
-            iRtseq = rtsq.Generate();
+            iRtseq = rtsq.Combine();
            
             iRts = Sleeve_Compilation_Helper_Test(iRtseq, new FieldsAndPropertiesModel());
             
@@ -63,8 +63,8 @@ namespace System.Instant.Tests
             iRtseq.Add(iRtseq.NewFigure());
             iRtseq[0, 4] = iRts[4];
 
-            IFigures isel1 = new Sleeves(iRtseq).Generate();
-            IFigures isel2 = new Sleeves(isel1).Generate();
+            IFigures isel1 = new Sleeves(iRtseq).Combine();
+            IFigures isel2 = new Sleeves(isel1).Combine();
 
             foreach (var card in iRtseq)
                 isel2.Add(card);

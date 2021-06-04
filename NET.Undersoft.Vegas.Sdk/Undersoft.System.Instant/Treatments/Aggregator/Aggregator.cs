@@ -53,10 +53,10 @@ namespace System.Instant.Treatments
 //                                (s.AggregateRubric != null &&
 //                                s.AggregateIndex[0] == y) &&
 //                                o.Targets.Count > 0).Select(s =>
-//                                 o.Origins.First.Value[s.FigureFieldId] =
+//                                 o.Origins.First.Value[s.FieldId] =
 
 //                                 (s.AggregateOperand == AggregateOperand.Default &&
-//                                    o.Origins.First.Value[s.FigureFieldId] == s.RubricType.Default()) ?
+//                                    o.Origins.First.Value[s.FieldId] == s.RubricType.Default()) ?
 //                                  o.Targets
 //                                    .Select(f => f[s.AggregateOrdinal[0]])
 

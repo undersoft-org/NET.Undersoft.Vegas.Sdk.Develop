@@ -41,7 +41,7 @@ namespace System.Instant.Mathset
            
             instMtic = new Figures(instFig, "Figures_Mathset_Test");
 
-            spcMtic = instMtic.Generate();
+            spcMtic = instMtic.Combine();
 
             MathsetMockModel fom = new MathsetMockModel();
 

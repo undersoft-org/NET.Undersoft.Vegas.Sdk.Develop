@@ -11,7 +11,8 @@ namespace System.Instant
 {   
     public class FigureCompilerValueType : FigureCompiler
     {
-        public FigureCompilerValueType(Figure instantFigure) : base(instantFigure)
+        public FigureCompilerValueType(Figure instantFigure, MemberRubrics fieldRubrics, MemberRubrics propertyRubrics) : 
+            base(instantFigure, fieldRubrics, propertyRubrics)
         {      
         }
       
@@ -24,7 +25,7 @@ namespace System.Instant
 
             CreateSerialCodeProperty(tb, typeof(Ussn), "SerialCode");
 
-            CreateFieldsAndProperties(tb, members);
+            CreateFieldsAndProperties(tb);
 
             CreateValueArrayProperty(tb);
 
@@ -67,31 +68,32 @@ namespace System.Instant
 
             TypeBuilder tb;
 
-            tb = moduleBuilder.DefineType(typeSignature, TypeAttributes.Public    | TypeAttributes.Serializable | TypeAttributes.BeforeFieldInit | TypeAttributes.Class |
-                                                         TypeAttributes.AnsiClass | TypeAttributes.SequentialLayout, typeof(ValueType));
+            tb = moduleBuilder.DefineType(typeSignature, TypeAttributes.Public          | TypeAttributes.Serializable | 
+                                                         TypeAttributes.BeforeFieldInit | TypeAttributes.Class |
+                                                         TypeAttributes.AnsiClass       | TypeAttributes.SequentialLayout, typeof(ValueType));
 
-            //tb.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, new Type[] { })
+            //tb.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, Type.EmptyTypes);
 
             tb.SetCustomAttribute(new CustomAttributeBuilder(structLayoutCtor, new object[] { LayoutKind.Sequential }, 
                                                              structLayoutFields, new object[] { CharSet.Ansi, 1 }));
+
             tb.SetCustomAttribute(new CustomAttributeBuilder(typeof(DataContractAttribute)
                                                                 .GetConstructor(Type.EmptyTypes), new object[0]));
 
             tb.AddInterfaceImplementation(typeof(IFigure));
-            if (IsDerived)
-                tb.SetParent(figure.BaseType);
+
             return tb;
         }
 
         private void CreateSerialCodeProperty(TypeBuilder tb, Type type, string name)
         {
-            FieldBuilder fb = CreateField(tb, null, type,  name);
+            FieldBuilder fb = CreateField(tb, null, type,  name.ToLower() );
             fields[0] = fb;
 
             PropertyBuilder prop = tb.DefineProperty(name,  PropertyAttributes.HasDefault,
                                                      type, new Type[] { type });
 
-            PropertyInfo iprop = typeof(IFigure).GetProperty("SerialCode");
+            PropertyInfo iprop = typeof(IFigure).GetProperty(name);
 
             MethodInfo accessor = iprop.GetGetMethod();
 
@@ -99,7 +101,7 @@ namespace System.Instant
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
 
             MethodBuilder getter = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
-                                                          accessor.CallingConvention, accessor.ReturnType, argTypes);
+                                                   accessor.CallingConvention, accessor.ReturnType, argTypes);
 
             tb.DefineMethodOverride(getter, accessor);
 
@@ -129,130 +131,96 @@ namespace System.Instant
 
             prop.SetCustomAttribute(new CustomAttributeBuilder(
                                        dataMemberCtor, new object[0],
-                                       dataMemberProps, new object[2] { 0, "SERIALCODE" }));
+                                       dataMemberProps, new object[2] { 0, name.ToUpper() }));
 
             props[0] = prop;
         }
 
-        private FieldBuilder[] CreateFieldsAndProperties(TypeBuilder tb, MemberRubrics members)
+        private FieldBuilder[] CreateFieldsAndProperties(TypeBuilder tb)
         {
-            SortedList<int, MemberRubric> ids = new SortedList<int, MemberRubric>();
-
             for (int i = scode; i < length + scode; i++)
             {
-                MemberInfo mi = members[i - scode];
+                MemberRubric mr = fieldRubrics[i - scode];
                 Type type = null;
-                string name = mi.Name;
-                if (mi.MemberType == MemberTypes.Field)
+                string name = mr.RubricName;
+                string fieldName = "_" + mr.RubricName;
+                bool isBackingField = false;
+                if (mr.MemberType == MemberTypes.Field)
                 {
-                    if (mi is MemberRubric)
-                        type = ((MemberRubric)mi).RubricType;
-                    else
-                        type = ((FieldInfo)mi).FieldType;
+                    var fieldRubric = (FieldRubric)mr.RubricInfo;
+                    isBackingField = fieldRubric.IsBackingField;
+                    fieldRubric.FieldName = fieldName;
+                    type = mr.RubricType;
+
+                    if (type == null)                      
+                        type = fieldRubric.FieldType;
                 }
-                else if (mi.MemberType == MemberTypes.Property)
+                else if (mr.MemberType == MemberTypes.Property)
                 {
-                    if (mi is MemberRubric)
-                        type = ((MemberRubric)mi).RubricType;
-                    else
-                        type = ((PropertyInfo)mi).PropertyType;
+                    type = mr.RubricType;
+                    if (type == null)
+                        type = ((PropertyRubric)mr.RubricInfo).PropertyType;
                 }
 
                 if ((type.IsArray && !type.GetElementType().IsValueType) ||
                     (!type.IsArray && !type.IsValueType && type != typeof(string)))
+                {
                     type = null;
+                }
 
                 if (type != null)
                 {
-                    FieldBuilder fb = CreateField(tb, mi, type, name);
-                    MemberRubric mr = ((MemberRubric)mi);
+                    var _mr = mr;
+                    if (isBackingField)
+                    {
+                        var __mr = propertyRubrics[mr.RubricName];
+                        if (__mr != null)
+                             _mr = __mr;
+                    }
+
+                    FieldBuilder fb = CreateField(tb, _mr, type, fieldName);
+
                     if (fb != null)
                     {
-                        CreateFieldCustomAttributes(fb, mi, mr);
 
-                        PropertyBuilder pi = (type != typeof(string)) ? CreateProperty(tb, fb, type, name) : CreateStringProperty(tb, fb, type, name);
+                        DetermineFigureAttributes(fb, _mr, mr);
+
+                        PropertyBuilder pb = (type != typeof(string)) ? 
+                                              CreateProperty(tb, fb, type, name) : 
+                                              CreateStringProperty(tb, fb, type, name);
                         fields[i] = fb;
-                        props[i] = pi;
-                        pi.SetCustomAttribute(new CustomAttributeBuilder(dataMemberCtor, new object[0], dataMemberProps, new object[2] { i - scode, name }));
+                        props[i] = pb;
+                        pb.SetCustomAttribute(new CustomAttributeBuilder(dataMemberCtor,  new object[0], 
+                                                                         dataMemberProps, new object[2] { i - scode, name }));
                     }
                 }
             }
-
-            members.KeyRubrics.Add(ids.Values);
-            members.KeyRubrics.Update();
 
             return fields;
         }
 
-        private FieldBuilder CreateField(TypeBuilder tb, MemberInfo member, Type type, string name)
+        private FieldBuilder CreateField(TypeBuilder tb, MemberRubric mr, Type type, string fieldName)
         {
-            if (type == typeof(string))
+            if (type == typeof(string) || type.IsArray)
             {
-                return CreateStringField(tb, member, type, name);
-            }
-            else if(type.IsArray)
-            { 
-                FieldBuilder field = null;
+                Type _type = type;
 
-                object[] o = member.GetCustomAttributes(typeof(MarshalAsAttribute), false);
-                if (o == null || !o.Any())
-                {
-                    var t = member.GetCustomAttributes(typeof(FigureAsAttribute), false);
-                    FigureAsAttribute[] maa = (t != null && t.Any()) ? t.Cast<FigureAsAttribute>().Where(r => r.Value == UnmanagedType.ByValTStr ||
-                                                                                                              r.Value == UnmanagedType.ByValArray).ToArray() : null;
-                    if (maa != null)
-                    {
-                        field = tb.DefineField("_" + name, type, FieldAttributes.Private | FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal);
-                        CreateFigureAsAttribute(field, member, maa.First());
-                    }
-                }
-                else
-                {
-                    MarshalAsAttribute[] maa = o.Cast<MarshalAsAttribute>()
-                                                    .Where(r => r.Value == UnmanagedType.ByValTStr ||
-                                                                r.Value == UnmanagedType.ByValArray).ToArray();
-                    if (maa.Any())
-                    {
-                        field = tb.DefineField("_" + name, type, FieldAttributes.Public | FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal);
-                        CreateMarshalAttribute(field, member, maa.First());                        
-                    }                   
-                }
-                return field;
-            }            
+                FieldBuilder fb;
 
-            return tb.DefineField("_" + name, type, FieldAttributes.Public | FieldAttributes.HasDefault);
-        }
+                if (type == typeof(string))
+                    _type = typeof(char[]);
 
-        private FieldBuilder CreateStringField(TypeBuilder tb, MemberInfo member, Type type, string name)
-        {
+                fb = tb.DefineField(fieldName, _type, FieldAttributes.Private | FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal);
+              
+                DetermineMarshalAsAttributeForArray(fb, mr, _type);
 
-            FieldBuilder field = null;
-
-            object[] o = member.GetCustomAttributes(false).Where(r => r is MarshalAsAttribute).ToArray();
-            if (!o.Any())
-            {
-                var t = member.GetCustomAttributes(false).Where(r => r is FigureAsAttribute);
-                FigureAsAttribute[] maa = t.Any() ? t.Cast<FigureAsAttribute>().Where(r => r.Value == UnmanagedType.ByValTStr ||
-                                                                                                 r.Value == UnmanagedType.ByValArray).ToArray() : null;
-                if (maa != null)
-                {
-                    field = tb.DefineField("_" + name, typeof(char[]), FieldAttributes.Public | FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal);
-                    CreateFigureAsAttribute(field, member, new FigureAsAttribute(UnmanagedType.ByValArray) { SizeConst = maa.First().SizeConst });
-                }
+                return fb;
             }
             else
             {
-                MarshalAsAttribute[] maa = o.Cast<MarshalAsAttribute>().Where(r => r.Value == UnmanagedType.ByValTStr ||
-                                                                                   r.Value == UnmanagedType.ByValArray).ToArray();
-                if (maa.Any())
-                {
-
-                    field = tb.DefineField("_" + name, typeof(char[]), FieldAttributes.Public | FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal);
-                    CreateMarshalAttribute(field, member, new MarshalAsAttribute(UnmanagedType.ByValArray) { SizeConst = maa.First().SizeConst });
-                }
+                return tb.DefineField(fieldName, type, FieldAttributes.Private);
             }
-            return field;
-        }
+        }       
 
         private PropertyBuilder CreateProperty(TypeBuilder tb, FieldBuilder field, Type type, string name)
         {
@@ -263,23 +231,7 @@ namespace System.Instant
             MethodBuilder getter = tb.DefineMethod("get_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, type,
                                                             Type.EmptyTypes);
-
-            bool derivedProperty = false;
-            PropertyInfo iprop = null;
-            if (IsDerived)
-            {
-                iprop = figure.BaseType.GetProperty(name);
-                if (iprop != null)
-                {
-                    MethodInfo accessor = iprop.GetGetMethod();
-                    if (accessor.IsVirtual)
-                    {
-                        tb.DefineMethodOverride(getter, accessor);
-                        derivedProperty = true;
-                    }
-                }
-            }
-
+           
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();
 
@@ -290,12 +242,6 @@ namespace System.Instant
             MethodBuilder setter = tb.DefineMethod("set_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, typeof(void),
                                                             new Type[] { type });
-            if (derivedProperty)
-            {
-                MethodInfo mutator = iprop.GetSetMethod();
-                tb.DefineMethodOverride(setter, mutator);
-            }
-
             prop.SetSetMethod(setter);
             il = setter.GetILGenerator();
 
@@ -315,21 +261,6 @@ namespace System.Instant
             MethodBuilder getter = tb.DefineMethod("get_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, type,
                                                             Type.EmptyTypes);
-            bool derivedProperty = false;
-            PropertyInfo iprop = null;
-            if (IsDerived)
-            {
-                iprop = figure.BaseType.GetProperty(name);
-                if (iprop != null)
-                {
-                    MethodInfo accessor = iprop.GetGetMethod();
-                    if (accessor.IsVirtual)
-                    {
-                        tb.DefineMethodOverride(getter, accessor);
-                        derivedProperty = true;
-                    }
-                }
-            }
 
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();
@@ -348,12 +279,6 @@ namespace System.Instant
                                                             MethodAttributes.HideBySig, typeof(void),
                                                             new Type[] { type });
 
-            if (derivedProperty)
-            {
-                MethodInfo mutator = iprop.GetSetMethod();
-                tb.DefineMethodOverride(setter, mutator);
-            }
-
             prop.SetSetMethod(setter);
             il = setter.GetILGenerator();
 
@@ -367,7 +292,6 @@ namespace System.Instant
             il.Emit(OpCodes.Ret);
 
             return prop;
-
         }
 
         private void CreateValueArrayProperty(TypeBuilder tb)
@@ -380,7 +304,7 @@ namespace System.Instant
             Type[] argTypes = Array.ConvertAll(args, a => a.ParameterType);
 
             MethodBuilder method = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
-                                                          accessor.CallingConvention, accessor.ReturnType, argTypes);
+                                                   accessor.CallingConvention, accessor.ReturnType, argTypes);
             tb.DefineMethodOverride(method, accessor);
 
             ILGenerator il = method.GetILGenerator();
@@ -457,7 +381,7 @@ namespace System.Instant
                     if (args.Length == 1 && argTypes[0] == typeof(int))
                     {
                         MethodBuilder method = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
-                                                          accessor.CallingConvention, accessor.ReturnType, argTypes);
+                                                               accessor.CallingConvention, accessor.ReturnType, argTypes);
                         tb.DefineMethodOverride(method, accessor);
                         ILGenerator il = method.GetILGenerator();
 
@@ -559,7 +483,7 @@ namespace System.Instant
                     if (args.Length == 1 && argTypes[0] == typeof(string))
                     {
                         MethodBuilder method = tb.DefineMethod(accessor.Name, accessor.Attributes & ~MethodAttributes.Abstract,
-                                                           accessor.CallingConvention, accessor.ReturnType, argTypes);
+                                                               accessor.CallingConvention, accessor.ReturnType, argTypes);
                         tb.DefineMethodOverride(method, accessor);
                         ILGenerator il = method.GetILGenerator();
 

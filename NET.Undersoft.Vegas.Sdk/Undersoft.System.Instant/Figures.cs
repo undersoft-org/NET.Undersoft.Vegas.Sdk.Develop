@@ -12,35 +12,35 @@ namespace System.Instant
         public Figures(Figure figureGenerator, string figuresTypeName = null, bool safeThread = true)
         {
             if(figureGenerator.Type == null)
-                figureGenerator.Generate();
+                figureGenerator.Combine();
             this.safeThread = safeThread;
             this.figure = figureGenerator;
             Name = (figuresTypeName != null && figuresTypeName != "") ? figuresTypeName : figure.Name + "_F";
         }
 
-        public Figures(Type figureModelType, bool IsVirtual = false, bool safeThread = true)
-           : this(figureModelType, null, null, IsVirtual, FigureMode.Reference, safeThread)
+        public Figures(Type figureModelType, bool safeThread = true)
+           : this(figureModelType, null, null, FigureMode.Reference, safeThread)
         {
         }
         public Figures(Type figureModelType, string figuresTypeName, bool IsVirtual = false, bool safeThread = true)
-           : this(figureModelType, figuresTypeName, null, IsVirtual, FigureMode.Reference, safeThread)
+           : this(figureModelType, figuresTypeName, null, FigureMode.Reference, safeThread)
         {
         }
-        public Figures(Type figureModelType, string figuresTypeName, string figureTypeName, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
-           : this(new Figure(figureModelType, figureTypeName, IsVirtual,  modeType), figuresTypeName, safeThread)
-        {
-        }
-
-        public Figures(IFigure figureObject, bool IsVirtual = false, bool safeThread = true)
-        : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, IsVirtual, FigureMode.Reference), null, safeThread)
-        {
-        }
-        public Figures(IFigure figureObject, string figuresTypeName, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
-           : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, IsVirtual, modeType), figuresTypeName, safeThread)
+        public Figures(Type figureModelType, string figuresTypeName, string figureTypeName, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
+           : this(new Figure(figureModelType, figureTypeName, modeType), figuresTypeName, safeThread)
         {
         }
 
-        public Figures(MemberRubrics figureRubrics, string figuresTypeName = null, string figureTypeName = null, bool IsVirtual = false, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
+        public Figures(IFigure figureObject, bool safeThread = true)
+        : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, FigureMode.Reference), null, safeThread)
+        {
+        }
+        public Figures(IFigure figureObject, string figuresTypeName, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
+           : this(new Figure(figureObject.GetType(), figureObject.GetType().Name, modeType), figuresTypeName, safeThread)
+        {
+        }
+
+        public Figures(MemberRubrics figureRubrics, string figuresTypeName = null, string figureTypeName = null, FigureMode modeType = FigureMode.Reference, bool safeThread = true)
          : this(new Figure(figureRubrics, figureTypeName, modeType), figuresTypeName, safeThread)
         {
         }
@@ -56,7 +56,7 @@ namespace System.Instant
             return newFigures();
         }
 
-        public IFigures Generate()
+        public IFigures Combine()
         {
             if (this.Type == null)
             {

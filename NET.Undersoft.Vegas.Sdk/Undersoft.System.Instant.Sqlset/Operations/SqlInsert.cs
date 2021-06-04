@@ -51,8 +51,8 @@ namespace System.Instant.Sqlset
                     {
                         sb.AppendLine(@"  /* ----  TABLE BULK START CMD ------ */  ");
 
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         if (updateExcept != null)
                         {
@@ -111,8 +111,8 @@ namespace System.Instant.Sqlset
                    
                     foreach (FieldMapping nMap in nMaps)
                     {
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();                   
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();                   
 
                         string qry = BatchInsertQuery(ir, nMap.DbTableName, ic, ik).ToString();
                         sb.Append(qry);
@@ -180,8 +180,8 @@ namespace System.Instant.Sqlset
 
                     foreach (FieldMapping nMap in nMaps)
                     {
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         string qry = BatchInsertQuery(ir, nMap.DbTableName, ic, ik).ToString();
                         sb.Append(qry);
@@ -250,8 +250,8 @@ namespace System.Instant.Sqlset
                  
                     foreach (FieldMapping nMap in nMaps)
                     {
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();                    
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();                    
 
                         string qry = BatchInsertQuery(ir, nMap.DbTableName, ic, ik).ToString();
                         sb.Append(qry);
@@ -295,8 +295,8 @@ namespace System.Instant.Sqlset
 
                     foreach (FieldMapping nMap in nMaps)
                     {;
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         string qry = BatchInsertQuery(ir, nMap.DbTableName, ic, ik).ToString();
                         sb.Append(qry);
@@ -346,7 +346,7 @@ namespace System.Instant.Sqlset
 
                 if (columns[i].RubricName.ToLower() == "updated")
                     isUpdateCol = true;
-                if (ia[columns[i].FigureFieldId] != DBNull.Value && !columns[i].IsIdentity)
+                if (ia[columns[i].FieldId] != DBNull.Value && !columns[i].IsIdentity)
                 {
                     if (c > 0)
                         delim = ",";
@@ -357,8 +357,8 @@ namespace System.Instant.Sqlset
                                                                                         (columns[i].RubricType == typeof(string) ||
                                                                                         columns[i].RubricType == typeof(DateTime)) ? "'" : "",
                                                                                         (columns[i].RubricType != typeof(string)) ?
-                                                                                        Convert.ChangeType(ia[columns[i].FigureFieldId], columns[i].RubricType) :
-                                                                                        ia[columns[i].FigureFieldId].ToString().Replace("'", "''")
+                                                                                        Convert.ChangeType(ia[columns[i].FieldId], columns[i].RubricType) :
+                                                                                        ia[columns[i].FieldId].ToString().Replace("'", "''")
                                                                                         );
                     c++;
                 }
@@ -377,7 +377,7 @@ namespace System.Instant.Sqlset
                 for (int i = 0; i < keys.Length; i++)
                 {
 
-                    if (ia[keys[i].FigureFieldId] != DBNull.Value && !keys[i].IsIdentity)
+                    if (ia[keys[i].FieldId] != DBNull.Value && !keys[i].IsIdentity)
                     {
                         if (c > 0)
                             delim = ",";
@@ -388,8 +388,8 @@ namespace System.Instant.Sqlset
                                                                                         (keys[i].RubricType == typeof(string) ||
                                                                                         keys[i].RubricType == typeof(DateTime)) ? "'" : "",
                                                                                         (keys[i].RubricType != typeof(string)) ?
-                                                                                        Convert.ChangeType(ia[keys[i].FigureFieldId], keys[i].RubricType) :
-                                                                                        ia[keys[i].FigureFieldId].ToString().Replace("'", "''")
+                                                                                        Convert.ChangeType(ia[keys[i].FieldId], keys[i].RubricType) :
+                                                                                        ia[keys[i].FieldId].ToString().Replace("'", "''")
                                                                                         );
                     c++;
                     }

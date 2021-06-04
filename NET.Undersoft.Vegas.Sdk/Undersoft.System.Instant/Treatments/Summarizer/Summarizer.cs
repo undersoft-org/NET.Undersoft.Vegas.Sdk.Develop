@@ -25,7 +25,7 @@ namespace System.Instant.Treatments
                                 
                                 (j => (j[s.SummaryOrdinal] is DateTime) ?
                                 ((DateTime)j[s.SummaryOrdinal]).ToOADate() :
-                                   Convert.ToDouble(j[s.FigureFieldId])), typeof(object)) :
+                                   Convert.ToDouble(j[s.FieldId])), typeof(object)) :
                                 (s.SummaryOperand == AggregateOperand.Min) ?
                                 Convert.ChangeType(figures
                                 
@@ -33,7 +33,7 @@ namespace System.Instant.Treatments
                                 
                                 (j => (j[s.SummaryOrdinal] is DateTime) ?
                                             ((DateTime)j[s.SummaryOrdinal]).ToOADate() :
-                                                Convert.ToDouble(j[s.FigureFieldId])), typeof(object)) :
+                                                Convert.ToDouble(j[s.FieldId])), typeof(object)) :
                                  (s.SummaryOperand == AggregateOperand.Max) ?
                                 Convert.ChangeType(figures
                                 
@@ -41,7 +41,7 @@ namespace System.Instant.Treatments
                                 
                                 (j => (j[s.SummaryOrdinal] is DateTime) ?
                                             ((DateTime)j[s.SummaryOrdinal]).ToOADate() :
-                                                Convert.ToDouble(j[s.FigureFieldId])), typeof(object)) :
+                                                Convert.ToDouble(j[s.FieldId])), typeof(object)) :
                                  (s.SummaryOperand == AggregateOperand.Avg) ?
                                Convert.ChangeType(figures
                                
@@ -49,9 +49,9 @@ namespace System.Instant.Treatments
                                
                                (j => (j[s.SummaryOrdinal] is DateTime) ?
                                             ((DateTime)j[s.SummaryOrdinal]).ToOADate() :
-                                                Convert.ToDouble(j[s.FigureFieldId])), typeof(object)) :
+                                                Convert.ToDouble(j[s.FieldId])), typeof(object)) :
                                  (s.SummaryOperand == AggregateOperand.Bis) ?
-                               Convert.ChangeType(figures.Select(j => (j[s.FigureFieldId] != DBNull.Value) ? j[s.FigureFieldId].ToString() : "")
+                               Convert.ChangeType(figures.Select(j => (j[s.FieldId] != DBNull.Value) ? j[s.FieldId].ToString() : "")
                                
                                .Aggregate((x, y) => x + " " + y), typeof(object)) : null : null
                             }

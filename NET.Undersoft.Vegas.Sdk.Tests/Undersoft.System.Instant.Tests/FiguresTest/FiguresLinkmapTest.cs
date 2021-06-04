@@ -77,9 +77,9 @@ namespace System.Instant.Tests
         [Fact]
         public void FiguresLinkmap_Test()
         {
-            IFigures figuresA = new Figures(typeof(FieldsAndPropertiesModel), "Figures_A_Test").Generate();
+            IFigures figuresA = new Figures(typeof(FieldsAndPropertiesModel), "Figures_A_Test").Combine();
 
-            IFigures figuresB = new Figures(typeof(FieldsAndPropertiesModel), "Figures_B_Test").Generate();
+            IFigures figuresB = new Figures(typeof(FieldsAndPropertiesModel), "Figures_B_Test").Combine();
 
             FiguresLinkmap_AddFigures_A_Helper_Test(figuresA);
      

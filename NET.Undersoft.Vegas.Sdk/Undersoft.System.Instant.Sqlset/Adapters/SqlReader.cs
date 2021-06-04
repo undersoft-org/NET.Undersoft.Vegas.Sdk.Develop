@@ -39,7 +39,7 @@ namespace System.Instant.Sqlset
                                                     RubricSize = Convert.ToInt32(c["ColumnSize"])
                                                 })
                                                 {
-                                                    FigureFieldId = Convert.ToInt32(c["ColumnOrdinal"]),
+                                                    FieldId = Convert.ToInt32(c["ColumnOrdinal"]),
                                                     IsIdentity = Convert.ToBoolean(c["IsIdentity"]),
                                                     IsAutoincrement = Convert.ToBoolean(c["IsAutoincrement"]),
                                                     IsDBNull = Convert.ToBoolean(c["AllowDBNull"]),                                                                               
@@ -77,7 +77,7 @@ namespace System.Instant.Sqlset
 
             Figure rt = new Figure(columns.ToArray(), tableName);
             Figures deck = new Figures(rt, tableName + "_Figures");
-            IFigures tab = deck.Generate();
+            IFigures tab = deck.Combine();
 
             if (dr.Read())
             {
@@ -93,9 +93,9 @@ namespace System.Instant.Sqlset
 
                     figure.ValueArray = itemArray.Select((a, y) => itemArray[y] = (a == DBNull.Value) ? a.GetType().Default() : a).ToArray();
 
-                    //figure.SerialCode = new Ussn(keyOrder.Select(ko => itemArray[ko]).ToArray());
+                    figure.UniqueKey = keyOrder.Select(i => itemArray[i]).ToArray().UniqueKey64();
 
-                    tab.Add(figure);
+                    tab.Put(figure);
                 }
                 while (dr.Read());
                 itemArray = null;
@@ -131,7 +131,7 @@ namespace System.Instant.Sqlset
                         deck = tab;
                         columnsCount = deck.Rubrics.Count;
                         itemArray = new object[columnsCount];
-                        keyOrder = deck.Rubrics.KeyRubrics.AsValues().Select(k => k.FigureFieldId).ToArray();
+                        keyOrder = deck.Rubrics.KeyRubrics.AsValues().Select(k => k.FieldId).ToArray();
                     }
 
                     dr.GetValues(itemArray);
@@ -187,7 +187,7 @@ namespace System.Instant.Sqlset
                         deck = tab;
                         columnsCount = deck.Rubrics.Count;
                         itemArray = new object[columnsCount];
-                        keyIndexes = deck.Rubrics.KeyRubrics.AsValues().Select(k => k.FigureFieldId).ToArray();
+                        keyIndexes = deck.Rubrics.KeyRubrics.AsValues().Select(k => k.FieldId).ToArray();
                     }
 
                     dr.GetValues(itemArray);
@@ -284,7 +284,7 @@ namespace System.Instant.Sqlset
                                                     RubricSize = Convert.ToInt32(c["ColumnSize"])
                                                 })
                                                 {
-                                                    FigureFieldId = Convert.ToInt32(c["ColumnOrdinal"]),
+                                                    FieldId = Convert.ToInt32(c["ColumnOrdinal"]),
                                                     IsIdentity = Convert.ToBoolean(c["IsIdentity"]),
                                                     IsAutoincrement = Convert.ToBoolean(c["IsAutoincrement"]),
                                                     IsDBNull = Convert.ToBoolean(c["AllowDBNull"])
@@ -300,7 +300,7 @@ namespace System.Instant.Sqlset
 
             Figure rt = new Figure(_columns.ToArray(), "SchemaFigure");
             Figures tab = new Figures(rt, "Schema");
-            IFigures deck = tab.Generate();
+            IFigures deck = tab.Combine();
           
             List<DbTable> dbtabs = DbHand.Schema.DataDbTables.List;
             MemberRubric[] pKeys = columns.Where(c => dbtabs.SelectMany(t => t.GetKeyForDataTable.Select(d => d.RubricName)).Contains(c.RubricName) && operColumns.Select(o => o.RubricName).Contains(c.RubricName)).ToArray();

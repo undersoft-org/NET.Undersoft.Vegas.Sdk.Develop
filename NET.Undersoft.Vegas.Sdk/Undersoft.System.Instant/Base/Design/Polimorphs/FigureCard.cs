@@ -210,7 +210,7 @@ namespace System.Instant
                 MemberRubric rubric = Figures.Rubrics[propertyName.UniqueKey()];
                 if (rubric != null)
                 {
-                    object val = presets.Get(rubric.FigureFieldId);
+                    object val = presets.Get(rubric.FieldId);
                     if (val != null)
                         return val;
                 }
@@ -242,7 +242,7 @@ namespace System.Instant
         {
             MemberRubric rubric = Figures.Rubrics[propertyName.UniqueKey()];
             if (rubric != null)
-                SetPreset(rubric.FigureFieldId, value);
+                SetPreset(rubric.FieldId, value);
             else
                 throw new IndexOutOfRangeException("Field doesn't exist");
         }

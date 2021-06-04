@@ -41,70 +41,82 @@ namespace System.Instant.Tests
     public class PropertiesOnlyModel
     {
         [FigureKey(IsAutoincrement = true, Order = 0)]
-        public virtual int Id { get; set; } = 405;
+        public int Id { get; set; } = 405;
 
         [FigureAs(UnmanagedType.ByValTStr, SizeConst = 10)]
-        public virtual string Alias { get; set; } = "ProperSize";
+        public string Alias { get; set; } = "ProperSize";
 
         [FigureKey(Order = 1)]
         [FigureDisplay("ProductName")]
         [FigureAs(UnmanagedType.ByValTStr, SizeConst = 10)]
-        public virtual string Name { get; set; } = "SizeIsTwoTimesLonger";
+        public string Name { get; set; } = "SizeIsTwoTimesLonger";
 
         [FigureKey]
-        public virtual long Key { get; set; } = long.MaxValue;
+        public long Key { get; set; } = long.MaxValue;
 
         [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public virtual byte[] ByteArray { get; set; }
+        public byte[] ByteArray { get; set; }
 
         [FigureDisplay("AvgPrice")]
         [FigureTreatment( AggregateOperand = AggregateOperand.Avg, SummaryOperand = AggregateOperand.Avg )]
-        public virtual double Price { get; set; }
+        public double Price { get; set; }
 
-        public virtual Usid SystemKey { get; set; } = Usid.Empty;
+        public Usid SystemKey { get; set; } = Usid.Empty;
 
-        public virtual bool Status { get; set; }
+        public bool Status { get; set; }
 
-        public virtual DateTime Time { get; set; } = DateTime.Now;
+        public DateTime Time { get; set; } = DateTime.Now;
 
-        public virtual Guid GlobalId { get; set;} = new Guid();
+        public Guid GlobalId { get; set;} = new Guid();
 
-        public virtual double Factor { get; set; } = 2 * (long)int.MaxValue;
+        public double Factor { get; set; } = 2 * (long)int.MaxValue;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public class FieldsAndPropertiesModel
     {
         [FigureKey]
-        public int Id { get; set; } = 404;
+        public int Id  = 404;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 10)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
+        private string token = "AFH54345";
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string Alias = "ProperSize";
 
         [FigureDisplay("ProductName")]
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 20)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Name = "SizeIsTwoTimesLonger";
 
         private long Key = long.MaxValue;
 
         [FigureDisplay("AvgPrice")]
         [FigureTreatment(AggregateOperand = AggregateOperand.Avg, SummaryOperand = AggregateOperand.Sum)]
-        public double Price { get; set; } = 12.3;
+        public double Price = 12.3;
 
-        [FigureAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public byte[] ByteArray { get; set; } = new byte[10];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public byte[] ByteArray  = new byte[10];
 
-        public Usid SystemKey { get; set; } = Usid.Empty;
+        public Usid SystemKey = Usid.Empty;
 
-        public bool Status { get; set; }
+        public bool Status;
 
         [FigureKey]
-        public DateTime Time { get; set; } = DateTime.Now;
+        public DateTime Time = DateTime.Now;
 
-        public Guid GlobalId { get; set; } = new Guid();
+        public Guid GlobalId = new Guid();
 
-        public double Factor { get; set; } = 2 * (long)int.MaxValue;
+        public double Factor = 2 * (long)int.MaxValue;
     }
 
-  
+    public class FieldsAndProperties : FieldsAndPropertiesModel
+    {
+        public new int Id { get; set; }
+
+
+
+    }
+
+
+
 }

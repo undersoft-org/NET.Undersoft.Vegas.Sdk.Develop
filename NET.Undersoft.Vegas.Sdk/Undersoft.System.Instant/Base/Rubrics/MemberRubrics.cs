@@ -191,7 +191,7 @@ namespace System.Instant
 
         public void Update()
         {
-            ordinals = this.AsValues().Select(o => o.FigureFieldId).ToArray();
+            ordinals = this.AsValues().Select(o => o.FieldId).ToArray();
             binarySizes = this.AsValues().Select(o => o.RubricSize).ToArray();
             binarySize = this.AsValues().Sum(b => b.RubricSize);
             if (KeyRubrics != null)

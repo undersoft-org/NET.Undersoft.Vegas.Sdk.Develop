@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,23 +17,44 @@ namespace System.Instant
         {
             RubricType = fieldType;
             RubricName = fieldName;
+            FieldName = fieldName;
             RubricId = fieldId;
-            if (fieldType.IsValueType)
-            {
-                if (fieldType == typeof(DateTime))
-                    RubricSize = 8;
-                else
-                    RubricSize = Marshal.SizeOf(fieldType);
-            }
             if (size > 0)
                 RubricSize = size;
+            else
+            {
+                if (fieldType.IsValueType)
+                {
+                    if (fieldType == typeof(DateTime))
+                        RubricSize = 8;
+                    else if (fieldType == typeof(Enum))
+                        RubricSize = 4;
+                    else
+                        RubricSize = Marshal.SizeOf(fieldType);
+                }
+                else
+                {
+                    RubricSize = Marshal.SizeOf(typeof(IntPtr));
+                }
+                if (size > 0)
+                    RubricSize = size;
+            }
         }
         public FieldRubric(FieldInfo field, int size = -1, int fieldId = -1) : this(field.FieldType, field.Name, size, fieldId)
         {
+            if(field.GetCustomAttribute(typeof(CompilerGeneratedAttribute)) != null)
+            {
+                string name = field.Name;
+                int end = name.LastIndexOf('>'), start = (name.IndexOf('<') + 1), length = end - start;
+                RubricName = new String(field.Name.ToCharArray(start, length));
+                IsBackingField = true;
+            }
             RubricInfo = field;
         }
 
         public string RubricName { get; set; }
+        public string FieldName { get; set; }
+        public bool IsBackingField { get; set; }
         public Type RubricType { get; set; }
         public FieldInfo RubricInfo { get; set; }
         public int RubricId { get; set; }
@@ -132,7 +153,7 @@ namespace System.Instant
 
         public override Type DeclaringType => RubricInfo != null ? RubricInfo.DeclaringType : null;
 
-        public override string Name => RubricName;
+        public override string Name => FieldName;
 
         public override Type ReflectedType => RubricInfo != null ? RubricInfo.ReflectedType : null;
 

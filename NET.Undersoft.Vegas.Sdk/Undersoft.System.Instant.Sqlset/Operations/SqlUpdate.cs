@@ -52,8 +52,8 @@ namespace System.Instant.Sqlset
                     {
                         sb.AppendLine(@"  /* ----  TABLE BULK START CMD ------ */  ");
 
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         if (updateExcept != null)
                         {
@@ -121,8 +121,8 @@ namespace System.Instant.Sqlset
                     {
                         IDeck<int> co = nMap.ColumnOrdinal;
                         IDeck<int> ko = nMap.KeyOrdinal;
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
                         if (updateExcept != null)
                         {
                             ic = ic.Where(c => !updateExcept.Contains(c.RubricName)).ToArray();
@@ -206,8 +206,8 @@ namespace System.Instant.Sqlset
                     {
                         IDeck<int> co = nMap.ColumnOrdinal;
                         IDeck<int> ko = nMap.KeyOrdinal;
-                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FigureFieldId)).ToArray();
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ic = tab.Rubrics.AsValues().Where(c => nMap.ColumnOrdinal.Contains(c.FieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
                         if (updateExcept != null)
                         {
                             ic = ic.Where(c => !updateExcept.Contains(c.RubricName)).ToArray();
@@ -257,7 +257,7 @@ namespace System.Instant.Sqlset
             {
                 if (columns[i].RubricName.ToLower() == "updated")
                     isUpdateCol = true;
-                if (ia[columns[i].FigureFieldId] != DBNull.Value)
+                if (ia[columns[i].FieldId] != DBNull.Value)
                 {
                     if (c > 0)
                         delim = ",";
@@ -268,8 +268,8 @@ namespace System.Instant.Sqlset
                                     (columns[i].RubricType == typeof(string) ||
                                     columns[i].RubricType == typeof(DateTime)) ? "'" : "",
                                     (columns[i].RubricType != typeof(string)) ?
-                                    Convert.ChangeType(ia[columns[i].FigureFieldId], columns[i].RubricType) :
-                                    ia[columns[i].FigureFieldId].ToString().Replace("'","''")
+                                    Convert.ChangeType(ia[columns[i].FieldId], columns[i].RubricType) :
+                                    ia[columns[i].FieldId].ToString().Replace("'","''")
                                     );
                     c++;
                 }
@@ -288,7 +288,7 @@ namespace System.Instant.Sqlset
                 for (int i = 0; i < keys.Length; i++)
                 {
                     
-                    if (ia[keys[i].FigureFieldId] != DBNull.Value)
+                    if (ia[keys[i].FieldId] != DBNull.Value)
                     {
                         if (c > 0)
                             delim = ",";
@@ -299,8 +299,8 @@ namespace System.Instant.Sqlset
                                         (keys[i].RubricType == typeof(string) ||
                                         keys[i].RubricType == typeof(DateTime)) ? "'" : "",
                                         (keys[i].RubricType != typeof(string)) ?
-                                        Convert.ChangeType(ia[keys[i].FigureFieldId], keys[i].RubricType) :
-                                        ia[keys[i].FigureFieldId].ToString().Replace("'", "''")
+                                        Convert.ChangeType(ia[keys[i].FieldId], keys[i].RubricType) :
+                                        ia[keys[i].FieldId].ToString().Replace("'", "''")
                                         );
                         c++;
                     }
@@ -316,7 +316,7 @@ namespace System.Instant.Sqlset
                 else
                     delim = " WHERE ";
 
-                if (ia[keys[i].FigureFieldId] != DBNull.Value)
+                if (ia[keys[i].FieldId] != DBNull.Value)
                 {
                     if (c > 0)
                         delim = " AND ";
@@ -329,10 +329,10 @@ namespace System.Instant.Sqlset
                                     keys[i].RubricName,
                                     (keys[i].RubricType == typeof(string) ||
                                     keys[i].RubricType == typeof(DateTime)) ? "'" : "", 
-                                    (ia[keys[i].FigureFieldId] != DBNull.Value) ?
+                                    (ia[keys[i].FieldId] != DBNull.Value) ?
                                     (keys[i].RubricType != typeof(string)) ?
-                                    Convert.ChangeType(ia[keys[i].FigureFieldId], keys[i].RubricType) :
-                                    ia[keys[i].FigureFieldId].ToString().Replace("'", "''") : ""
+                                    Convert.ChangeType(ia[keys[i].FieldId], keys[i].RubricType) :
+                                    ia[keys[i].FieldId].ToString().Replace("'", "''") : ""
                                     );
                     c++;
                 }

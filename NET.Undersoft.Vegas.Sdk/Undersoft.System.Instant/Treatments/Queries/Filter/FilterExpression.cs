@@ -57,9 +57,9 @@ namespace System.Instant.Treatments
                 else
                 {
                     HashSet<int> list = new HashSet<int>((fc.Value.GetType() == typeof(string)) ? fc.Value.ToString().Split(';')
-                                                         .Select(p => Convert.ChangeType(p, fc.FilterRubric.RubricType).GetHashCode()) :
+                                                          .Select(p => Convert.ChangeType(p, fc.FilterRubric.RubricType).GetHashCode()) :
                                                          (fc.Value.GetType() == typeof(List<object>)) ? ((List<object>)fc.Value)
-                                                         .Select(p => Convert.ChangeType(p, fc.FilterRubric.RubricType).GetHashCode()) : null);
+                                                          .Select(p => Convert.ChangeType(p, fc.FilterRubric.RubricType).GetHashCode()) : null);
 
                     if (list != null && list.Count > 0)
                         exps = (r => list.Contains(r[fc.FilterRubric.RubricName].GetHashCode()));
@@ -87,52 +87,86 @@ namespace System.Instant.Treatments
                     switch (Operand)
                     {
                         case OperandType.Equal:
-                            ex = (r => r[fc.FilterRubric.FigureFieldId] != null ? 
+
+                            ex = (r => r[fc.FilterRubric.FieldId] != null ? 
                             fc.FilterRubric.RubricType == typeof(IUnique) ||
                             fc.FilterRubric.RubricType == typeof(string) ||
                             fc.FilterRubric.RubricType == typeof(DateTime) ?
-                            r[fc.FilterRubric.FigureFieldId].ComparableUInt64(fc.FilterRubric.RubricType)                                    
+                            r[fc.FilterRubric.FieldId].ComparableUInt64(fc.FilterRubric.RubricType)                                    
                                 .Equals(Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
-                            r[fc.FilterRubric.FigureFieldId].ComparableDouble(fc.FilterRubric.RubricType)
+                            r[fc.FilterRubric.FieldId].ComparableDouble(fc.FilterRubric.RubricType)
                                  .Equals(Value.ComparableDouble(fc.FilterRubric.RubricType)) : 
                               false);
                             break;
+
                         case OperandType.EqualOrMore:
-                            ex = (r => r[fc.FilterRubric.FigureFieldId] != null ?
-                             fc.FilterRubric.RubricType == typeof(IUnique) || fc.FilterRubric.RubricType == typeof(string) || fc.FilterRubric.RubricType == typeof(DateTime) ?
-                              r[fc.FilterRubric.FigureFieldId].ComparableUInt64(fc.FilterRubric.RubricType) >= (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
-                            r[fc.FilterRubric.FigureFieldId].ComparableDouble(fc.FilterRubric.RubricType) >= (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
+
+                            ex = (r => r[fc.FilterRubric.FieldId] != null ?
+                             fc.FilterRubric.RubricType == typeof(IUnique) ||
+                             fc.FilterRubric.RubricType == typeof(string) ||
+                             fc.FilterRubric.RubricType == typeof(DateTime) ?
+                              r[fc.FilterRubric.FieldId].ComparableUInt64(fc.FilterRubric.RubricType) 
+                                                      >=
+                              (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
+                            r[fc.FilterRubric.FieldId].ComparableDouble(fc.FilterRubric.RubricType) 
+                                                      >=
+                            (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
                             break;
+
                         case OperandType.More:
-                            ex = (r => r[fc.FilterRubric.FigureFieldId] != null ?
-                             fc.FilterRubric.RubricType == typeof(IUnique) || fc.FilterRubric.RubricType == typeof(string) || fc.FilterRubric.RubricType == typeof(DateTime) ?
-                              r[fc.FilterRubric.FigureFieldId].ComparableUInt64(fc.FilterRubric.RubricType) > (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
-                            r[fc.FilterRubric.FigureFieldId].ComparableDouble(fc.FilterRubric.RubricType) > (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
+
+                             ex = (r => r[fc.FilterRubric.FieldId] != null ?
+                             fc.FilterRubric.RubricType == typeof(IUnique) ||
+                             fc.FilterRubric.RubricType == typeof(string) ||
+                             fc.FilterRubric.RubricType == typeof(DateTime) ?
+                              r[fc.FilterRubric.FieldId].ComparableUInt64(fc.FilterRubric.RubricType) 
+                                                      >
+                              (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
+                            r[fc.FilterRubric.FieldId].ComparableDouble(fc.FilterRubric.RubricType) 
+                                                      >
+                            (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
                             break;
+
                         case OperandType.EqualOrLess:
-                            ex = (r => r[fc.FilterRubric.FigureFieldId] != null ?
-                             fc.FilterRubric.RubricType == typeof(IUnique) || fc.FilterRubric.RubricType == typeof(string) || fc.FilterRubric.RubricType == typeof(DateTime) ?
-                              r[fc.FilterRubric.FigureFieldId].ComparableUInt64(fc.FilterRubric.RubricType) <= (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
-                            r[fc.FilterRubric.FigureFieldId].ComparableDouble(fc.FilterRubric.RubricType) <= (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
+
+                            ex = (r => r[fc.FilterRubric.FieldId] != null ?
+                            fc.FilterRubric.RubricType == typeof(IUnique) ||
+                            fc.FilterRubric.RubricType == typeof(string) ||
+                            fc.FilterRubric.RubricType == typeof(DateTime) ?
+                            r[fc.FilterRubric.FieldId].ComparableUInt64(fc.FilterRubric.RubricType) 
+                                                    <=
+                            (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
+                            r[fc.FilterRubric.FieldId].ComparableDouble(fc.FilterRubric.RubricType) 
+                                                    <=
+                            (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
                             break;
+
                         case OperandType.Less:
-                            ex = (r => r[fc.FilterRubric.FigureFieldId] != null ?
-                             fc.FilterRubric.RubricType == typeof(IUnique) || fc.FilterRubric.RubricType == typeof(string) || fc.FilterRubric.RubricType == typeof(DateTime) ?
-                              r[fc.FilterRubric.FigureFieldId].ComparableUInt64(fc.FilterRubric.RubricType) < (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
-                            r[fc.FilterRubric.FigureFieldId].ComparableDouble(fc.FilterRubric.RubricType) < (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
+
+                            ex = (r => r[fc.FilterRubric.FieldId] != null ?
+                             fc.FilterRubric.RubricType == typeof(IUnique) ||
+                             fc.FilterRubric.RubricType == typeof(string) ||
+                             fc.FilterRubric.RubricType == typeof(DateTime) ?
+                             r[fc.FilterRubric.FieldId].ComparableUInt64(fc.FilterRubric.RubricType) 
+                                                    <
+                             (Value.ComparableUInt64(fc.FilterRubric.RubricType)) :
+                             r[fc.FilterRubric.FieldId].ComparableDouble(fc.FilterRubric.RubricType) 
+                                                    <
+                             (Value.ComparableDouble(fc.FilterRubric.RubricType)) : false);
                             break;
                         default:
                             break;
                     }
                 }
                 else if (Operand != OperandType.NotLike)
-                    ex = (r => r[fc.FilterRubric.FigureFieldId] != null ?
-                    Convert.ChangeType(r[fc.FilterRubric.FigureFieldId], fc.FilterRubric.RubricType).ToString()
+
+                    ex = (r => r[fc.FilterRubric.FieldId] != null ?
+                    Convert.ChangeType(r[fc.FilterRubric.FieldId], fc.FilterRubric.RubricType).ToString()
                         .Contains(Convert.ChangeType(Value, fc.FilterRubric.RubricType).ToString()) : 
                             false);
                 else
-                    ex = (r => r[fc.FilterRubric.FigureFieldId] != null ?
-                    !Convert.ChangeType(r[fc.FilterRubric.FigureFieldId], fc.FilterRubric.RubricType).ToString()
+                    ex = (r => r[fc.FilterRubric.FieldId] != null ?
+                    !Convert.ChangeType(r[fc.FilterRubric.FieldId], fc.FilterRubric.RubricType).ToString()
                         .Contains(Convert.ChangeType(Value, fc.FilterRubric.RubricType).ToString()) : 
                             false);
             }

@@ -29,13 +29,13 @@ namespace System.Extract
                                                       "Figure_MemberRubric_FieldsAndPropertiesModel_ValueType");
             FieldsAndPropertiesModel fom = new FieldsAndPropertiesModel();
             table = new Figures(str, "Figures_Compilation_Test");
-            rctab = table.Generate();
+            rctab = table.Combine();
 
             rcobj = rctab.NewFigure();
 
             foreach (var rubric in str.Rubrics.AsValues())
             {
-                if (rubric.FigureFieldId > -1)
+                if (rubric.FieldId > -1)
                 {                   
                     var field = fom.GetType().GetField(rubric.FigureField.Name,
                         BindingFlags.NonPublic | BindingFlags.Instance);
@@ -45,10 +45,10 @@ namespace System.Extract
                     {
                         var prop = fom.GetType().GetProperty(rubric.RubricName);
                         if(prop != null)
-                            rcobj[rubric.FigureFieldId] = prop.GetValue(fom);
+                            rcobj[rubric.FieldId] = prop.GetValue(fom);
                     }
                     else
-                        rcobj[rubric.FigureFieldId] = field.GetValue(fom);   
+                        rcobj[rubric.FieldId] = field.GetValue(fom);   
                     
                 }
             }
@@ -252,42 +252,42 @@ namespace System.Extract
 
         [Fact] public unsafe void Extractor_FigureExtracts_Test()
         {
-            Figure referenceType = new Figure(typeof(FieldsAndPropertiesModel));
-            FieldsAndPropertiesModel fom = new FieldsAndPropertiesModel();
-            IFigure rts = Figure_Compilation_Helper_Test(referenceType, fom);
+            Figure refFigure = new Figure(typeof(FieldsAndPropertiesModel));
+            FieldsAndPropertiesModel fapm = new FieldsAndPropertiesModel();
+            IFigure refFigureFilled = Figure_Compilation_Helper_Test(refFigure, fapm);
 
-            IntPtr pserial = rts.GetStructureIntPtr();
-            IFigure rts2 = referenceType.Generate();
-            pserial.ToStructure(rts2);
+            IntPtr refFigureFilled_UnmngPtr = refFigureFilled.GetStructureIntPtr();
+            IFigure refFigureNew_A = refFigure.Combine();
+            refFigureFilled_UnmngPtr.ToStructure(refFigureNew_A);
 
-            byte[] bserial = rts2.GetBytes();
-            IFigure rts3 = referenceType.Generate();
-            bserial.ToStructure(rts3);
+            byte[] refFigureNew_A_Bytes = refFigureNew_A.GetBytes();
+            IFigure refFigureNew_B = refFigure.Combine();
+            refFigureNew_A_Bytes.ToStructure(refFigureNew_B);
 
-            IFigure rts4 = referenceType.Generate();
-            rts4.StructureFrom(bserial);
+            IFigure refFigureNew_C = refFigure.Combine();
+            refFigureNew_C.StructureFrom(refFigureNew_A_Bytes);
 
-            Figure valueType = new Figure(typeof(FieldsAndPropertiesModel), false, FigureMode.ValueType);
-            fom = new FieldsAndPropertiesModel();
-            IFigure vts = Figure_Compilation_Helper_Test(valueType, fom);
-            ValueType v = (ValueType)vts;
+            Figure valtypeFigure = new Figure(typeof(FieldsAndPropertiesModel), FigureMode.ValueType);
+            fapm = new FieldsAndPropertiesModel();
+            IFigure valtypeFigureFilled = Figure_Compilation_Helper_Test(valtypeFigure, fapm);
+            ValueType valtypeFigureFilledAndCasted = (ValueType)valtypeFigureFilled;
 
-            IntPtr pserial2 = vts.GetStructureIntPtr();
+            IntPtr valtypeFigureFilledAndCasted_UnmngPtr = valtypeFigureFilledAndCasted.GetStructureIntPtr();
 
-            IFigure vts2 = valueType.Generate();
-            ValueType v2 = (ValueType)vts2;
-            vts2 = (IFigure)(pserial2.ToStructure(vts2));
+            IFigure valtypeFigureNew_A = valtypeFigure.Combine();
+            ValueType valtypeFigureNew_A_Casted = (ValueType)valtypeFigureNew_A;
+            valtypeFigureNew_A = (IFigure)(valtypeFigureFilledAndCasted_UnmngPtr.ToStructure(valtypeFigureNew_A_Casted));
 
-            byte[] bserial2 = (vts).GetBytes();
-            IFigure vts3 = valueType.Generate();
-            vts3 = (IFigure)(bserial2.ToStructure(vts3));
-            fixed (byte* b = bserial2)
-                vts3 = (IFigure)(Extractor.PointerToStructure(b, vts3));
+            byte[] valtypeFigureNew_A_Bytes = valtypeFigureNew_A.GetBytes();
+            IFigure valtypeFigureNew_B = valtypeFigure.Combine();
+            valtypeFigureNew_B = (IFigure)(valtypeFigureFilledAndCasted_UnmngPtr.ToStructure(valtypeFigureNew_B));
+            fixed (byte* b = valtypeFigureNew_A_Bytes)
+                valtypeFigureNew_B = (IFigure)(Extractor.PointerToStructure(b, valtypeFigureNew_B));
 
-            IFigure vts4 = valueType.Generate();
-            vts4 = (IFigure)(vts4.StructureFrom(pserial2));
+            IFigure valtypeFigureNew_C = valtypeFigure.Combine();
+            valtypeFigureNew_C = (IFigure)(valtypeFigureNew_C.StructureFrom(valtypeFigureFilledAndCasted_UnmngPtr));
 
-            Marshal.FreeHGlobal((IntPtr)pserial2);
+            Marshal.FreeHGlobal((IntPtr)valtypeFigureFilledAndCasted_UnmngPtr);
 
         }
 

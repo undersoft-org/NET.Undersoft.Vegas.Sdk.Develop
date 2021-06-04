@@ -52,7 +52,7 @@ namespace System.Instant
         {
             FigureType = member.FigureType;
             FigureField = member.FigureField;
-            FigureFieldId = member.FigureFieldId;
+            FieldId = member.FieldId;
             RubricOffset = member.RubricOffset;
             IsKey = member.IsKey;
             IsIdentity = member.IsIdentity;
@@ -98,7 +98,7 @@ namespace System.Instant
 
         public FieldInfo FigureField { get; set; }
 
-        public int FigureFieldId { get; set; }
+        public int FieldId { get; set; }
 
         public Type FigureType { get; set; }
 

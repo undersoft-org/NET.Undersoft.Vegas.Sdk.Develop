@@ -104,7 +104,7 @@ namespace System.Instant.Sqlset
 
                     foreach (FieldMapping nMap in nMaps)
                     {
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         string qry = BatchDeleteQuery(ir, nMap.DbTableName, ik).ToString();
                         sb.Append(qry);
@@ -172,7 +172,7 @@ namespace System.Instant.Sqlset
 
                     foreach (FieldMapping nMap in nMaps)
                     {
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         string qry = BatchDeleteQuery(ir, nMap.DbTableName, ik).ToString();
                         sb.Append(qry);
@@ -241,7 +241,7 @@ namespace System.Instant.Sqlset
 
                     foreach (FieldMapping nMap in nMaps)
                     {
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         string qry = BatchDeleteQuery(ir, nMap.DbTableName, ik).ToString();
                         sb.Append(qry);
@@ -285,7 +285,7 @@ namespace System.Instant.Sqlset
 
                     foreach (FieldMapping nMap in nMaps)
                     {                       
-                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FigureFieldId)).ToArray();
+                        MemberRubric[] ik = tab.Rubrics.AsValues().Where(c => nMap.KeyOrdinal.Contains(c.FieldId)).ToArray();
 
                         string qry = BatchDeleteQuery(ir, nMap.DbTableName, ik).ToString();
                         sb.Append(qry);
@@ -331,7 +331,7 @@ namespace System.Instant.Sqlset
             c = 0;
             for (int i = 0; i < keys.Length; i++)
             {
-                if (ia[keys[i].FigureFieldId] != DBNull.Value)
+                if (ia[keys[i].FieldId] != DBNull.Value)
                 {
                     if (c > 0)
                         delim = " AND ";
@@ -344,10 +344,10 @@ namespace System.Instant.Sqlset
                                     keys[i].RubricName,
                                     (keys[i].RubricType == typeof(string) ||
                                     keys[i].RubricType == typeof(DateTime)) ? "'" : "",
-                                    (ia[keys[i].FigureFieldId] != DBNull.Value) ?
+                                    (ia[keys[i].FieldId] != DBNull.Value) ?
                                     (keys[i].RubricType != typeof(string)) ?
-                                    Convert.ChangeType(ia[keys[i].FigureFieldId], keys[i].RubricType) :
-                                    ia[keys[i].FigureFieldId].ToString().Replace("'", "''") : ""
+                                    Convert.ChangeType(ia[keys[i].FieldId], keys[i].RubricType) :
+                                    ia[keys[i].FieldId].ToString().Replace("'", "''") : ""
                                     );
                     c++;
                 }

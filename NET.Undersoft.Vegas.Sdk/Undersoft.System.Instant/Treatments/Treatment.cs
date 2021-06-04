@@ -131,7 +131,7 @@ namespace System.Instant.Treatments
                                                                     new MemberRubric(c) { RubricName = c.RubricName.Split('=')[1] } : null,
                                                    SummaryOperand = (Enum.TryParse(c.RubricName.Split('=')[0], true, out parsed)) ? parsed : c.SummaryOperand
                                                })).ToArray(), "Summary_" + figures.GetType().Name);
-            figures.Summary = summaryFigure.Generate();
+            figures.Summary = summaryFigure.Combine();
             summaryRubrics = (MemberRubrics)summaryFigure.Rubrics;
             return summaryRubrics;
         }

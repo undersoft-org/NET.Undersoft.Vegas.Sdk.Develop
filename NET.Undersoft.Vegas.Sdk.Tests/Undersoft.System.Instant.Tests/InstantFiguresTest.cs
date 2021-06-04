@@ -11,7 +11,7 @@ namespace System.Instant.Tests
         private IFigure iRts; 
         private IFigure Figure_Compilation_Helper_Test(Figure str, FieldsAndPropertiesModel fom)
         {
-            IFigure rts = str.Generate();          
+            IFigure rts = str.Combine();          
 
             for (int i = 1; i < str.Rubrics.Count; i++)
             {
@@ -41,7 +41,7 @@ namespace System.Instant.Tests
 
             rtsq = new Figures(str, "InstantSequence_Compilation_Test");
 
-            iRtseq = rtsq.Generate();
+            iRtseq = rtsq.Combine();
 
             IFigure rcst = iRtseq.NewFigure();
 
@@ -57,7 +57,7 @@ namespace System.Instant.Tests
 
             rtsq = new Figures(str, "InstantSequence_Compilation_Test");
 
-            iRtseq = rtsq.Generate();
+            iRtseq = rtsq.Combine();
 
             iRtseq.Add(iRtseq.NewFigure());
             iRtseq[0, 4] = iRts[4];
@@ -75,7 +75,7 @@ namespace System.Instant.Tests
 
             rtsq = new Figures(str, "InstantSequence_Compilation_Test");
 
-            iRtseq = rtsq.Generate();
+            iRtseq = rtsq.Combine();
 
             iRtseq.Add(iRtseq.NewFigure());
             iRtseq[0, nameof(fom.Name)] = iRts[nameof(fom.Name)];
@@ -93,14 +93,14 @@ namespace System.Instant.Tests
 
             rtsq = new Figures(str, "InstantSequence_Compilation_Test");
 
-            var rttab = rtsq.Generate();
+            var rttab = rtsq.Combine();
 
             Assert.Equal(rttab.Rubrics, rtsq.Rubrics);
           
         }
 
         [Fact]
-        public void Figures_Generate_Test()
+        public void Figures_Compile_Test()
         {
             str = new Figure(typeof(FieldsAndPropertiesModel));
             FieldsAndPropertiesModel fom = new FieldsAndPropertiesModel();
@@ -108,7 +108,7 @@ namespace System.Instant.Tests
 
             rtsq = new Figures(str, "InstantSequence_Compilation_Test");
 
-            var rttab = rtsq.Generate();
+            var rttab = rtsq.Combine();
 
             for (int i = 0; i < 10000; i++)
             {      

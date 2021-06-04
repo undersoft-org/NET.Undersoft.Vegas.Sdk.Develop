@@ -31,7 +31,7 @@ namespace System.Instant.Mathset
 
         #region Mathset Formula
 
-        public int FigureFieldId { get => memberRubric.FigureFieldId; }
+        public int FigureFieldId { get => memberRubric.FieldId; }
         public int ComputeOrdinal { get; set; }
         public Type RubricType { get => memberRubric.RubricType; }
         public string RubricName { get => memberRubric.RubricName; }
