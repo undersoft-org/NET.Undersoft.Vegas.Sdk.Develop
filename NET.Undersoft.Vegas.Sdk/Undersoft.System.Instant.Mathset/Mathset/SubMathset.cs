@@ -1,47 +1,147 @@
-﻿using System.Reflection.Emit;
-using System.Instant;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.Mathset.SubMathset.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (05.06.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant.Mathset
 {
+    using System.Instant;
+    using System.Reflection.Emit;
+
+    /// <summary>
+    /// Defines the <see cref="SubMathset" />.
+    /// </summary>
     [Serializable]
     public class SubMathset : LeftFormula
     {
-        public IFigures Data { get { return Formuler.Data; } }
+        #region Fields
 
-        public MathRubric Rubric
-        { get; set; }
-        public Mathset       Formuler
-        { get; set; }
-        public SubMathset    SubFormuler
-        { get; set; }
+        public int startId = 0;
 
-        public string RubricName
-        { get => Rubric.RubricName; }
-        public Type RubricType
-        { get => Rubric.RubricType; }
-        public int FieldId
-        { get => Rubric.FigureFieldId; }
+        #endregion
 
-        public int rowCount { get { return Data.Count; } }
-        public int colCount { get { return Formuler.Rubrics.Count; } }
+        #region Constructors
 
-        public int startId = 0;     
-              
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubMathset"/> class.
+        /// </summary>
+        /// <param name="evalRubric">The evalRubric<see cref="MathRubric"/>.</param>
+        /// <param name="formuler">The formuler<see cref="Mathset"/>.</param>
         public SubMathset(MathRubric evalRubric, Mathset formuler)
         {
             if (evalRubric != null) Rubric = evalRubric;
-          
+
             SetDimensions(formuler);
         }
 
-        public void SetDimensions(Mathset formuler = null)
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the colCount.
+        /// </summary>
+        public int colCount
         {
-            if (!ReferenceEquals(formuler, null))
-                Formuler = formuler;
-            Rubric.SubFormuler = this;
+            get { return Formuler.Rubrics.Count; }
+        }
 
-        }  
+        /// <summary>
+        /// Gets the Data.
+        /// </summary>
+        public IFigures Data
+        {
+            get { return Formuler.Data; }
+        }
 
+        /// <summary>
+        /// Gets the FieldId.
+        /// </summary>
+        public int FieldId { get => Rubric.FigureFieldId; }
+
+        /// <summary>
+        /// Gets or sets the Formuler.
+        /// </summary>
+        public Mathset Formuler { get; set; }
+
+        /// <summary>
+        /// Gets the rowCount.
+        /// </summary>
+        public int rowCount
+        {
+            get { return Data.Count; }
+        }
+
+        /// <summary>
+        /// Gets or sets the Rubric.
+        /// </summary>
+        public MathRubric Rubric { get; set; }
+
+        /// <summary>
+        /// Gets the RubricName.
+        /// </summary>
+        public string RubricName { get => Rubric.RubricName; }
+
+        /// <summary>
+        /// Gets the RubricType.
+        /// </summary>
+        public Type RubricType { get => Rubric.RubricType; }
+
+        /// <summary>
+        /// Gets the Size.
+        /// </summary>
+        public override MathsetSize Size
+        {
+            get { return new MathsetSize(rowCount, colCount); }
+        }
+
+        /// <summary>
+        /// Gets or sets the SubFormuler.
+        /// </summary>
+        public SubMathset SubFormuler { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        // Compilation First Pass: add a reference to the array variable
+        // Code Generation: access the element through the i index
+        /// <summary>
+        /// The Compile.
+        /// </summary>
+        /// <param name="g">The g<see cref="ILGenerator"/>.</param>
+        /// <param name="cc">The cc<see cref="CompilerContext"/>.</param>
+        public override void Compile(ILGenerator g, CompilerContext cc)
+        {
+            if (cc.IsFirstPass())
+            {
+                cc.Add(Data);
+            }
+            else
+            {
+                CompilerContext.GenLocalLoad(g, cc.GetSubIndexOf(Data));           // index
+
+                g.Emit(OpCodes.Ldc_I4, FieldId);
+                g.EmitCall(OpCodes.Callvirt, typeof(IFigure).GetMethod("get_Item", new Type[] { typeof(int) }), null);
+                g.Emit(OpCodes.Unbox_Any, RubricType);
+                g.Emit(OpCodes.Conv_R8);
+            }
+        }
+
+        /// <summary>
+        /// The CompileAssign.
+        /// </summary>
+        /// <param name="g">The g<see cref="ILGenerator"/>.</param>
+        /// <param name="cc">The cc<see cref="CompilerContext"/>.</param>
+        /// <param name="post">The post<see cref="bool"/>.</param>
+        /// <param name="partial">The partial<see cref="bool"/>.</param>
         public override void CompileAssign(ILGenerator g, CompilerContext cc, bool post, bool partial)
         {
             if (cc.IsFirstPass())
@@ -91,36 +191,20 @@ namespace System.Instant.Mathset
 
                 if (partial)
                     CompilerContext.GenLocalLoad(g, cc.GetBufforIndexOf(Data));           // index
-            }            
-        }
-
-        // Compilation First Pass: add a reference to the array variable
-        // Code Generation: access the element through the i index
-        public override void Compile(ILGenerator g, CompilerContext cc)
-        {
-            if (cc.IsFirstPass())
-            {
-                cc.Add(Data);
-            }
-            else
-            {
-                CompilerContext.GenLocalLoad(g, cc.GetSubIndexOf(Data));           // index
-
-                g.Emit(OpCodes.Ldc_I4, FieldId);
-                g.EmitCall(OpCodes.Callvirt, typeof(IFigure).GetMethod("get_Item", new Type[] { typeof(int) }), null);
-                g.Emit(OpCodes.Unbox_Any, RubricType);
-                g.Emit(OpCodes.Conv_R8);
             }
         }
 
-        public override MathsetSize Size
+        /// <summary>
+        /// The SetDimensions.
+        /// </summary>
+        /// <param name="formuler">The formuler<see cref="Mathset"/>.</param>
+        public void SetDimensions(Mathset formuler = null)
         {
-            get { return new MathsetSize(rowCount, colCount); }
+            if (!ReferenceEquals(formuler, null))
+                Formuler = formuler;
+            Rubric.SubFormuler = this;
         }
 
-        //public override double Math(int i, int j)
-        //{
-        //    return this[i, j];
-        //}
+        #endregion
     }
 }

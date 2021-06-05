@@ -1,18 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Data;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.Mathset.Dataline.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (05.06.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant.Mathset
-{      
+{
+    using System;
+
     public class Dataline
     {
         public int RowCount;
         public int RowOffset;
 
         public Dataline()
-        {            
+        {
         }
         public Dataline(IFigures table)
         {
@@ -23,7 +31,7 @@ namespace System.Instant.Mathset
             RowCount = rowCount;
             RowOffset = rowOffset;
             Data = table;
-        }       
+        }
 
         public double this[int rowid, int cellid]
         {

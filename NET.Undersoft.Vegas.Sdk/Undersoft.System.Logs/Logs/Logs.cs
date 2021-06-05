@@ -17,6 +17,9 @@ namespace System
     using System.Instant;
     using System.Threading;
 
+    /// <summary>
+    /// Defines the <see cref="Logs" />.
+    /// </summary>
     public static class Logs
     {
         #region Fields
@@ -34,6 +37,9 @@ namespace System
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes static members of the <see cref="Logs"/> class.
+        /// </summary>
         static Logs()
         {
             clearLogTime = DateTime.Now.AddDays(BACK_LOG_DAYS).AddHours(BACK_LOG_HOURS).AddMinutes(BACK_LOG_MINUTES);
@@ -46,12 +52,21 @@ namespace System
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the handler.
+        /// </summary>
         private static ILogHandler handler { get; set; }
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// The Add.
+        /// </summary>
+        /// <param name="logLevel">The logLevel<see cref="int"/>.</param>
+        /// <param name="exception">The exception<see cref="Exception"/>.</param>
+        /// <param name="information">The information<see cref="string"/>.</param>
         public static void Add(int logLevel, Exception exception, string information = null)
         {
             if (_logLevel >= logLevel)
@@ -60,6 +75,11 @@ namespace System
             }
         }
 
+        /// <summary>
+        /// The Add.
+        /// </summary>
+        /// <param name="logLevel">The logLevel<see cref="int"/>.</param>
+        /// <param name="information">The information<see cref="String"/>.</param>
         public static void Add(int logLevel, String information)
         {
             if (_logLevel >= logLevel)
@@ -68,11 +88,9 @@ namespace System
             }
         }
 
-        public static void CreateHandler(IDeputy writeEvent, IDeputy cleanEvent = null)
-        {
-            handler = new LogHandler(writeEvent, cleanEvent);
-        }
-
+        /// <summary>
+        /// The ClearLog.
+        /// </summary>
         public static void ClearLog()
         {
             try
@@ -89,11 +107,28 @@ namespace System
             }
         }
 
+        /// <summary>
+        /// The CreateHandler.
+        /// </summary>
+        /// <param name="writeEvent">The writeEvent<see cref="IDeputy"/>.</param>
+        /// <param name="cleanEvent">The cleanEvent<see cref="IDeputy"/>.</param>
+        public static void CreateHandler(IDeputy writeEvent, IDeputy cleanEvent = null)
+        {
+            handler = new LogHandler(writeEvent, cleanEvent);
+        }
+
+        /// <summary>
+        /// The SetLogLevel.
+        /// </summary>
+        /// <param name="logLevel">The logLevel<see cref="int"/>.</param>
         public static void SetLogLevel(int logLevel)
         {
             _logLevel = logLevel;
         }
 
+        /// <summary>
+        /// The Start.
+        /// </summary>
         public static void Start()
         {
             threadLive = true;
@@ -101,6 +136,10 @@ namespace System
             logger.Start();
         }
 
+        /// <summary>
+        /// The Start.
+        /// </summary>
+        /// <param name="logLevel">The logLevel<see cref="int"/>.</param>
         public static void Start(int logLevel)
         {
             SetLogLevel(logLevel);
@@ -111,6 +150,12 @@ namespace System
             }
         }
 
+        /// <summary>
+        /// The Start.
+        /// </summary>
+        /// <param name="logLevel">The logLevel<see cref="int"/>.</param>
+        /// <param name="writeEvent">The writeEvent<see cref="IDeputy"/>.</param>
+        /// <param name="cleanEvent">The cleanEvent<see cref="IDeputy"/>.</param>
         public static void Start(int logLevel, IDeputy writeEvent, IDeputy cleanEvent = null)
         {
             CreateHandler(writeEvent, cleanEvent);
@@ -122,12 +167,18 @@ namespace System
             }
         }
 
+        /// <summary>
+        /// The Stop.
+        /// </summary>
         public static void Stop()
         {
             logger.Join();
             threadLive = false;
         }
 
+        /// <summary>
+        /// The logging.
+        /// </summary>
         private static void logging()
         {
             while (threadLive)

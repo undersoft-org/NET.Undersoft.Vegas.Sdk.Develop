@@ -1,11 +1,23 @@
-﻿using System.Reflection.Emit;
+﻿/*************************************************
+   Copyright (c) 2021 Undersoft
+
+   System.Instant.Mathset.Mathset.cs
+   
+   @project: Undersoft.Vegas.Sdk
+   @stage: Development
+   @author: Dariusz Hanc
+   @date: (05.06.2021) 
+   @licence MIT
+ *************************************************/
 
 namespace System.Instant.Mathset
-{         
-       
-    [Serializable]          
-    public class Mathset : LeftFormula         
-    { 
+{
+    using System.Reflection.Emit;
+
+
+    [Serializable]
+    public class Mathset : LeftFormula
+    {
         [NonSerialized]
         private CompilerContext context;
 
@@ -15,49 +27,49 @@ namespace System.Instant.Mathset
             Formuler = rubric.Formuler;
         }
 
-        public Mathset        Formuler
+        public Mathset Formuler
         { get; set; }
-        public SubMathset     SubFormuler
+        public SubMathset SubFormuler
         { get; set; }
-        public Formula         Formula
+        public Formula Formula
         {
             get => Rubric.Formula;
             set => Rubric.Formula = value;
         }
-        public Formula         PartialFormula;
-        public Mathstage       SubFormula;
+        public Formula PartialFormula;
+        public Mathstage SubFormula;
 
         public bool PartialMathset = false;
-         
+
         public IFigures Data
         { get => Rubric.MathsetRubrics.Data; }
 
-        public MathRubrics  Rubrics
+        public MathRubrics Rubrics
         {
             get => Rubric.FormulaRubrics;
             set => Rubric.FormulaRubrics = value;
         }
-        public MathRubric   Rubric
+        public MathRubric Rubric
         { get; set; }
 
-        public string   RubricName
+        public string RubricName
         { get => Rubric.RubricName; }
-        public Type     RubricType
+        public Type RubricType
         { get => Rubric.RubricType; }
-        public int      FieldId
+        public int FieldId
         { get => Rubric.FigureFieldId; }
 
-        public int      rowCount
+        public int rowCount
         { get; set; }
-        public int      colCount
-        { get=> Rubrics.Count; }
+        public int colCount
+        { get => Rubrics.Count; }
 
-        public int startId = 0;      
+        public int startId = 0;
 
         public MathRubric AssignRubric(string name)
         {
             return Rubric.AssignRubric(name);
-        }               
+        }
         public MathRubric AssignRubric(int ordinal)
         {
             return Rubric.AssignRubric(ordinal);
@@ -78,25 +90,26 @@ namespace System.Instant.Mathset
             Mathset mx = (Mathset)this.MemberwiseClone();
             return mx;
         }
-      
-        public double         this[long index]
+
+        public double this[long index]
         {
             get
             {
                 int length = Data.GetType().GetFields().Length - 1;
-                return Convert.ToDouble((Data[(int)index / length])[(int)index % length]); }
+                return Convert.ToDouble((Data[(int)index / length])[(int)index % length]);
+            }
             set
             {
                 int length = Data.GetType().GetFields().Length - 1;
                 (Data[(int)index / length])[(int)index % length] = value;
             }
         }
-        public double         this[long index, long field]
+        public double this[long index, long field]
         {
             get { return Convert.ToDouble(Data[(int)index, (int)field]); }
             set { Data[(int)index, (int)field] = value; }
         }
-        public SubMathset    this[string name]
+        public SubMathset this[string name]
         {
             get
             {
@@ -105,7 +118,7 @@ namespace System.Instant.Mathset
                 return SubFormula[name];
             }
         }
-        public SubMathset    this[int r, string name]
+        public SubMathset this[int r, string name]
         {
             get
             {
@@ -114,22 +127,22 @@ namespace System.Instant.Mathset
                 return SubFormula[name];
             }
         }
-        public Mathstage      this[int r]
+        public Mathstage this[int r]
         {
             get
             {
                 return new Mathstage(this, r, r);
             }
         }
-        public Mathstage      this[IndexRange q]
+        public Mathstage this[IndexRange q]
         {
             get { return new Mathstage(this, q.first, q.last); }
-        }      
+        }
 
         public static IndexRange Range(int i1, int i2)
         {
             return new IndexRange(i1, i2);
-        }      
+        }
 
         public override void CompileAssign(ILGenerator g, CompilerContext cc, bool post, bool partial)
         {
@@ -145,7 +158,7 @@ namespace System.Instant.Mathset
                 PartialFormula.Compile(g, cc);
             }
 
-        }             
+        }
         public override void Compile(ILGenerator g, CompilerContext cc)
         {
             if (cc.IsFirstPass())
@@ -159,12 +172,12 @@ namespace System.Instant.Mathset
             {
                 PartialFormula.Compile(g, cc);
             }
-        }            
+        }
 
         public override MathsetSize Size
         {
             get { return new MathsetSize(Data.Count, Rubrics.Count); }
-        }                                         
+        }
 
         public void SetDimensions(SubMathset sm, Mathset mx = null, int offset = 0)
         {
@@ -203,13 +216,13 @@ namespace System.Instant.Mathset
         public SubMathset GetElements(int e1, int e2)
         {
             return new SubMathset(null, this);
-        }                                       
-      
+        }
+
         [Serializable]
         public class Mathstage
         {
             internal Mathstage(Mathset m)
-            {                
+            {
                 formuler = m;
                 firstRow = 0;
                 rowCount = (m.rowCount - firstRow) - 1;
@@ -219,7 +232,7 @@ namespace System.Instant.Mathset
                 firstRow = startRowId;
                 rowCount = (endRowId - startRowId);
                 formuler = m;
-            }        
+            }
 
             public SubMathset this[int ordinal]
             {
@@ -228,14 +241,14 @@ namespace System.Instant.Mathset
                     MathRubric rubric = formuler.Rubric.AssignRubric(ordinal);
                     return formuler.GetAll(rubric);
                 }
-            }                                                                       
+            }
             public SubMathset this[string name]
             {
                 get
                 {
                     try
                     {
-                        MathRubric rubric = formuler.Rubric.AssignRubric(name);                                                         
+                        MathRubric rubric = formuler.Rubric.AssignRubric(name);
                         return formuler.GetAll(rubric);
                     }
                     catch (Exception ex)
@@ -243,12 +256,12 @@ namespace System.Instant.Mathset
                         return null;
                     }
                 }
-            }                                                              
+            }
 
             public static explicit operator LeftFormula(Mathstage r)
             {
                 return r.formuler.GetElements(r.firstRow, r.lastRow);
-            }                                      
+            }
 
             private Mathset formuler;
 
@@ -258,7 +271,7 @@ namespace System.Instant.Mathset
             {
                 get { return (formuler.rowCount > (firstRow + rowCount + 1) && rowCount > -1) ? firstRow + rowCount : formuler.rowCount - 1; }
             }
-        }      
+        }
 
         [Serializable]
         public struct IndexRange
@@ -269,7 +282,6 @@ namespace System.Instant.Mathset
                 last = i2;
             }
             internal int first, last;
-        }                                                                                
+        }
     }
 }
-

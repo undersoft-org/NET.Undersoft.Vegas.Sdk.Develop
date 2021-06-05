@@ -29,6 +29,9 @@ namespace System
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes static members of the <see cref="Assemblies"/> class.
+        /// </summary>
         static Assemblies()
         {
             resolveAssigned = ResolveExecuting();
