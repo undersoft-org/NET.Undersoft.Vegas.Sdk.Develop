@@ -76,10 +76,10 @@ namespace System.Instant.Tests
     public class FieldsAndPropertiesModel
     {
         [FigureKey]
-        public int Id  = 404;
+        public int Id { get; set; } = 404;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-        private string token = "AFH54345";
+        public string token = "AFH54345";
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string Alias = "ProperSize";
@@ -88,7 +88,7 @@ namespace System.Instant.Tests
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Name = "SizeIsTwoTimesLonger";
 
-        private long Key = long.MaxValue;
+        public long Key { get; set; } = long.MaxValue;
 
         [FigureDisplay("AvgPrice")]
         [FigureTreatment(AggregateOperand = AggregateOperand.Avg, SummaryOperand = AggregateOperand.Sum)]
@@ -112,8 +112,6 @@ namespace System.Instant.Tests
     public class FieldsAndProperties : FieldsAndPropertiesModel
     {
         public new int Id { get; set; }
-
-
 
     }
 

@@ -8,15 +8,15 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
 namespace System.Instant
-{   
+{
     public class FigureCompilerValueType : FigureCompiler
     {
-        public FigureCompilerValueType(Figure instantFigure, MemberRubrics fieldRubrics, MemberRubrics propertyRubrics) : 
+        public FigureCompilerValueType(Figure instantFigure, MemberRubrics fieldRubrics, MemberRubrics propertyRubrics) :
             base(instantFigure, fieldRubrics, propertyRubrics)
-        {      
+        {
         }
-      
-        public Type CompileFigureType(string typeName)
+
+        public override Type CompileFigureType(string typeName)
         {
             fields = new FieldBuilder[length + scode];
             props = new PropertyBuilder[length + scode];
@@ -33,7 +33,7 @@ namespace System.Instant
 
             CreateItemByStringProperty(tb);
 
-            CreateUniqueKeyProperty(tb);          
+            CreateUniqueKeyProperty(tb);
 
             CreateUniqueSeedProperty(tb);
 
@@ -58,23 +58,23 @@ namespace System.Instant
             //CreateSetUniqueSeedMethod(tb);
         }
 
-        private TypeBuilder GetTypeBuilder(string typeName)
+        public override TypeBuilder GetTypeBuilder(string typeName)
         {
             string typeSignature = (typeName != null && typeName != "") ? typeName : Unique.NewKey.ToString();
             AssemblyName an = new AssemblyName(typeSignature);
 
             AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(an, AssemblyBuilderAccess.RunAndCollect);
-            ModuleBuilder moduleBuilder     = assemblyBuilder.DefineDynamicModule(typeSignature + "Module");
+            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(typeSignature + "Module");
 
             TypeBuilder tb;
 
-            tb = moduleBuilder.DefineType(typeSignature, TypeAttributes.Public          | TypeAttributes.Serializable | 
+            tb = moduleBuilder.DefineType(typeSignature, TypeAttributes.Public | TypeAttributes.Serializable |
                                                          TypeAttributes.BeforeFieldInit | TypeAttributes.Class |
-                                                         TypeAttributes.AnsiClass       | TypeAttributes.SequentialLayout, typeof(ValueType));
+                                                         TypeAttributes.AnsiClass | TypeAttributes.SequentialLayout, typeof(ValueType));
 
             //tb.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, Type.EmptyTypes);
 
-            tb.SetCustomAttribute(new CustomAttributeBuilder(structLayoutCtor, new object[] { LayoutKind.Sequential }, 
+            tb.SetCustomAttribute(new CustomAttributeBuilder(structLayoutCtor, new object[] { LayoutKind.Sequential },
                                                              structLayoutFields, new object[] { CharSet.Ansi, 1 }));
 
             tb.SetCustomAttribute(new CustomAttributeBuilder(typeof(DataContractAttribute)
@@ -85,12 +85,12 @@ namespace System.Instant
             return tb;
         }
 
-        private void CreateSerialCodeProperty(TypeBuilder tb, Type type, string name)
+        public override void CreateSerialCodeProperty(TypeBuilder tb, Type type, string name)
         {
-            FieldBuilder fb = CreateField(tb, null, type,  name.ToLower() );
+            FieldBuilder fb = createField(tb, null, type, name.ToLower());
             fields[0] = fb;
 
-            PropertyBuilder prop = tb.DefineProperty(name,  PropertyAttributes.HasDefault,
+            PropertyBuilder prop = tb.DefineProperty(name, PropertyAttributes.HasDefault,
                                                      type, new Type[] { type });
 
             PropertyInfo iprop = typeof(IFigure).GetProperty(name);
@@ -136,7 +136,7 @@ namespace System.Instant
             props[0] = prop;
         }
 
-        private FieldBuilder[] CreateFieldsAndProperties(TypeBuilder tb)
+        public override FieldBuilder[] CreateFieldsAndProperties(TypeBuilder tb)
         {
             for (int i = scode; i < length + scode; i++)
             {
@@ -152,7 +152,7 @@ namespace System.Instant
                     fieldRubric.FieldName = fieldName;
                     type = mr.RubricType;
 
-                    if (type == null)                      
+                    if (type == null)
                         type = fieldRubric.FieldType;
                 }
                 else if (mr.MemberType == MemberTypes.Property)
@@ -175,22 +175,22 @@ namespace System.Instant
                     {
                         var __mr = propertyRubrics[mr.RubricName];
                         if (__mr != null)
-                             _mr = __mr;
+                            _mr = __mr;
                     }
 
-                    FieldBuilder fb = CreateField(tb, _mr, type, fieldName);
+                    FieldBuilder fb = createField(tb, _mr, type, fieldName);
 
                     if (fb != null)
                     {
 
-                        DetermineFigureAttributes(fb, _mr, mr);
+                        ResolveFigureAttributes(fb, _mr, mr);
 
-                        PropertyBuilder pb = (type != typeof(string)) ? 
-                                              CreateProperty(tb, fb, type, name) : 
-                                              CreateStringProperty(tb, fb, type, name);
+                        PropertyBuilder pb = (type != typeof(string)) ?
+                                              createProperty(tb, fb, type, name) :
+                                              createStringProperty(tb, fb, type, name);
                         fields[i] = fb;
                         props[i] = pb;
-                        pb.SetCustomAttribute(new CustomAttributeBuilder(dataMemberCtor,  new object[0], 
+                        pb.SetCustomAttribute(new CustomAttributeBuilder(dataMemberCtor, new object[0],
                                                                          dataMemberProps, new object[2] { i - scode, name }));
                     }
                 }
@@ -199,7 +199,7 @@ namespace System.Instant
             return fields;
         }
 
-        private FieldBuilder CreateField(TypeBuilder tb, MemberRubric mr, Type type, string fieldName)
+        private FieldBuilder createField(TypeBuilder tb, MemberRubric mr, Type type, string fieldName)
         {
             if (type == typeof(string) || type.IsArray)
             {
@@ -211,8 +211,8 @@ namespace System.Instant
                     _type = typeof(char[]);
 
                 fb = tb.DefineField(fieldName, _type, FieldAttributes.Private | FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal);
-              
-                DetermineMarshalAsAttributeForArray(fb, mr, _type);
+
+                ResolveMarshalAsAttributeForArray(fb, mr, _type);
 
                 return fb;
             }
@@ -220,18 +220,18 @@ namespace System.Instant
             {
                 return tb.DefineField(fieldName, type, FieldAttributes.Private);
             }
-        }       
+        }
 
-        private PropertyBuilder CreateProperty(TypeBuilder tb, FieldBuilder field, Type type, string name)
+        private PropertyBuilder createProperty(TypeBuilder tb, FieldBuilder field, Type type, string name)
         {
 
             PropertyBuilder prop = tb.DefineProperty(name, PropertyAttributes.HasDefault,
-                                                     type, new Type[] { type });          
+                                                     type, new Type[] { type });
 
             MethodBuilder getter = tb.DefineMethod("get_" + name, MethodAttributes.Public |
                                                             MethodAttributes.HideBySig, type,
                                                             Type.EmptyTypes);
-           
+
             prop.SetGetMethod(getter);
             ILGenerator il = getter.GetILGenerator();
 
@@ -253,8 +253,8 @@ namespace System.Instant
             return prop;
         }
 
-        private PropertyBuilder CreateStringProperty(TypeBuilder tb, FieldBuilder field, Type type, string name)
-        {                       
+        private PropertyBuilder createStringProperty(TypeBuilder tb, FieldBuilder field, Type type, string name)
+        {
             PropertyBuilder prop = tb.DefineProperty(name, PropertyAttributes.HasDefault,
                                                      type, new Type[] { type });
 
@@ -287,14 +287,14 @@ namespace System.Instant
             {
                 il.Emit(OpCodes.Ldarg_1); // value
                 il.EmitCall(OpCodes.Call, typeof(string).GetMethod("ToCharArray", Type.EmptyTypes), null);
-            }           
+            }
             il.Emit(OpCodes.Stfld, field); // assign
             il.Emit(OpCodes.Ret);
 
             return prop;
         }
 
-        private void CreateValueArrayProperty(TypeBuilder tb)
+        public override void CreateValueArrayProperty(TypeBuilder tb)
         {
             PropertyInfo prop = typeof(IFigure).GetProperty("ValueArray");
 
@@ -368,7 +368,7 @@ namespace System.Instant
             il.Emit(OpCodes.Ret);
         }
 
-        private void CreateItemByIntProperty(TypeBuilder tb)
+        public override void CreateItemByIntProperty(TypeBuilder tb)
         {
             foreach (PropertyInfo prop in typeof(IFigure).GetProperties())
             {
@@ -470,7 +470,7 @@ namespace System.Instant
             }
         }
 
-        private void CreateItemByStringProperty(TypeBuilder tb)
+        public override void CreateItemByStringProperty(TypeBuilder tb)
         {
             foreach (PropertyInfo prop in typeof(IFigure).GetProperties())
             {
@@ -601,7 +601,7 @@ namespace System.Instant
             }
         }
 
-        public void CreateGetBytesMethod(TypeBuilder tb)
+        public override void CreateGetBytesMethod(TypeBuilder tb)
         {
             MethodInfo createArray = typeof(IUnique).GetMethod("GetBytes");
 
@@ -618,8 +618,6 @@ namespace System.Instant
             il.EmitCall(OpCodes.Call, typeof(ObjectExtractExtenstion).GetMethod("GetValueStructureBytes", new Type[] { typeof(object) }), null);
             il.Emit(OpCodes.Ret);
         }
-
-
     }
 
 }

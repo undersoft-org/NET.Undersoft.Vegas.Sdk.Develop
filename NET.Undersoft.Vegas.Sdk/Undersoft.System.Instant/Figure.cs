@@ -26,10 +26,9 @@ namespace System.Instant
             mode = modeType;
 
             Rubrics = fieldRubrics = new MemberRubrics(createMemberRurics(figureModelType.GetRuntimeFields().ToArray()));
-            
-            propertyRubrics = new MemberRubrics(createMemberRurics(figureModelType.GetRuntimeProperties().ToArray())
-                                                  .Where(r => fieldRubrics.ContainsKey(r)));
 
+            propertyRubrics = new MemberRubrics(createMemberRurics(figureModelType.GetRuntimeProperties().ToArray())
+                                                                        .Where(r => fieldRubrics.ContainsKey(r)));
             Rubrics.KeyRubrics = new MemberRubrics();
         }
         public Figure(IList<MemberInfo> figureMembers, FigureMode modeType = FigureMode.Reference) 
@@ -72,40 +71,18 @@ namespace System.Instant
                     switch (mode)
                     {
                         case FigureMode.Reference:
-                            combineReferenceType();
+                            combineDynamicType(new FigureCompilerReference(this, fieldRubrics, propertyRubrics));
                             break;
                         case FigureMode.ValueType:
-                            combineValueType();
+                            combineDynamicType(new FigureCompilerValueType(this, fieldRubrics, propertyRubrics));
                             break;
                         case FigureMode.Derived:
-                            combineDerivedType();
+                            combineDerivedType(new FigureCompilerDerivedType(this, fieldRubrics, propertyRubrics));
                             break;
                         default:
                             break;
                     }
-
-                    Rubrics.AsValues().Where(m => m.FigureField != null)
-                                          .Select((f, y) => new object[] {
-                                           f.FieldId = y - 1,
-                                           f.RubricId = y - 1
-                                          }).ToArray();
-
-                    foreach(var rubric in Rubrics)
-                    {
-                        try
-                        {
-                            rubric.RubricOffset = (int)Marshal.OffsetOf(this.Type, rubric.FigureField.Name);
-                        }
-                        catch (Exception ex)
-                        {
-                            
-                        }
-                        finally
-                        {
-                            rubric.RubricOffset = -1;
-                        }
-                    }
-
+                    
                     Rubrics.Update();
                 }
                 catch (Exception ex)
@@ -131,58 +108,63 @@ namespace System.Instant
 
         }
 
-        private void combineReferenceType()
+        private void combineDynamicType(FigureCompiler compiler)
         {
-            var ifcref = new FigureCompilerReference(this, fieldRubrics, propertyRubrics);
-            compiledType = ifcref.CompileFigureType(Name);
-            Rubrics.KeyRubrics.Add(ifcref.Identities.Values);
+            var fcvt = compiler;
+            compiledType = fcvt.CompileFigureType(Name);
+            Rubrics.KeyRubrics.Add(fcvt.Identities.Values);
             this.Type = compiledType.New().GetType();
             Size = Marshal.SizeOf(this.Type);
-            var firef = this.Type.GetRuntimeFields().ToArray();
+            var rf = this.Type.GetRuntimeFields().ToArray();
+
             if (!Rubrics.AsValues().Where(m => m.Name == "SerialCode").Any())
             {
-                var mr = new MemberRubric(firef[0]);
+                var mr = new MemberRubric(rf[0]);
                 mr.RubricName = "SerialCode";
                 Rubrics.Insert(0, mr);
             }
-            Rubrics.AsValues().Select((m, y) => m.FigureField = firef[y]).ToArray();
+
+            Rubrics.AsValues().Select((m, y) => m.FigureField = rf[y]).ToArray();
+            Rubrics.AsValues().Where(m => m.FigureField != null)
+                                         .Select((f, y) => new object[] {
+                                           f.FieldId = y - 1,
+                                           f.RubricId = y - 1,
+                                           f.RubricOffset = (int)Marshal.OffsetOf(this.Type, f.FigureField.Name) })
+                                           .ToArray();
         }
 
-        private void combineValueType()
+        private void combineDerivedType(FigureCompiler compiler)
         {
-            var ifcvt = new FigureCompilerValueType(this, fieldRubrics, propertyRubrics);
-            compiledType = ifcvt.CompileFigureType(Name);
-            Rubrics.KeyRubrics.Add(ifcvt.Identities.Values);
+            var fcdt = compiler;
+            compiledType = fcdt.CompileFigureType(Name);
+            Rubrics.KeyRubrics.Add(fcdt.Identities.Values);
             this.Type = compiledType.New().GetType();
             Size = Marshal.SizeOf(this.Type);
-            var fivt = this.Type.GetRuntimeFields().ToArray();
-            if (!Rubrics.AsValues().Where(m => m.Name == "SerialCode").Any())
-            {
-                var mr = new MemberRubric(fivt[0]);
-                mr.RubricName = "SerialCode";
-                Rubrics.Insert(0, mr);
-            }
-            Rubrics.AsValues().Select((m, y) => m.FigureField = fivt[y]).ToArray();
-        }
 
-        private void combineDerivedType()
-        {
-            var ifcdt = new FigureCompilerDerivedType(this, fieldRubrics, propertyRubrics);
-            compiledType = ifcdt.CompileFigureType(Name);
-            Rubrics.KeyRubrics.Add(ifcdt.Identities.Values);
-            this.Type = compiledType.New().GetType();
-            Size = Marshal.SizeOf(this.Type);
-            var fidt = ifcdt.derivedFields;
-            Rubrics.AsValues().Select((m, y) => m.FigureField = fidt[y].RubricInfo).ToArray();
             if (!Rubrics.AsValues().Where(m => m.Name == "SerialCode").Any())
             {
                 var f = this.Type.GetField("serialcode", BindingFlags.NonPublic | BindingFlags.Instance);
                 var mr = new MemberRubric(f);
                 mr.RubricName = "SerialCode";
                 mr.FigureField = f;
+                mr.RubricOffset = (int)Marshal.OffsetOf(this.Type, f.Name);
                 Rubrics.Insert(0, mr);
             }
 
+            var df = fcdt.derivedFields;
+            Rubrics.AsValues().Select((m, y) => m.FigureField = df[y].RubricInfo).ToArray();
+
+            foreach (var rubric in Rubrics.Skip(1).ToArray())
+            {
+                try
+                {
+                    rubric.RubricOffset = (int)Marshal.OffsetOf(BaseType, rubric.FigureField.Name);
+                }
+                catch (Exception ex)
+                {
+                    rubric.RubricOffset = -1;
+                }
+            }
         }
     }
 }

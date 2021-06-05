@@ -8,27 +8,15 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
 namespace System.Instant
-{   
-    public class FigureCompiler
+{
+    public abstract class FigureCompiler : FigureCompilerConstructors
     {
-        public SortedList<short, MemberRubric> Identities = new SortedList<short, MemberRubric>();
-        protected readonly PropertyInfo[]  dataMemberProps = new[] { typeof(DataMemberAttribute).GetProperty("Order"), 
-                                                                  typeof(DataMemberAttribute).GetProperty("Name") };
-        protected readonly FieldInfo[] structLayoutFields = new[] { typeof(StructLayoutAttribute).GetField("CharSet"),
-                                                                 typeof(StructLayoutAttribute).GetField("Pack") };
-        protected readonly ConstructorInfo dataMemberCtor = typeof(DataMemberAttribute).GetConstructor(Type.EmptyTypes);
-        protected readonly ConstructorInfo structLayoutCtor = typeof(StructLayoutAttribute).GetConstructor(new Type[] { typeof(LayoutKind) });
-        protected readonly ConstructorInfo marshalAsCtor = typeof(MarshalAsAttribute).GetConstructor(new Type[] { typeof(UnmanagedType) });
-        protected readonly ConstructorInfo figureKeyCtor = typeof(FigureKeyAttribute).GetConstructor(Type.EmptyTypes);
-        protected readonly ConstructorInfo figureLinkCtor = typeof(FigureLinkAttribute).GetConstructor(Type.EmptyTypes);
-        protected readonly ConstructorInfo figureIdentityCtor = typeof(FigureIdentityAttribute).GetConstructor(Type.EmptyTypes);
-        protected readonly ConstructorInfo figureRequiredCtor = typeof(FigureRequiredAttribute).GetConstructor(Type.EmptyTypes);
-        protected readonly ConstructorInfo figureDisplayCtor = typeof(FigureDisplayAttribute).GetConstructor(new Type[] { typeof(string) });
-        protected readonly ConstructorInfo figuresTreatmentCtor = typeof(FigureTreatmentAttribute) .GetConstructor(Type.EmptyTypes);
+        public SortedList<short, MemberRubric> Identities
+            = new SortedList<short, MemberRubric>();
 
         protected MemberRubrics fieldRubrics;
         protected MemberRubrics propertyRubrics;
-
+        public FieldRubric[] derivedFields;
         protected FieldBuilder[] fields = null;
         protected PropertyBuilder[] props = null;
         protected FigureMode mode;
@@ -45,9 +33,39 @@ namespace System.Instant
             length = fieldRubrics.Count;
         }
 
-        public void DetermineFigureAttributes(FieldBuilder fb, MemberRubric mrwa, MemberRubric mr)
+        public abstract Type CompileFigureType(string typeName);
+
+        public abstract TypeBuilder GetTypeBuilder(string typeName);
+
+        public abstract void CreateSerialCodeProperty(TypeBuilder tb, Type type, string name);
+
+        public abstract FieldBuilder[] CreateFieldsAndProperties(TypeBuilder tb);
+
+        public abstract void CreateValueArrayProperty(TypeBuilder tb);
+
+        public abstract void CreateItemByIntProperty(TypeBuilder tb);
+
+        public abstract void CreateItemByStringProperty(TypeBuilder tb);
+
+        public abstract void CreateGetBytesMethod(TypeBuilder tb);
+
+        public void ResolveFigureAttributes(FieldBuilder fb, MemberRubric mrwa, MemberRubric mr)
         {
             MemberInfo mi = mrwa.RubricInfo;
+
+            resolveFigureKeyAttributes(fb, mi, mr);
+
+            resolveFigureIdentityAttributes(fb, mi, mr);
+
+            resolveFigureRquiredAttributes(fb, mi, mr);
+
+            resolveFigureDisplayAttributes(fb, mi, mr);
+
+            resolveFigureTreatmentAttributes(fb, mi, mr);
+        }
+
+        private void resolveFigureKeyAttributes(FieldBuilder fb, MemberInfo mi, MemberRubric mr)
+        {
             object[] o = mi.GetCustomAttributes(typeof(FigureKeyAttribute), false);
             if (o != null && o.Any())
             {
@@ -60,10 +78,10 @@ namespace System.Instant
                     fka.Order = (short)(Identities.LastOrDefault().Key + 1);
 
                 mr.IdentityOrder = fka.Order;
-                Identities.Add(mr.IdentityOrder, mr);              
+                Identities.Add(mr.IdentityOrder, mr);
                 mr.Required = true;
 
-                if(fb != null)
+                if (fb != null)
                     CreateFigureKeyAttribute(fb, fka);
             }
             else if (mr.IsKey)
@@ -77,12 +95,15 @@ namespace System.Instant
                 Identities.Add(mr.IdentityOrder, mr);
 
                 if (fb != null)
-                    CreateFigureKeyAttribute(fb, new FigureKeyAttribute() { IsAutoincrement = mr.IsAutoincrement, Order = mr.IdentityOrder });             
+                    CreateFigureKeyAttribute(fb, new FigureKeyAttribute() { IsAutoincrement = mr.IsAutoincrement, Order = mr.IdentityOrder });
             }
+        }
 
+        private void resolveFigureIdentityAttributes(FieldBuilder fb, MemberInfo mi, MemberRubric mr)
+        {
             if (!mr.IsKey)
             {
-                o = mi.GetCustomAttributes(typeof(FigureIdentityAttribute), false);
+                object[] o = mi.GetCustomAttributes(typeof(FigureIdentityAttribute), false);
                 if (o != null && o.Any())
                 {
                     FigureIdentityAttribute fia = (FigureIdentityAttribute)o.First();
@@ -109,8 +130,11 @@ namespace System.Instant
                         CreateFigureIdentityAttribute(fb, new FigureIdentityAttribute() { IsAutoincrement = mr.IsAutoincrement, Order = mr.IdentityOrder });
                 }
             }
+        }
 
-            o = mi.GetCustomAttributes(typeof(FigureRequiredAttribute), false);
+        private void resolveFigureRquiredAttributes(FieldBuilder fb, MemberInfo mi, MemberRubric mr)
+        {
+            object[] o = mi.GetCustomAttributes(typeof(FigureRequiredAttribute), false);
             if (o != null && o.Any())
             {
                 mr.Required = true;
@@ -123,8 +147,11 @@ namespace System.Instant
                 if (fb != null)
                     CreateFigureRequiredAttribute(fb);
             }
+        }
 
-            o = mi.GetCustomAttributes(typeof(FigureDisplayAttribute), false);
+        private void resolveFigureDisplayAttributes(FieldBuilder fb, MemberInfo mi, MemberRubric mr)
+        {
+            object[] o = mi.GetCustomAttributes(typeof(FigureDisplayAttribute), false);
             if (o != null && o.Any())
             {
                 FigureDisplayAttribute fda = (FigureDisplayAttribute)o.First(); ;
@@ -137,8 +164,11 @@ namespace System.Instant
             {
                 CreateFigureDisplayAttribute(fb, new FigureDisplayAttribute(mr.DisplayName));
             }
+        }
 
-            o = mi.GetCustomAttributes(typeof(FigureTreatmentAttribute), false);
+        private void resolveFigureTreatmentAttributes(FieldBuilder fb, MemberInfo mi, MemberRubric mr)
+        {
+            object[] o = mi.GetCustomAttributes(typeof(FigureTreatmentAttribute), false);
             if (o != null && o.Any())
             {
                 FigureTreatmentAttribute fta = (FigureTreatmentAttribute)o.First(); ;
@@ -150,11 +180,11 @@ namespace System.Instant
             }
             else if (mr.AggregateOperand != AggregateOperand.None || mr.SummaryOperand != AggregateOperand.None)
             {
-                CreateFigureTreatmentAttribute(fb, new FigureTreatmentAttribute() { AggregateOperand = mr.AggregateOperand, SummaryOperand = mr.SummaryOperand } );
+                CreateFigureTreatmentAttribute(fb, new FigureTreatmentAttribute() { AggregateOperand = mr.AggregateOperand, SummaryOperand = mr.SummaryOperand });
             }
         }
 
-        public void DetermineMarshalAsAttributeForArray(FieldBuilder field, MemberRubric member, Type type)
+        public void ResolveMarshalAsAttributeForArray(FieldBuilder field, MemberRubric member, Type type)
         {
             MemberInfo _member = member.RubricInfo;
             if (member is MemberRubric && ((MemberRubric)member).FigureField != null)
@@ -186,7 +216,7 @@ namespace System.Instant
             }
         }
 
-        public void DetermineMarshalAsAttributeForString(FieldBuilder field, MemberRubric member, Type type)
+        public void ResolveMarshalAsAttributeForString(FieldBuilder field, MemberRubric member, Type type)
         {
             MemberInfo _member = member.RubricInfo;
             if (member is MemberRubric && ((MemberRubric)member).FigureField != null)
@@ -227,8 +257,8 @@ namespace System.Instant
 
         public void CreateFigureAsAttribute(FieldBuilder field, FigureAsAttribute attrib)
         {
-            field.SetCustomAttribute(new CustomAttributeBuilder(marshalAsCtor, new object[] { attrib.Value }, 
-                                                                               new FieldInfo[] { typeof(MarshalAsAttribute).GetField("SizeConst") }, 
+            field.SetCustomAttribute(new CustomAttributeBuilder(marshalAsCtor, new object[] { attrib.Value },
+                                                                               new FieldInfo[] { typeof(MarshalAsAttribute).GetField("SizeConst") },
                                                                                new object[] { attrib.SizeConst }));
         }
 
@@ -242,7 +272,7 @@ namespace System.Instant
 
         public void CreateFigureIdentityAttribute(FieldBuilder field, FigureIdentityAttribute attrib)
         {
-            field.SetCustomAttribute(new CustomAttributeBuilder(figureIdentityCtor, Type.EmptyTypes, 
+            field.SetCustomAttribute(new CustomAttributeBuilder(figureIdentityCtor, Type.EmptyTypes,
                                                                                     new FieldInfo[] { typeof(FigureIdentityAttribute).GetField("Order"),
                                                                                                       typeof(FigureIdentityAttribute).GetField("IsAutoincrement") },
                                                                                     new object[] { attrib.Order, attrib.IsAutoincrement }));
@@ -260,7 +290,7 @@ namespace System.Instant
 
         public void CreateFigureTreatmentAttribute(FieldBuilder field, FigureTreatmentAttribute attrib)
         {
-            field.SetCustomAttribute(new CustomAttributeBuilder(figuresTreatmentCtor,   Type.EmptyTypes, 
+            field.SetCustomAttribute(new CustomAttributeBuilder(figuresTreatmentCtor, Type.EmptyTypes,
                                                                                         new FieldInfo[] { typeof(FigureTreatmentAttribute).GetField("AggregateOperand"),
                                                                                                           typeof(FigureTreatmentAttribute).GetField("SummaryOperand") },
                                                                                         new object[] { attrib.AggregateOperand, attrib.SummaryOperand }));
@@ -444,7 +474,7 @@ namespace System.Instant
             tb.DefineMethodOverride(getter, accessor);
 
             prop.SetGetMethod(getter);
-            ILGenerator il = getter.GetILGenerator();           
+            ILGenerator il = getter.GetILGenerator();
 
             il.Emit(OpCodes.Ldarg_0); // this
             il.Emit(OpCodes.Ldflda, fields[0]); // load
@@ -469,7 +499,7 @@ namespace System.Instant
             il.EmitCall(OpCodes.Call, typeof(Ussn).GetProperty("UniqueKey").GetSetMethod(), null);
             il.Emit(OpCodes.Ret); // return
 
-           // return prop;
+            // return prop;
         }
 
         public virtual void CreateUniqueSeedProperty(TypeBuilder tb)

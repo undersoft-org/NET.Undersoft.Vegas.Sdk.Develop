@@ -11,14 +11,13 @@ namespace System.Instant
 {   
     public class FigureCompilerDerivedType : FigureCompiler
     {
-        public FieldRubric[] derivedFields;
         protected FieldBuilder  scodeField;
 
         public FigureCompilerDerivedType(Figure instantFigure, MemberRubrics memberRubrics, MemberRubrics fieldRubrics) : base(instantFigure, memberRubrics, fieldRubrics)
         {      
         }
       
-        public Type CompileFigureType(string typeName)
+        public override Type CompileFigureType(string typeName)
         {
             derivedFields = new FieldRubric[length + scode];
 
@@ -51,7 +50,7 @@ namespace System.Instant
             return tb.CreateTypeInfo();
         }
 
-        private TypeBuilder GetTypeBuilder(string typeName)
+        public override TypeBuilder GetTypeBuilder(string typeName)
         {
             string typeSignature = (typeName != null && typeName != "") ? typeName : Unique.NewKey.ToString();
             AssemblyName an = new AssemblyName(typeSignature);
@@ -77,7 +76,7 @@ namespace System.Instant
             return tb;
         }
 
-        private void CreateSerialCodeProperty(TypeBuilder tb, Type type, string name)
+        public override void CreateSerialCodeProperty(TypeBuilder tb, Type type, string name)
         {
             scodeField = tb.DefineField(name.ToLower(), type, FieldAttributes.Private);
 
@@ -123,12 +122,13 @@ namespace System.Instant
             prop.SetCustomAttribute(new CustomAttributeBuilder(
                                        dataMemberCtor, new object[0],
                                        dataMemberProps, new object[2] { 0, name.ToUpper() }));
+
             derivedFields[0] = new FieldRubric(scodeField.FieldType, name);
             derivedFields[0].RubricInfo = scodeField;
            // props[0] = prop;
         }
 
-        private FieldBuilder[] CreateFieldsAndProperties(TypeBuilder tb)
+        public override FieldBuilder[] CreateFieldsAndProperties(TypeBuilder tb)
         {
             for (int i = scode; i < length + scode; i++)
             {
@@ -164,7 +164,6 @@ namespace System.Instant
                 if (type != null)
                 {
                     var _mr = mr;
-
                     if (isBackingField)
                     {
                         var __mr = propertyRubrics[mr.RubricName];
@@ -172,7 +171,7 @@ namespace System.Instant
                             _mr = __mr;
                     }
 
-                    DetermineFigureAttributes(null, _mr, mr);
+                    ResolveFigureAttributes(null, _mr, mr);
 
                     derivedFields[i] = (FieldRubric)mr.RubricInfo;
                 }
@@ -181,7 +180,7 @@ namespace System.Instant
             return fields;
         }
 
-        private void CreateValueArrayProperty(TypeBuilder tb)
+        public override void CreateValueArrayProperty(TypeBuilder tb)
         {
             PropertyInfo prop = typeof(IFigure).GetProperty("ValueArray");
 
@@ -206,7 +205,12 @@ namespace System.Instant
                 il.Emit(OpCodes.Ldloc_0); // this
                 il.Emit(OpCodes.Ldc_I4, i - scode);
                 il.Emit(OpCodes.Ldarg_0); // this
-                il.Emit(OpCodes.Ldfld, derivedFields[i].RubricInfo); // foo load
+
+                if (derivedFields[i].IsBackingField)
+                    il.EmitCall(OpCodes.Call, figure.BaseType.GetMethod("get_" + derivedFields[i].RubricName), null); // foo load
+                else
+                    il.Emit(OpCodes.Ldfld, derivedFields[i].RubricInfo); // foo load
+
                 if (derivedFields[i].FieldType.IsValueType)
                 {
                     il.Emit(OpCodes.Box, derivedFields[i].FieldType); // box
@@ -239,12 +243,18 @@ namespace System.Instant
                                              OpCodes.Unbox_Any : 
                                              OpCodes.Castclass, 
                                              derivedFields[i].FieldType); // type
-                il.Emit(OpCodes.Stfld, derivedFields[i].RubricInfo); // 
+                if (derivedFields[i].IsBackingField)
+                {
+                    il.EmitCall(OpCodes.Call, figure.BaseType.GetMethod("set_" + derivedFields[i].RubricName,
+                                                        new Type[] { derivedFields[i].FieldType }), null); // foo load
+                }
+                else
+                    il.Emit(OpCodes.Stfld, derivedFields[i].RubricInfo); // 
             }
             il.Emit(OpCodes.Ret);
         }
 
-        private void CreateItemByIntProperty(TypeBuilder tb)
+        public override void CreateItemByIntProperty(TypeBuilder tb)
         {
             foreach (PropertyInfo prop in typeof(IFigure).GetProperties())
             {
@@ -280,7 +290,12 @@ namespace System.Instant
                             {
                                 il.MarkLabel(branches[i - scode]);
                                 il.Emit(OpCodes.Ldarg_0); // this
-                                il.Emit(OpCodes.Ldfld, derivedFields[i].RubricInfo); // foo load
+
+                                if (derivedFields[i].IsBackingField)
+                                    il.EmitCall(OpCodes.Call, figure.BaseType.GetMethod("get_" + derivedFields[i].RubricName), null);
+                                else
+                                    il.Emit(OpCodes.Ldfld, derivedFields[i].RubricInfo); // foo load
+                                
                                 if (derivedFields[i].FieldType.IsValueType)
                                 {
                                     il.Emit(OpCodes.Box, derivedFields[i].FieldType); // box
@@ -328,7 +343,13 @@ namespace System.Instant
                                                              OpCodes.Unbox_Any : 
                                                              OpCodes.Castclass, 
                                                              derivedFields[i].FieldType); // type
-                                il.Emit(OpCodes.Stfld, derivedFields[i].RubricInfo);
+                                if (derivedFields[i].IsBackingField)
+                                {
+                                    il.EmitCall(OpCodes.Call, figure.BaseType.GetMethod("set_" + derivedFields[i].RubricName,
+                                                                        new Type[] { derivedFields[i].FieldType }), null); // foo load
+                                }
+                                else
+                                    il.Emit(OpCodes.Stfld, derivedFields[i].RubricInfo); // 
                                 il.Emit(OpCodes.Ret); // end
                             }
                         }
@@ -338,7 +359,7 @@ namespace System.Instant
             }
         }
 
-        private void CreateItemByStringProperty(TypeBuilder tb)
+        public override void CreateItemByStringProperty(TypeBuilder tb)
         {
             foreach (PropertyInfo prop in typeof(IFigure).GetProperties())
             {
@@ -387,7 +408,12 @@ namespace System.Instant
                             {
                                 il.MarkLabel(branches[i]);
                                 il.Emit(OpCodes.Ldarg_0); // this
-                                il.Emit(OpCodes.Ldfld, derivedFields[i].RubricInfo); // foo load
+
+                                if (derivedFields[i].IsBackingField)
+                                    il.EmitCall(OpCodes.Call, figure.BaseType.GetMethod("get_" + derivedFields[i].RubricName), null);
+                                else
+                                    il.Emit(OpCodes.Ldfld, derivedFields[i].RubricInfo); // foo load
+
                                 if (derivedFields[i].FieldType.IsValueType)
                                 {
                                     il.Emit(OpCodes.Box, derivedFields[i].FieldType); // box
@@ -448,7 +474,13 @@ namespace System.Instant
                                                              OpCodes.Unbox_Any : 
                                                              OpCodes.Castclass, 
                                                              derivedFields[i].FieldType); // type
-                                il.Emit(OpCodes.Stfld, derivedFields[i].RubricInfo); // 
+                                if (derivedFields[i].IsBackingField)
+                                {
+                                    il.EmitCall(OpCodes.Call, figure.BaseType.GetMethod("set_" + derivedFields[i].RubricName,
+                                                                        new Type[] { derivedFields[i].FieldType }), null); // foo load
+                                }
+                                else
+                                    il.Emit(OpCodes.Stfld, derivedFields[i].RubricInfo); // 
                                 il.Emit(OpCodes.Ret); // end
                             }
                         }
@@ -458,7 +490,7 @@ namespace System.Instant
             }
         }
 
-        private void CreateGetBytesMethod(TypeBuilder tb)
+        public override void CreateGetBytesMethod(TypeBuilder tb)
         {
             MethodInfo createArray = typeof(IUnique).GetMethod("GetBytes");
 
