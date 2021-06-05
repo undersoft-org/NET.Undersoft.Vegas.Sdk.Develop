@@ -216,7 +216,6 @@ namespace System.Instant.Tests
                                                         "Figure_MemberRubric_PropertiesOnlyModel_ValueType", FigureMode.ValueType);
             fom = new PropertiesOnlyModel();
             Figure_Compilation_Helper_Test(valueType, fom);
-
         }
         [Fact] public void Figure_Memberinfo_FieldsAndPropertiesModel_Compilation_Test()
         {
