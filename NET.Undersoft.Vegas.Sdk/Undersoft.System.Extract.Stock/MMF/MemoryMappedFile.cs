@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
 using System.Security.Permissions;
-using System.Extract.Stock;
 using System.Runtime.InteropServices;
 
 namespace System.Extract.Stock

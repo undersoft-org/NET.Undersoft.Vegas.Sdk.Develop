@@ -74,8 +74,6 @@ namespace System.Sets.Basedeck
             --removed;
         }
 
-
-
         public KeyedSet(int capacity = 17, HashBits bits = HashBits.bit64) : base(bits)
         {
             size = capacity;
@@ -115,8 +113,6 @@ namespace System.Sets.Basedeck
         //    msbId = Submix.MsbId(capacity);
         //}
 
-
-
         public virtual ICard<V> First
         { get { return first; } }
         public virtual ICard<V> Last
@@ -127,9 +123,6 @@ namespace System.Sets.Basedeck
         public virtual bool IsReadOnly { get; set; }
         public virtual bool IsSynchronized { get; set; }
         public virtual object SyncRoot { get; set; }
-
-
-
 
         ICard<V> IList<ICard<V>>.this[int index]
         {
@@ -156,8 +149,6 @@ namespace System.Sets.Basedeck
             get { return InnerGet(unique.Key(key)); }
             set { InnerPut(unique.Key(key), value); }
         }
-
-
 
         protected virtual V InnerGet(ulong key)
         {
@@ -270,8 +261,6 @@ namespace System.Sets.Basedeck
         }
         public abstract ICard<V> GetCard(int index);
 
-
-
         protected abstract ICard<V> InnerPut(ulong key, V value);
         protected abstract ICard<V> InnerPut(V value);
         protected abstract ICard<V> InnerPut(ICard<V> value);
@@ -354,7 +343,6 @@ namespace System.Sets.Basedeck
                 Put(item);
             }
         }
-
 
         protected abstract bool InnerAdd(ulong key, V value);
         protected abstract bool InnerAdd(V value);
@@ -500,10 +488,50 @@ namespace System.Sets.Basedeck
         }
         public virtual void Insert(int index, V item)
         {
-            Insert(index, NewCard(item));
+            // get position index in table, which is an absolute value from key %(modulo) size. Simply it is rest from dividing key and size                           
+            ulong key = unique.Key(item);
+            ulong pos = getPosition(key);
+
+            ICard<V> card = table[pos]; /// local for last removed item finded   
+            // add in case when item doesn't exist and there is no conflict                                                      
+            if (card == null)
+            {
+                card = NewCard(item);
+                table[pos] = card;
+                InnerInsert(index, card);
+                countIncrement();
+                return;
+            }
+
+            for (; ; )
+            {
+                /// key check
+                if (card.Equals(key))
+                {
+                    /// when card was removed insert 
+                    if (card.Removed)
+                    {
+                        var newcard = NewCard(item);
+                        card.Extent = newcard;
+                        InnerInsert(index, newcard);
+                        conflictIncrement();
+                        return;
+                    }
+                    throw new Exception("Item exist");
+
+                }
+                /// check that all conflicts was examinated and local card is the last one  
+                if (card.Extent == null)
+                {
+                    var newcard = NewCard(item);
+                    card.Extent = newcard;
+                    InnerInsert(index, newcard);
+                    conflictIncrement();
+                    return;
+                }
+                card = card.Extent;
+            }
         }
-
-
 
         public virtual bool Enqueue(V value)
         {
@@ -632,7 +660,6 @@ namespace System.Sets.Basedeck
             Put(cards);
         }
 
-
         protected bool InnerContainsKey(ulong key)
         {
             ICard<V> mem = table[getPosition(key)];
@@ -674,8 +701,6 @@ namespace System.Sets.Basedeck
         {
             return InnerContainsKey(unique.Key(item));
         }
-
-
 
         protected virtual V InnerRemove(ulong key)
         {
@@ -771,8 +796,6 @@ namespace System.Sets.Basedeck
         //    mixMask = Submix.Mask((ulong)size);
         //    msbId = Submix.MsbId(size);
         //}
-
-
 
         public virtual void CopyTo(ICard<V>[] array, int index)
         {
@@ -870,9 +893,6 @@ namespace System.Sets.Basedeck
         {
             return GetCard(item).Index;
         }
-
-
-
 
         public virtual IEnumerable<V> AsValues()
         {
